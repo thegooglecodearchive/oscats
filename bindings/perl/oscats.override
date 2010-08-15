@@ -1,0 +1,94 @@
+prefixes
+g_bit_array_	BitArray
+g_gsl_vector_	GslVector
+g_gsl_matrix_	GslMatrix
+g_gsl_permutation_	GslPermutation
+oscats_rnd_	Random
+oscats_examinee_	Examinee
+oscats_covariates_	Covariates
+oscats_attributes_	Attributes
+oscats_item_		Item
+oscats_item_bank_	ItemBank
+oscats_test_	Test
+oscats_irt_model_	IrtModel
+oscats_class_model_	ClassModel
+oscats_algorithm_	Algorithm
+oscats_alg_exposure_counter_	AlgExposureCounter
+oscats_alg_class_rates_	AlgClassRates
+%%
+ignore
+oscats_rnd_binorm
+oscats_rnd_multinomial
+oscats_rnd_sample
+oscats_estimate_theta_mle
+oscats_estimate_theta_eap
+oscats_algorithm_register
+oscats_algorithm_register_valist
+oscats_alg_chooser_set_c_criterion
+oscats_integrate_set_c_function
+%%
+function	oscats_algorithm_register	oscats_algorithm_	Algorithm
+SV *
+oscats_algorithm_register (class, test, ...)
+    const char *class
+    OscatsTest *test
+  PREINIT:
+    int n_params = 0;
+    GParameter *params = NULL;
+    GType alg;
+    OscatsAlgorithm *alg_data;
+    OscatsAlgorithmClass *alg_class = NULL;
+  CODE:
+#define FIRST_ARG	2
+    alg = gperl_object_type_from_package(class);
+    if (!alg)
+      croak("%s is not registered with gperl as an object type.", class);
+    if (!g_type_is_a(alg, OSCATS_TYPE_ALGORITHM))
+      croak("can only register oscats::Algorithm types");
+    if (!OSCATS_IS_TEST(test))
+      croak("second argument must be an oscats::Test");
+    if (NULL == (alg_class = g_type_class_ref(alg)))
+      croak("couldn't get a reference to type class");
+    if (items > FIRST_ARG)	/* Have key/values */
+    {
+      int i;
+      n_params = (items - 2) / 2;
+      params = g_new0(GParameter, n_params);
+      for (i=0; i < n_params; i++)
+      {
+        const char *key = SvPV_nolen (ST (FIRST_ARG+i*2+0));
+        GParamSpec *pspec = g_object_class_find_property((GObjectClass*)alg_class, key);
+        if (!pspec)
+        {
+          /* clean up */
+          int j;
+          for (j=0; j < i; j++)
+            g_value_unset(&params[j].value);
+          g_free(params);
+          g_type_class_unref(alg_class);
+          croak("type %s does not support property %s", class, key);
+        }
+        g_value_init(&params[i].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+        // Note: this croaks if there is a problem,
+        // which will leak any non-trivial values previously set
+        gperl_value_from_sv(&params[i].value, ST(FIRST_ARG+i*2+1));
+        params[i].name = key;
+      }
+    }
+#undef FIRST_ARG
+
+    alg_data = g_object_newv(alg, n_params, params);
+    alg_class->reg(alg_data, test);	// takes ownership
+    g_object_ref(alg_data);		// for the wrapper
+    RETVAL = gperl_new_object((GObject*)alg_data, TRUE);
+    
+    if (n_params)
+    {
+      int i;
+      for (i=0; i < n_params; i++)
+        g_value_unset(&params[i].value);
+      g_free(params);
+    }
+    g_type_class_unref(alg_class);
+  OUTPUT:
+    RETVAL

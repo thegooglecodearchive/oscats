@@ -1,0 +1,117 @@
+%%
+headers
+#include <oscats.h>
+#include "gen_oscats.h"
+%%
+ignore-glob
+    *_get_type
+%%
+ignore
+    oscats_algorithm_register
+    oscats_algorithm_register_valist
+%%
+add OscatsAlgorithm register ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
+PHP_METHOD
+{
+  GType alg;
+  OscatsAlgorithm *alg_data = NULL;
+  OscatsAlgorithmClass *alg_class = NULL;
+  zval *php_type = NULL;
+  zval *php_test = NULL;
+  zval *php_props = NULL;
+  char buf[128];
+  
+  if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VO|a",
+                          &php_type, &php_test, oscatstest_ce, &php_props))
+  {
+    PHPG_THROW_EXCEPTION(phpg_construct_exception,
+     "register() must have at least two parameters: an OscatsAlgorithmClass and an OscatsTest");
+  }
+  
+  if (php_type)
+    alg = phpg_gtype_from_zval(php_type);
+  else
+    alg = phpg_gtype_from_zval(this_ptr);
+  if (!g_type_is_a(alg, OSCATS_TYPE_ALGORITHM))
+  {
+    PHPG_THROW_EXCEPTION(phpg_type_exception,
+      "First parameter must be an OscatsAlgorithmClass.");
+  }
+  
+  alg_class = g_type_class_ref(alg);
+  if (alg_class == NULL)
+    PHPG_THROW_EXCEPTION(phpg_construct_exception,
+        "Could not get a reference to type class.");
+
+  if (php_props)
+  {
+    guint n_params = 0;
+    GParameter *params = NULL;
+    GParamSpec *pspec;
+    int key_type;
+    char *key;
+    ulong num_key;
+    zval **value;
+
+    params = ecalloc(zend_hash_num_elements(Z_ARRVAL_P(php_props)), sizeof(GParameter));
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_props));
+         zend_hash_get_current_data(Z_ARRVAL_P(php_props), (void**)&value) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_props)))
+    {
+      key_type = zend_hash_get_current_key(Z_ARRVAL_P(php_props), &key, &num_key, 0);
+      if (key_type != HASH_KEY_IS_STRING)
+      {
+        zend_throw_exception(phpg_construct_exception, "parameter names have to be keys", 0 TSRMLS_CC);
+        goto cleanup;
+      }
+
+      pspec = g_object_class_find_property(G_OBJECT_CLASS(alg_class), key);
+      if (!pspec)
+      {
+        snprintf(buf, 128, "Class %s does not support property '%s'", g_type_name(alg), key);
+        zend_throw_exception(phpg_construct_exception, buf, 0 TSRMLS_CC);
+        goto cleanup;
+      }
+
+      g_value_init(&params[n_params].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+      if (phpg_gvalue_from_zval(&params[n_params].value, value, TRUE TSRMLS_CC) == FAILURE)
+      {
+        snprintf(buf, 128, "Could not convert value for property '%s'", key);
+        zend_throw_exception(phpg_construct_exception, buf, 0 TSRMLS_CC);
+        goto cleanup;
+      }
+
+      params[n_params].name = estrdup(key);
+      n_params++;
+    }
+
+    alg_data = g_object_newv(alg, n_params, params);
+
+cleanup:
+    if (params)
+    {
+      int i;
+      for (i = 0; i < (int)n_params; i++)
+      {
+        efree((void *)params[i].name);
+        g_value_unset(&params[i].value);
+      }
+      efree(params);
+    }
+
+  } else 		// No properties
+    alg_data = g_object_new(alg, NULL);
+  
+  if (alg_data)
+    phpg_gobject_new(&return_value, (GObject*)alg_data TSRMLS_CC);
+  else
+  {
+    snprintf(buf, 128, "Could not construct %s object", g_type_name(alg));
+    PHPG_THROW_EXCEPTION(phpg_construct_exception, buf);
+  }
+  
+  g_object_ref(alg_data);		// For wrapper
+  alg_class->reg(alg_data, OSCATS_TEST(PHPG_GOBJECT(php_test)));
+  g_type_class_unref(alg_class);
+}
+%%

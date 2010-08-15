@@ -1,0 +1,29 @@
+OSCATS: Open-Source Computerized Adaptive Testing System
+Programming Library Examples
+----------------------------
+
+The programs in this directory provide examples of how to program with
+OSCATS in C and the languages with bindings provided.
+
+To compile the C examples, simply run "make" in this directory, or:
+  gcc -o ex01 ex01.c -I../src/liboscats -L../src/liboscats/.libs -loscats \
+    `pkg-config --cflags --libs gobject-2.0` \
+    `gsl-config --cflags --libs`
+
+To run the python examples, you may need to set:
+  PYTHONPATH=../bindings/python/.libs
+
+Note that the php_oscats.so library must be installed in $PHP_EXTENSIONS_DIR
+in order to run the php examples.
+
+To compile and run the java examples:
+  javac -cp ../bindings/java/glib.jar:../bindings/java/oscats.jar ex01.java
+  java -cp .:../bindings/java/glib.jar:../bindings/java/oscats.jar \
+    -Djava.library.path=../bindings/java/.libs ex01
+
+Note: On Windows, the colons in the the classpath should be semi-colons.
+
+- Example 1: Comparison of random and matched item selection
+  Model: 1D 1PL
+  Compare quality of estimated ability and item exposure under four
+  different item selection criteria.
