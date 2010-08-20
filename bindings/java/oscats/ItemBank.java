@@ -59,9 +59,9 @@ public final class ItemBank extends Object
       return OscatsItemBank.getItem(this, i);
     }
     
-    public boolean isIrt() { return OscatsItemBank.isIrt(this); }
+    public boolean isCont() { return OscatsItemBank.isCont(this); }
     
-    public boolean isClass() { return OscatsItemBank.isClass(this); }
+    public boolean isDiscr() { return OscatsItemBank.isDiscr(this); }
 
 }
 

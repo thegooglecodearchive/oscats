@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * DINA Classification Model Java Wrapper Class
+ * Estimate Class Algorithm Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ClassModelDina extends ClassModel
+public final class AlgEstimateAlpha extends Algorithm
 {
-    protected ClassModelDina(long pointer) { super(pointer); }
+    protected AlgEstimateAlpha(long pointer) { super(pointer); }
 
-    public ClassModelDina() {
-      this(OscatsClassModelDina.new_with_params());
-    }
-
-    public ClassModelDina(Attributes dims) {
-      this(OscatsClassModelDina.new_with_params("dims", dims));
+    public static AlgEstimateAlpha register(Test test, java.lang.Object... params)
+    {
+      AlgEstimateAlpha alg_data = new AlgEstimateAlpha(OscatsAlgEstimateAlpha.new_with_params(params));
+      OscatsAlgorithmOverride.register(alg_data, test);
+      return alg_data;
     }
 
 }
+

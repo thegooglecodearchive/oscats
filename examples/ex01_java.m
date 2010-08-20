@@ -32,14 +32,14 @@ LEN = 30;
 
 function ret = gen_items()
     import oscats.ItemBank
-    import oscats.IrtModelL1p
+    import oscats.ContModelL1p
     import oscats.Item
     % Create an item bank to store the items.
     % Setting the property "sizeHint" increases allocation efficiency.
     bank = ItemBank(N_ITEMS);
     for k = 1:N_ITEMS
       % First we create an IRT model container for our item
-      model = IrtModelL1p();
+      model = ContModelL1p();
       % Then, set the parameters.  Here there is only one, the difficulty (b).
       model.setParamByIndex(0, oscats.Random.normal(1));
       % Create an item based on this model
@@ -100,7 +100,7 @@ for j = 1:num_tests
       % algorithm, and a stoping critierion.
 
       % Have to pass empty set of parameters to appease Matlab
-      oscats.AlgSimulateIrt.register(test(j), {});
+      oscats.AlgSimulateTheta.register(test(j), {});
       oscats.AlgEstimateTheta.register(test(j), {});
 
       % All calls to oscats.Algorithm.register() return an algorithm
@@ -157,7 +157,7 @@ end
 fprintf(f, '\n');
 for i = 1:N_ITEMS
       % Get the item's difficulty parameter
-      fprintf(f, '%d\t%g', i, bank.getItem(i-1).getIrtModel().getParamByIndex(0));
+      fprintf(f, '%d\t%g', i, bank.getItem(i-1).getContModel().getParamByIndex(0));
       % Get the exposure rate for this item in each test
       for j = 1:num_tests
         fprintf(f, '\t%g', exposure(j).getRate(bank.getItem(i-1)) );

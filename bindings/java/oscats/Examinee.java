@@ -59,20 +59,20 @@ public final class Examinee extends Object
       return OscatsExaminee.getThetaErr(this);
     }
     
-    public void setTrueClass(Attributes attr) {
-      OscatsExaminee.setTrueClass(this, attr);
+    public void setTrueAlpha(Attributes attr) {
+      OscatsExaminee.setTrueAlpha(this, attr);
     }
     
-    public Attributes getTrueClass() {
-      return OscatsExaminee.getTrueClass(this);
+    public Attributes getTrueAlpha() {
+      return OscatsExaminee.getTrueAlpha(this);
     }
     
-    public void setClassHat(Attributes attr) {
-      OscatsExaminee.setClassHat(this, attr);
+    public void setAlphaHat(Attributes attr) {
+      OscatsExaminee.setAlphaHat(this, attr);
     }
     
-    public Attributes getClassHat() {
-      return OscatsExaminee.getClassHat(this);
+    public Attributes getAlphaHat() {
+      return OscatsExaminee.getAlphaHat(this);
     }
 
     public int numItems() { return OscatsExaminee.numItems(this); }

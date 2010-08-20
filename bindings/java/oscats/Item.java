@@ -27,16 +27,32 @@ public final class Item extends Object
 {
     protected Item(long pointer) { super(pointer); }
 
-    public Item(String id, IrtModel irtmodel) {
-      this(OscatsItem.new_with_params("id", id, "irtmodel", irtmodel));
+    public Item(String id, ContModel contmodel) {
+      this(OscatsItem.new_with_params("id", id, "contmodel", contmodel));
     }
     
-    public Item(IrtModel irtmodel) {
-      this(OscatsItem.new_with_params("irtmodel", irtmodel));
+    public Item(ContModel contmodel) {
+      this(OscatsItem.new_with_params("contmodel", contmodel));
     }
 
-    public IrtModel getIrtModel() {
-      return (IrtModel)getPropertyObject("irtmodel");
+    public Item(String id, DiscrModel discrmodel) {
+      this(OscatsItem.new_with_params("id", id, "discrmodel", discrmodel));
+    }
+    
+    public Item(DiscrModel discrmodel) {
+      this(OscatsItem.new_with_params("discrmodel", discrmodel));
+    }
+
+    public Item(String id, ContModel contmodel, DiscrModel discrmodel) {
+      this(OscatsItem.new_with_params("id", id, "contmodel", contmodel, "discrmodel", discrmodel));
+    }
+    
+    public ContModel getContModel() {
+      return (ContModel)getPropertyObject("contmodel");
+    }
+    
+    public DiscrModel getDiscrModel() {
+      return (DiscrModel)getPropertyObject("discrmodel");
     }
     
     static public void resetCharacteristics() {

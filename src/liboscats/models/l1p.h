@@ -20,21 +20,21 @@
 #ifndef _LIBOSCATS_MODEL_L1P_H_
 #define _LIBOSCATS_MODEL_L1P_H_
 #include <glib.h>
-#include <irtmodel.h>
+#include <contmodel.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_IRT_MODEL_L1P		(oscats_irt_model_l1p_get_type())
-#define OSCATS_IRT_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_IRT_MODEL_L1P, OscatsIrtModelL1p))
-#define OSCATS_IS_IRT_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_IRT_MODEL_L1P))
-#define OSCATS_IRT_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_IRT_MODEL_L1P, OscatsIrtModelL1pClass))
-#define OSCATS_IS_IRT_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_IRT_MODEL_L1P))
-#define OSCATS_IRT_MODEL_L1P_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_IRT_MODEL_L1P, OscatsIrtModelL1pClass))
+#define OSCATS_TYPE_CONT_MODEL_L1P		(oscats_cont_model_l1p_get_type())
+#define OSCATS_CONT_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CONT_MODEL_L1P, OscatsContModelL1p))
+#define OSCATS_IS_CONT_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CONT_MODEL_L1P))
+#define OSCATS_CONT_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CONT_MODEL_L1P, OscatsContModelL1pClass))
+#define OSCATS_IS_CONT_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CONT_MODEL_L1P))
+#define OSCATS_CONT_MODEL_L1P_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CONT_MODEL_L1P, OscatsContModelL1pClass))
 
-typedef struct _OscatsIrtModelL1p OscatsIrtModelL1p;
-typedef struct _OscatsIrtModelL1pClass OscatsIrtModelL1pClass;
+typedef struct _OscatsContModelL1p OscatsContModelL1p;
+typedef struct _OscatsContModelL1pClass OscatsContModelL1pClass;
 
 /**
- * OscatsIrtModelL1p:
+ * OscatsContModelL1p:
  *
  * The One-Paramter Logistic (Rasch) IRT model:
  * P(X=1|theta) = 1/1+exp[-(sum_i theta_i -b + sum_j d_j covariate_j)],
@@ -58,15 +58,15 @@ typedef struct _OscatsIrtModelL1pClass OscatsIrtModelL1pClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsIrtModelL1p {
-  OscatsIrtModel parent_instance;
+struct _OscatsContModelL1p {
+  OscatsContModel parent_instance;
 };
 
-struct _OscatsIrtModelL1pClass {
-  OscatsIrtModelClass parent_class;
+struct _OscatsContModelL1pClass {
+  OscatsContModelClass parent_class;
 };
 
-GType oscats_irt_model_l1p_get_type();
+GType oscats_cont_model_l1p_get_type();
 
 G_END_DECLS
 #endif

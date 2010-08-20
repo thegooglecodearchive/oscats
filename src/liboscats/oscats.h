@@ -23,7 +23,8 @@
 #include <bitarray.h>
 #include <gsl.h>
 #include <random.h>
-#include <irtmodel.h>
+#include <contmodel.h>
+#include <discrmodel.h>
 #include <item.h>
 #include <itembank.h>
 #include <test.h>

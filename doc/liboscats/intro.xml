@@ -24,8 +24,8 @@ emitted by the
 test administration loop.  Items in the bank have a psychometric model in
 either the IRT or latent classification framework (or both).  These models
 are objects subclassed from the abstract
-<link linkend="OscatsIrtModel"><structname>OscatsIrtModel</structname></link>
-or <link linkend="OscatsClassModel"><structname>OscatsClassModel</structname></link>
+<link linkend="OscatsContModel"><structname>OscatsContModel</structname></link>
+or <link linkend="OscatsDiscrModel"><structname>OscatsDiscrModel</structname></link>
 class.  Using new models or algorithms in OSCATS is as simple as writing a
 new subclass with the desired functionality.</para>
 

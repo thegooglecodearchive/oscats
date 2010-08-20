@@ -36,7 +36,7 @@ becomes <code>obj.get(i)</code> and
 becomes <code>tst.administer(ex)</code>.  Functions that are not object
 methods retain their full C names, for example
 <code>oscats.oscats_rnd_normal(1)</code> or
-<code>oscats.oscats_algorithm_register(oscats.AlgSimulateIrt, test)</code>.
+<code>oscats.oscats_algorithm_register(oscats.AlgSimulateTheta, test)</code>.
 </para>
 
 <para>Objects with an explicit construction method,
@@ -47,7 +47,7 @@ Objects without a <function>*_new()</function> function or that require
 construction properties can be created with the generic
 <function>gobject.new()</function> function.  Construction properties are
 supplied as keyword arguments.  For example,
-<programlisting>model = gobject.new(oscats.IrtModelL1p)
+<programlisting>model = gobject.new(oscats.ContModelL1p)
 tst = gobject.new(oscats.Test, id=name, itembank=bank)</programlisting>
 </para>
 
@@ -68,8 +68,8 @@ becomes <code>$tst-&gt;administer($ex)</code>.  Functions that are not object
 methods have been placed in Perl modules corresponding to ther C package
 names, so <code><link linkend="oscats-rnd-normal">oscats_rnd_normal</link>(1)</code>
 becomes <code>oscats::Random::normal(1)</code> and
-<code><link linkend="oscats-algorithm-register">oscats_algorithm_register</link>(OscatsAlgSimulateIrt, test)</code>
-becomes <code>oscats::Algorithm::register(oscats::AlgSimulateIrt, $test)</code>.
+<code><link linkend="oscats-algorithm-register">oscats_algorithm_register</link>(OscatsAlgSimulateTheta, test)</code>
+becomes <code>oscats::Algorithm::register(oscats::AlgSimulateTheta, $test)</code>.
 </para>
 
 <para>Objects are created with the usual Perl semantics.  Classes with an
@@ -77,7 +77,7 @@ explicit construction method, <function>oscats_*_new(...)</function>, can be
 created with positional arguments; otherwise, construction properties are
 supplied as name-value pairs.  For example,
 <programlisting>$v = new oscats::GslVector(10);
-$model = new oscats::IrtModelL1p();
+$model = new oscats::ContModelL1p();
 $test = new oscats::Test("id" =&gt; $name, "itembank" =&gt; $bank);</programlisting>
 Since Perl has automatic garbage collection, it isn't necessary to free
 objects explicitly.</para>
@@ -105,14 +105,14 @@ becomes <code>$tst-&gt;administer($ex)</code>.  Functions that are not object
 methods have been stripped of the <structname>oscats_</structname> prefix,
 for example
 <code>Oscats::rnd_normal(1)</code> or
-<code>OscatsAlgorithm::register(OscatsAlgSimulateIrt, $test)</code>.
+<code>OscatsAlgorithm::register(OscatsAlgSimulateTheta, $test)</code>.
 </para>
 
 <para>Objects with an explicit construction method,
 <function>oscats_*_new(...)</function>, or that do not require constuction
 properties can be created with the usual PHP symantics.  For example,
 <programlisting>$v = new GGslVector(10);
-$model = new OscatsIrtModelL1p();</programlisting>
+$model = new OscatsContModelL1p();</programlisting>
 For objects that require construction properties, the object name must be
 specified in the first argument as a string and the properties as an array
 of key-value pairs in the second argument (this is a bit cumbersome, but is
@@ -143,8 +143,8 @@ becomes <code>oscats.Random.normal(1)</code>.  The
 <link linkend="oscats-algorithm-register"><function>oscats_algorithm_register</function></link>
 function is a static method of the <structname>oscats.Algorithm</structname>
 class (and its descendants), so
-<code><link linkend="oscats-algorithm-register">oscats_algorithm_register</link>(OscatsAlgSimulateIrt, test)</code>
-becomes <code>oscats.AlgSimulateIrt.register(test)</code>.  Construction
+<code><link linkend="oscats-algorithm-register">oscats_algorithm_register</link>(OscatsAlgSimulateTheta, test)</code>
+becomes <code>oscats.AlgSimulateTheta.register(test)</code>.  Construction
 properties can be supplied for algorithm registration by appending string
 property names and their values, as in C, for example
 <code>oscats.AlgClosestDiff.register(test, "num", num)</code>.
@@ -157,9 +157,9 @@ currently supported as such, but are instead handled through multiple
 constructor signatures.  There are also several other methods with
 additional signatures, particularly when it is possible to fetch information
 in several different ways (for example, 
-<link linkend="oscats-irt-model-get-param"><function>oscats_irt_model_get_param</function></link>,
-<link linkend="oscats-irt-model-get-param-by-index"><function>oscats_irt_model_get_param_by_index</function></link>, and
-<link linkend="oscats-irt-model-get-param-by-name"><function>oscats_irt_model_get_param_by_name</function></link>.
+<link linkend="oscats-cont-model-get-param"><function>oscats_cont_model_get_param</function></link>,
+<link linkend="oscats-cont-model-get-param-by-index"><function>oscats_cont_model_get_param_by_index</function></link>, and
+<link linkend="oscats-cont-model-get-param-by-name"><function>oscats_cont_model_get_param_by_name</function></link>.
 For reference, all methods with multiple signatures are listed below. Since
 Java has automatic garbage collection, it isn't necessary to free objects
 explicitly.</para>
@@ -173,37 +173,9 @@ public final class AlgFixedLength extends Algorithm
     public static AlgFixedLength register(Test test, int len)
 public final class BitArray extends Object
     public static final BitArray createBitArray(int bitLength)
-public abstract class ClassModel extends Object
-    public ClassModel()
-    public ClassModel(Attributes attr)
-    public boolean hasParam(int param) // param is a Quark
-    public double getParam(int param) // param is a Quark
-    public double getParamByIndex(int i)
-    public double getParam(String name)
-    public double getParamByName(String name)
-    public void setParam(int param, double x) // param is a Quark
-    public void setParamByIndex(int i, double x)
-    public void setParam(String name, double x)
-    public void setParamByName(String name, double x)
-public final class Covariates extends Object
-    public void set(int name, double value)
-    public void set(String name, double value)
-    public double get(int name)
-    public double get(String name)
-public final class Examinee extends Object
-    public Examinee()
-    public Examinee(String id)
-public final class GslMatrix extends Object
-    public static GslMatrix createGslMatrix(int rows, int cols)
-public final class GslPermutation extends Object
-    public static GslPermutation createGslPermutation(int n)
-public final class GslVector extends Object
-    public static GslVector createGslVector(int n)
-public final class Integrate extends Object
-    public void setTol(double tol)
-public abstract class IrtModel extends Object
-    public IrtModel()
-    public IrtModel(BitArray dims)
+public abstract class ContModel extends Object
+    public ConModel()
+    public ContModel(BitArray dims)
     public boolean hasParam(int param) // param is a Quark
     public double getParam(int param) // param is a Quark
     public double getParamByIndex(int i)
@@ -216,9 +188,40 @@ public abstract class IrtModel extends Object
     public boolean hasCovariate(int name) // name is a Quark
     public boolean hasCovariate(String name)
     public boolean hasCovariateName(String name)
+public final class Covariates extends Object
+    public void set(int name, double value)
+    public void set(String name, double value)
+    public double get(int name)
+    public double get(String name)
+public abstract class DiscrModel extends Object
+    public DiscrModel()
+    public DiscrModel(Attributes attr)
+    public boolean hasParam(int param) // param is a Quark
+    public double getParam(int param) // param is a Quark
+    public double getParamByIndex(int i)
+    public double getParam(String name)
+    public double getParamByName(String name)
+    public void setParam(int param, double x) // param is a Quark
+    public void setParamByIndex(int i, double x)
+    public void setParam(String name, double x)
+    public void setParamByName(String name, double x)
+public final class Examinee extends Object
+    public Examinee()
+    public Examinee(String id)
+public final class GslMatrix extends Object
+    public static GslMatrix createGslMatrix(int rows, int cols)
+public final class GslPermutation extends Object
+    public static GslPermutation createGslPermutation(int n)
+public final class GslVector extends Object
+    public static GslVector createGslVector(int n)
+public final class Integrate extends Object
+    public void setTol(double tol)
 public final class Item extends Object
-    public Item(String id, IrtModel irtmodel)
-    public Item(IrtModel irtmodel)
+    public Item(String id, ContModel contmodel)
+    public Item(ContModel contmodel)
+    public Item(String id, DiscrModel discrmodel)
+    public Item(DiscrModel discrmodel)
+    public Item(String id, ContModel contmodel, DiscrModel discrmodel)
 public final class ItemBank extends Object
     public ItemBank(String id, int sizeHint)
     public ItemBank(String id)
@@ -258,7 +261,7 @@ and methods can be called as if they were Matlab functions.  The variable
 arguments to the <function>oscats.Algorithm.register</function> function are
 supplied as a cell array; and if there are no additional arguments, an empty
 cell array must be given, for example
-<code>oscats.AlgSimulateIrt.register(test, {})</code>. </para>
+<code>oscats.AlgSimulateTheta.register(test, {})</code>. </para>
 
 </section>
 

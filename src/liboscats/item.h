@@ -20,8 +20,8 @@
 #ifndef _LIBOSCATS_ITEM_H_
 #define _LIBOSCATS_ITEM_H_
 #include <glib.h>
-#include "irtmodel.h"
-#include "classmodel.h"
+#include "contmodel.h"
+#include "discrmodel.h"
 G_BEGIN_DECLS
 
 #define OSCATS_TYPE_ITEM		(oscats_item_get_type())
@@ -37,8 +37,8 @@ typedef struct _OscatsItemClass OscatsItemClass;
 struct _OscatsItem {
   GObject parent_instance;
   gchar *id;
-  OscatsIrtModel *irt_model;
-  OscatsClassModel *class_model;
+  OscatsContModel *cont_model;
+  OscatsDiscrModel *discr_model;
   GBitArray *characteristics;
 };
 

@@ -97,16 +97,16 @@ static void oscats_examinee_dispose (GObject *object)
   if (self->true_theta) g_object_unref(self->true_theta);
   if (self->theta_hat) g_object_unref(self->theta_hat);
   if (self->theta_err) g_object_unref(self->theta_err);
-  if (self->true_class) g_object_unref(self->true_class);
-  if (self->class_hat) g_object_unref(self->class_hat);
+  if (self->true_alpha) g_object_unref(self->true_alpha);
+  if (self->alpha_hat) g_object_unref(self->alpha_hat);
   if (self->covariates) g_object_unref(self->covariates);
   self->items = NULL;
   self->resp = NULL;
   self->true_theta = NULL;
   self->theta_hat = NULL;
   self->theta_err = NULL;
-  self->true_class = NULL;
-  self->class_hat = NULL;
+  self->true_alpha = NULL;
+  self->alpha_hat = NULL;
   self->covariates = NULL;
 }
 
@@ -263,7 +263,7 @@ GGslMatrix * oscats_examinee_get_theta_err(OscatsExaminee *e)
 }
 
 /**
- * oscats_examinee_set_true_class:
+ * oscats_examinee_set_true_alpha:
  * @e: an #OscatsExaminee
  * @attr: an #OscatsAttributes for the true (simulated) latent attributes
  *
@@ -271,17 +271,17 @@ GGslMatrix * oscats_examinee_get_theta_err(OscatsExaminee *e)
  * The vector @status is copied.  The internal dimension is adjusted
  * to match @status.
  */
-void oscats_examinee_set_true_class(OscatsExaminee *e,
+void oscats_examinee_set_true_alpha(OscatsExaminee *e,
                                     const OscatsAttributes *attr)
 {
   g_return_if_fail(OSCATS_IS_EXAMINEE(e));
-  if (!e->true_class)
-    e->true_class = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
-  oscats_attributes_copy(e->true_class, attr);
+  if (!e->true_alpha)
+    e->true_alpha = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
+  oscats_attributes_copy(e->true_alpha, attr);
 }
 
 /**
- * oscats_examinee_get_true_class:
+ * oscats_examinee_get_true_alpha:
  * @e: an #OscatsExaminee
  *
  * Returns %NULL if true latent attributes have never been set.
@@ -289,31 +289,31 @@ void oscats_examinee_set_true_class(OscatsExaminee *e,
  *
  * Returns: a pointer to the simulated examinee's true latent classification
  */
-OscatsAttributes * oscats_examinee_get_true_class(OscatsExaminee *e)
+OscatsAttributes * oscats_examinee_get_true_alpha(OscatsExaminee *e)
 {
   g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->true_class;
+  return e->true_alpha;
 }
 
 /**
- * oscats_examinee_set_class_hat:
+ * oscats_examinee_set_alpha_hat:
  * @e: an #OscatsExaminee
  * @attr: an #OscatsAttributes for the estimated latent classification
  *
  * Sets the estimated latent attributes for the examinee.  The vector
  * @status is copied.  The internal dimension is adjusted to match @status.
  */
-void oscats_examinee_set_class_hat(OscatsExaminee *e, 
+void oscats_examinee_set_alpha_hat(OscatsExaminee *e, 
                                    const OscatsAttributes *attr)
 {
   g_return_if_fail(OSCATS_IS_EXAMINEE(e));
-  if (!e->class_hat)
-    e->class_hat = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
-  oscats_attributes_copy(e->class_hat, attr);
+  if (!e->alpha_hat)
+    e->alpha_hat = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
+  oscats_attributes_copy(e->alpha_hat, attr);
 }
 
 /**
- * oscats_examinee_get_class_hat:
+ * oscats_examinee_get_alpha_hat:
  * @e: an #OscatsExaminee
  *
  * Returns %NULL if estimated latent attributes have never been set.
@@ -321,10 +321,10 @@ void oscats_examinee_set_class_hat(OscatsExaminee *e,
  *
  * Returns: a pointer to the examinee's estimated latent classification
  */
-OscatsAttributes * oscats_examinee_get_class_hat(OscatsExaminee *e)
+OscatsAttributes * oscats_examinee_get_alpha_hat(OscatsExaminee *e)
 {
   g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->class_hat;
+  return e->alpha_hat;
 }
 
 /**

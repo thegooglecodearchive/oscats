@@ -54,8 +54,8 @@ guint oscats_item_bank_num_items(const OscatsItemBank *bank);
 guint oscats_item_bank_max_response(const OscatsItemBank *bank);
 const OscatsItem * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i);
 
-gboolean oscats_item_bank_is_irt(const OscatsItemBank *bank);
-gboolean oscats_item_bank_is_class(const OscatsItemBank *bank);
+gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank);
+gboolean oscats_item_bank_is_discr(const OscatsItemBank *bank);
 
 G_END_DECLS
 #endif

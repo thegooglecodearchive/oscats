@@ -20,21 +20,21 @@
 #ifndef _LIBOSCATS_MODEL_NIDA_H_
 #define _LIBOSCATS_MODEL_NIDA_H_
 #include <glib.h>
-#include <classmodel.h>
+#include <discrmodel.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_CLASS_MODEL_NIDA		(oscats_class_model_nida_get_type())
-#define OSCATS_CLASS_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CLASS_MODEL_NIDA, OscatsClassModelNida))
-#define OSCATS_IS_CLASS_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CLASS_MODEL_NIDA))
-#define OSCATS_CLASS_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CLASS_MODEL_NIDA, OscatsClassModelNidaClass))
-#define OSCATS_IS_CLASS_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CLASS_MODEL_NIDA))
-#define OSCATS_CLASS_MODEL_NIDA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CLASS_MODEL_NIDA, OscatsClassModelNidaClass))
+#define OSCATS_TYPE_DISCR_MODEL_NIDA		(oscats_discr_model_nida_get_type())
+#define OSCATS_DISCR_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_DISCR_MODEL_NIDA, OscatsDiscrModelNida))
+#define OSCATS_IS_DISCR_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_DISCR_MODEL_NIDA))
+#define OSCATS_DISCR_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_DISCR_MODEL_NIDA, OscatsDiscrModelNidaClass))
+#define OSCATS_IS_DISCR_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_DISCR_MODEL_NIDA))
+#define OSCATS_DISCR_MODEL_NIDA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_DISCR_MODEL_NIDA, OscatsDiscrModelNidaClass))
 
-typedef struct _OscatsClassModelNida OscatsClassModelNida;
-typedef struct _OscatsClassModelNidaClass OscatsClassModelNidaClass;
+typedef struct _OscatsDiscrModelNida OscatsDiscrModelNida;
+typedef struct _OscatsDiscrModelNidaClass OscatsDiscrModelNidaClass;
 
 /**
- * OscatsClassModelNida:
+ * OscatsDiscrModelNida:
  *
  * Noisy Inputs Deterministic And Gate (NIDA) Classification model:
  * P(X=1|alpha) = prod_i (1-s_i)^(alpha_i) g_i^(1-prod_i alpha_i)
@@ -65,15 +65,15 @@ typedef struct _OscatsClassModelNidaClass OscatsClassModelNidaClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsClassModelNida {
-  OscatsClassModel parent_instance;
+struct _OscatsDiscrModelNida {
+  OscatsDiscrModel parent_instance;
 };
 
-struct _OscatsClassModelNidaClass {
-  OscatsClassModelClass parent_class;
+struct _OscatsDiscrModelNidaClass {
+  OscatsDiscrModelClass parent_class;
 };
 
-GType oscats_class_model_nida_get_type();
+GType oscats_discr_model_nida_get_type();
 
 G_END_DECLS
 #endif

@@ -17,38 +17,38 @@
  *  along with OSCATS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBOSCATS_ALGORITHM_SIMULATE_IRT_H_
-#define _LIBOSCATS_ALGORITHM_SIMULATE_IRT_H_
+#ifndef _LIBOSCATS_ALGORITHM_SIMULATE_THETA_H_
+#define _LIBOSCATS_ALGORITHM_SIMULATE_THETA_H_
 #include <glib-object.h>
 #include <algorithm.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_ALG_SIMULATE_IRT	(oscats_alg_simulate_irt_get_type())
-#define OSCATS_ALG_SIMULATE_IRT(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_SIMULATE_IRT, OscatsAlgSimulateIrt))
-#define OSCATS_IS_ALG_SIMULATE_IRT(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_SIMULATE_IRT))
-#define OSCATS_ALG_SIMULATE_IRT_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_SIMULATE_IRT, OscatsAlgSimulateIrtClass))
-#define OSCATS_IS_ALG_SIMULATE_IRT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_SIMULATE_IRT))
-#define OSCATS_ALG_SIMULATE_IRT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_SIMULATE_IRT, OscatsAlgSimulateIrtClass))
+#define OSCATS_TYPE_ALG_SIMULATE_THETA	(oscats_alg_simulate_theta_get_type())
+#define OSCATS_ALG_SIMULATE_THETA(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_SIMULATE_THETA, OscatsAlgSimulateTheta))
+#define OSCATS_IS_ALG_SIMULATE_THETA(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_SIMULATE_THETA))
+#define OSCATS_ALG_SIMULATE_THETA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_SIMULATE_THETA, OscatsAlgSimulateThetaClass))
+#define OSCATS_IS_ALG_SIMULATE_THETA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_SIMULATE_THETA))
+#define OSCATS_ALG_SIMULATE_THETA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_SIMULATE_THETA, OscatsAlgSimulateThetaClass))
 
-typedef struct _OscatsAlgSimulateIrt OscatsAlgSimulateIrt;
-typedef struct _OscatsAlgSimulateIrtClass OscatsAlgSimulateIrtClass;
+typedef struct _OscatsAlgSimulateTheta OscatsAlgSimulateTheta;
+typedef struct _OscatsAlgSimulateThetaClass OscatsAlgSimulateThetaClass;
 
 /**
- * OscatsAlgSimulateIrt
+ * OscatsAlgSimulateTheta
  *
  * Item administration algorithm (#OscatsTest::administer).
  * Generates a simulated response for the given item based on an
- * underlying IRT model.
+ * underlying continuous IRT model.
  */
-struct _OscatsAlgSimulateIrt {
+struct _OscatsAlgSimulateTheta {
   OscatsAlgorithm parent_instance;
 };
 
-struct _OscatsAlgSimulateIrtClass {
+struct _OscatsAlgSimulateThetaClass {
   OscatsAlgorithmClass parent_class;
 };
 
-GType oscats_alg_simulate_irt_get_type();
+GType oscats_alg_simulate_theta_get_type();
 
 G_END_DECLS
 #endif

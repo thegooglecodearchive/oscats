@@ -18,8 +18,8 @@
  */
 
 #include "random.h"
-#include "algorithms/max_kl_class.h"
-#include "classmodel.h"
+#include "algorithms/max_kl_discr.h"
+#include "discrmodel.h"
 
 enum {
   PROP_0,
@@ -28,32 +28,32 @@ enum {
   PROP_PRIOR,
 };
 
-G_DEFINE_TYPE(OscatsAlgMaxKlClass, oscats_alg_max_kl_class, OSCATS_TYPE_ALGORITHM);
+G_DEFINE_TYPE(OscatsAlgMaxKlDiscr, oscats_alg_max_kl_discr, OSCATS_TYPE_ALGORITHM);
 
-static void oscats_alg_max_kl_class_dispose(GObject *object);
-static void oscats_alg_max_kl_class_set_property(GObject *object,
+static void oscats_alg_max_kl_discr_dispose(GObject *object);
+static void oscats_alg_max_kl_discr_set_property(GObject *object,
               guint prop_id, const GValue *value, GParamSpec *pspec);
-static void oscats_alg_max_kl_class_get_property(GObject *object,
+static void oscats_alg_max_kl_discr_get_property(GObject *object,
               guint prop_id, GValue *value, GParamSpec *pspec);
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
 
-static void oscats_alg_max_kl_class_class_init (OscatsAlgMaxKlClassClass *klass)
+static void oscats_alg_max_kl_discr_class_init (OscatsAlgMaxKlDiscrClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GParamSpec *pspec;
 
-  gobject_class->dispose = oscats_alg_max_kl_class_dispose;
-  gobject_class->set_property = oscats_alg_max_kl_class_set_property;
-  gobject_class->get_property = oscats_alg_max_kl_class_get_property;
+  gobject_class->dispose = oscats_alg_max_kl_discr_dispose;
+  gobject_class->set_property = oscats_alg_max_kl_discr_set_property;
+  gobject_class->get_property = oscats_alg_max_kl_discr_get_property;
 
   OSCATS_ALGORITHM_CLASS(klass)->reg = alg_register;
 
 /**
- * OscatsAlgMaxKlClass:num:
+ * OscatsAlgMaxKlDiscr:num:
  *
  * Number of items from which to choose.  If one, then the exact optimal
  * item is selected.  If greater than one, then a random item is chosen
- * from among the #OscatsAlgMaxKlClass:num optimal items.
+ * from among the #OscatsAlgMaxKlDiscr:num optimal items.
  */
   pspec = g_param_spec_uint("num", "", 
                             "Number of items from which to choose",
@@ -64,7 +64,7 @@ static void oscats_alg_max_kl_class_class_init (OscatsAlgMaxKlClassClass *klass)
   g_object_class_install_property(gobject_class, PROP_NUM, pspec);
 
 /**
- * OscatsAlgMaxKlClass:posterior:
+ * OscatsAlgMaxKlDiscr:posterior:
  *
  * If true, use posterior-weighted KL index.
  */
@@ -77,7 +77,7 @@ static void oscats_alg_max_kl_class_class_init (OscatsAlgMaxKlClassClass *klass)
   g_object_class_install_property(gobject_class, PROP_POSTERIOR, pspec);
 
 /**
- * OscatsAlgMaxKlClass:prior:
+ * OscatsAlgMaxKlDiscr:prior:
  *
  * Prior distribution for ability patterns as a vector of probabilities for
  * all 2^K attribute patterns (summing to 1).  Default: uniform.
@@ -92,14 +92,14 @@ static void oscats_alg_max_kl_class_class_init (OscatsAlgMaxKlClassClass *klass)
 
 }
 
-static void oscats_alg_max_kl_class_init (OscatsAlgMaxKlClass *self)
+static void oscats_alg_max_kl_discr_init (OscatsAlgMaxKlDiscr *self)
 {
 }
 
-static void oscats_alg_max_kl_class_dispose (GObject *object)
+static void oscats_alg_max_kl_discr_dispose (GObject *object)
 {
-  OscatsAlgMaxKlClass *self = OSCATS_ALG_MAX_KL_CLASS(object);
-  G_OBJECT_CLASS(oscats_alg_max_kl_class_parent_class)->dispose(object);
+  OscatsAlgMaxKlDiscr *self = OSCATS_ALG_MAX_KL_DISCR(object);
+  G_OBJECT_CLASS(oscats_alg_max_kl_discr_parent_class)->dispose(object);
   if (self->chooser) g_object_unref(self->chooser);
   if (self->attr) g_object_unref(self->attr);
   if (self->prior) g_object_unref(self->prior);
@@ -108,10 +108,10 @@ static void oscats_alg_max_kl_class_dispose (GObject *object)
   self->prior = NULL;
 }
 
-static void oscats_alg_max_kl_class_set_property(GObject *object,
+static void oscats_alg_max_kl_discr_set_property(GObject *object,
               guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-  OscatsAlgMaxKlClass *self = OSCATS_ALG_MAX_KL_CLASS(object);
+  OscatsAlgMaxKlDiscr *self = OSCATS_ALG_MAX_KL_DISCR(object);
   switch (prop_id)
   {
     case PROP_NUM:			// construction only
@@ -145,10 +145,10 @@ static void oscats_alg_max_kl_class_set_property(GObject *object,
   }
 }
 
-static void oscats_alg_max_kl_class_get_property(GObject *object,
+static void oscats_alg_max_kl_discr_get_property(GObject *object,
               guint prop_id, GValue *value, GParamSpec *pspec)
 {
-  OscatsAlgMaxKlClass *self = OSCATS_ALG_MAX_KL_CLASS(object);
+  OscatsAlgMaxKlDiscr *self = OSCATS_ALG_MAX_KL_DISCR(object);
   switch (prop_id)
   {
     case PROP_NUM:
@@ -176,10 +176,10 @@ static gdouble criterion(const OscatsItem *item,
                          const OscatsExaminee *e,
                          gpointer data)
 {
-  OscatsAlgMaxKlClass *alg_data = OSCATS_ALG_MAX_KL_CLASS(data);
+  OscatsAlgMaxKlDiscr *alg_data = OSCATS_ALG_MAX_KL_DISCR(data);
   OscatsAttributes *attr = alg_data->attr;
   guint k, num = (1 << alg_data->numAttrs);
-  guint max = oscats_class_model_get_max(item->class_model);
+  guint max = oscats_discr_model_get_max(item->discr_model);
   guint stride = 1;
   gdouble p[max], *prior = NULL;
   gdouble L = 1, I = 0;
@@ -191,15 +191,15 @@ static gdouble criterion(const OscatsItem *item,
   }
 
   for (k=0; k <= max; k++)
-    p[k] = oscats_class_model_P(item->class_model, k, e->class_hat);
+    p[k] = oscats_discr_model_P(item->discr_model, k, e->alpha_hat);
 
   for (attr->data=0; attr->data < num; attr->data++)
   {
     if (alg_data->posterior)
     {
       for (L=1,k=0; k < e->items->len; k++)
-        L *= oscats_class_model_P(
-               OSCATS_ITEM(g_ptr_array_index(e->items, k))->class_model,
+        L *= oscats_discr_model_P(
+               OSCATS_ITEM(g_ptr_array_index(e->items, k))->discr_model,
                e->resp->data[k],
                attr);
       if (prior)
@@ -208,7 +208,7 @@ static gdouble criterion(const OscatsItem *item,
 
     for (k=0; k <= max; k++)
       I += p[k] * L *
-           log(p[k]/oscats_class_model_P(item->class_model, k, attr));
+           log(p[k]/oscats_discr_model_P(item->discr_model, k, attr));
   }
 
   return -I;
@@ -217,7 +217,7 @@ static gdouble criterion(const OscatsItem *item,
 static gint select (OscatsTest *test, OscatsExaminee *e,
                     GBitArray *eligible, gpointer alg_data)
 {
-  OscatsAlgMaxKlClass *self = OSCATS_ALG_MAX_KL_CLASS(alg_data);
+  OscatsAlgMaxKlDiscr *self = OSCATS_ALG_MAX_KL_DISCR(alg_data);
   return oscats_alg_chooser_choose(self->chooser, e, eligible, alg_data);
 }
 
@@ -230,9 +230,9 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
  */
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-  OscatsAlgMaxKlClass *self = OSCATS_ALG_MAX_KL_CLASS(alg_data);
+  OscatsAlgMaxKlDiscr *self = OSCATS_ALG_MAX_KL_DISCR(alg_data);
   guint numAttrs = oscats_item_bank_num_attrs(test->itembank);
-  g_return_if_fail(oscats_item_bank_is_class(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_discr(test->itembank));
 
   if (self->posterior && self->prior)
     g_return_if_fail(self->prior->v->size == (1 << numAttrs));

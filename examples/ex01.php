@@ -35,11 +35,11 @@
     $bank = new OscatsItemBank('OscatsItemBank', array("sizeHint" => $N_ITEMS));
     for ($i=0; $i < $N_ITEMS; $i++) {
       # First we create an IRT model container for our item
-      $model = new OscatsIrtModelL1p();
+      $model = new OscatsContModelL1p();
       # Then, set the parameters.  Here there is only one, the difficulty (b).
       $model->set_param_by_index(0, Oscats::rnd_normal(1));
       # Create an item based on this model
-      $item = new OscatsItem('OscatsItem', array("irtmodel" => $model));
+      $item = new OscatsItem('OscatsItem', array("contmodel" => $model));
       # Add the item to the item bank
       $bank->add_item($item);
       # Since php is garbage collected, we don't have to worry about
@@ -92,7 +92,7 @@
   # algorithm, and a stoping critierion.
   $exposures = array();
   foreach ($tests as $test) {
-    OscatsAlgorithm::register(OscatsAlgSimulateIrt, $test);
+    OscatsAlgorithm::register(OscatsAlgSimulateTheta, $test);
     OscatsAlgorithm::register(OscatsAlgEstimateTheta, $test);
     
     # All calls to oscats_algorithm_register() return an algorithm

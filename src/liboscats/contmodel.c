@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * Abstract IRT Model Class
+ * Abstract Continuous IRT Model Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -18,14 +18,14 @@
  */
 
 /**
- * SECTION:irtmodel
- * @title:OscatsIrtModel
+ * SECTION:contmodel
+ * @title:OscatsContModel
  * @short_description: Abstract IRT Model Class
  */
 
-#include "irtmodel.h"
+#include "contmodel.h"
 
-G_DEFINE_TYPE(OscatsIrtModel, oscats_irt_model, G_TYPE_OBJECT);
+G_DEFINE_TYPE(OscatsContModel, oscats_cont_model, G_TYPE_OBJECT);
 
 enum
 {
@@ -37,53 +37,53 @@ enum
   PROP_N_COV,
 };
 
-static void oscats_irt_model_dispose (GObject *object);
-static void oscats_irt_model_finalize (GObject *object);
-static void oscats_irt_model_constructed (GObject *object);
-static void oscats_irt_model_set_property(GObject *object, guint prop_id,
+static void oscats_cont_model_dispose (GObject *object);
+static void oscats_cont_model_finalize (GObject *object);
+static void oscats_cont_model_constructed (GObject *object);
+static void oscats_cont_model_set_property(GObject *object, guint prop_id,
                                       const GValue *value, GParamSpec *pspec);
-static void oscats_irt_model_get_property(GObject *object, guint prop_id,
+static void oscats_cont_model_get_property(GObject *object, guint prop_id,
                                       GValue *value, GParamSpec *pspec);
-static guint8 null_get_max (const OscatsIrtModel *model)
+static guint8 null_get_max (const OscatsContModel *model)
 {
-  g_critical("Abstract IRT Model should be overloaded.");
+  g_critical("Abstract Continuous IRT Model should be overloaded.");
   return 0;
 }
-static gdouble null_P (const OscatsIrtModel *model, guint resp,
+static gdouble null_P (const OscatsContModel *model, guint resp,
                        const GGslVector *theta, const OscatsCovariates *covariates)
 {
-  g_critical("Abstract IRT Model should be overloaded.");
+  g_critical("Abstract Continuous IRT Model should be overloaded.");
   return 0;
 }
-static gdouble null_distance (const OscatsIrtModel *model,
+static gdouble null_distance (const OscatsContModel *model,
                               const GGslVector *theta, const OscatsCovariates *covariates)
 {
-  g_critical("Abstract IRT Model should be overloaded.");
+  g_critical("Abstract Continuous IRT Model should be overloaded.");
   return 0;
 }
-static void null_logLik_theta (const OscatsIrtModel *model, guint resp,
+static void null_logLik_theta (const OscatsContModel *model, guint resp,
                          const GGslVector *theta, const OscatsCovariates *covariates,
                          GGslVector *grad, GGslMatrix *hes, gboolean Inf)
 {
-  g_critical("Abstract IRT Model should be overloaded.");
+  g_critical("Abstract Continuous IRT Model should be overloaded.");
 }
-static void null_logLik_param (const OscatsIrtModel *model, guint resp,
+static void null_logLik_param (const OscatsContModel *model, guint resp,
                          const GGslVector *theta, const OscatsCovariates *covariates,
                          GGslVector *grad, GGslMatrix *hes)
 {
-  g_critical("Abstract IRT Model should be overloaded.");
+  g_critical("Abstract Continous IRT Model should be overloaded.");
 }
                    
-static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
+static void oscats_cont_model_class_init (OscatsContModelClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GParamSpec *pspec;
 
-  gobject_class->constructed = oscats_irt_model_constructed;
-  gobject_class->dispose = oscats_irt_model_dispose;
-  gobject_class->finalize = oscats_irt_model_finalize;
-  gobject_class->set_property = oscats_irt_model_set_property;
-  gobject_class->get_property = oscats_irt_model_get_property;
+  gobject_class->constructed = oscats_cont_model_constructed;
+  gobject_class->dispose = oscats_cont_model_dispose;
+  gobject_class->finalize = oscats_cont_model_finalize;
+  gobject_class->set_property = oscats_cont_model_set_property;
+  gobject_class->get_property = oscats_cont_model_get_property;
   
   klass->get_max = null_get_max;
   klass->P = null_P;
@@ -92,7 +92,7 @@ static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
   klass->logLik_dparam = null_logLik_param;
   
 /**
- * OscatsIrtModel:Np:
+ * OscatsContModel:Np:
  *
  * The number of parameters of the IRT model.
  */
@@ -105,10 +105,10 @@ static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
   g_object_class_install_property(gobject_class, PROP_N_PARAMS, pspec);
 
 /**
- * OscatsIrtModel:testDim:
+ * OscatsContModel:testDim:
  *
  * The IRT dimension of the test.
- * This is derived from #OscatsIrtModel:dims at construction.
+ * This is derived from #OscatsContModel:dims at construction.
  */
   pspec = g_param_spec_uint("testDim", "Test Dimension", 
                             "Total IRT Dimension for the test",
@@ -119,10 +119,10 @@ static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
   g_object_class_install_property(gobject_class, PROP_TEST_DIM, pspec);
 
 /**
- * OscatsIrtModel:Ndims:
+ * OscatsContModel:Ndims:
  *
  * The dimension of the IRT model (<= the dimension of the test).
- * Determined from #OscatsIrtModel:dims.  Default is 1.
+ * Determined from #OscatsContModel:dims.  Default is 1.
  */
   pspec = g_param_spec_uint("Ndims", "Num Dims", 
                             "Dimension of the IRT model",
@@ -133,7 +133,7 @@ static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
   g_object_class_install_property(gobject_class, PROP_N_DIMS, pspec);
 
 /**
- * OscatsIrtModel:dims:
+ * OscatsContModel:dims:
  *
  * A #GBitArray indicating onto which dimensions of the test 
  * this item loads.  The default is a test with one dimension.
@@ -148,12 +148,12 @@ static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
   g_object_class_install_property(gobject_class, PROP_DIMS, pspec);
 
 /**
- * OscatsIrtModel:Ncov:
+ * OscatsContModel:Ncov:
  *
  * The number of covariates in the IRT model.  Default is 0.
  * The default names are Cov.1, Cov.2, etc.  It is strongly recommended
- * to change the default names with oscats_irt_model_set_covariate_name()
- * or oscats_irt_model_set_covariate_name_str().
+ * to change the default names with oscats_cont_model_set_covariate_name()
+ * or oscats_cont_model_set_covariate_name_str().
  */
   pspec = g_param_spec_uint("Ncov", "Number of Covariates", 
                             "Number of covariates in the IRT model",
@@ -165,14 +165,14 @@ static void oscats_irt_model_class_init (OscatsIrtModelClass *klass)
 
 }
 
-static void oscats_irt_model_init (OscatsIrtModel *self)
+static void oscats_cont_model_init (OscatsContModel *self)
 {
 }
 
-static void oscats_irt_model_constructed(GObject *object)
+static void oscats_cont_model_constructed(GObject *object)
 {
-  OscatsIrtModel *model = OSCATS_IRT_MODEL(object);
-//  G_OBJECT_CLASS(oscats_irt_model_parent_class)->constructed(object);
+  OscatsContModel *model = OSCATS_CONT_MODEL(object);
+//  G_OBJECT_CLASS(oscats_cont_model_parent_class)->constructed(object);
 
   if (!model->dimsFlags)
   {
@@ -206,27 +206,27 @@ static void oscats_irt_model_constructed(GObject *object)
 
 }
 
-static void oscats_irt_model_dispose (GObject *object)
+static void oscats_cont_model_dispose (GObject *object)
 {
-  OscatsIrtModel *self = OSCATS_IRT_MODEL(object);
-  G_OBJECT_CLASS(oscats_irt_model_parent_class)->dispose(object);
+  OscatsContModel *self = OSCATS_CONT_MODEL(object);
+  G_OBJECT_CLASS(oscats_cont_model_parent_class)->dispose(object);
   if (self->dimsFlags) g_object_unref(self->dimsFlags);
   self->dimsFlags = NULL;
 }
 
-static void oscats_irt_model_finalize (GObject *object)
+static void oscats_cont_model_finalize (GObject *object)
 {
-  OscatsIrtModel *self = OSCATS_IRT_MODEL(object);
+  OscatsContModel *self = OSCATS_CONT_MODEL(object);
   g_free(self->params);
   g_free(self->names);
   g_free(self->dims);
-  G_OBJECT_CLASS(oscats_irt_model_parent_class)->finalize(object);
+  G_OBJECT_CLASS(oscats_cont_model_parent_class)->finalize(object);
 }
 
-static void oscats_irt_model_set_property(GObject *object, guint prop_id,
+static void oscats_cont_model_set_property(GObject *object, guint prop_id,
                                       const GValue *value, GParamSpec *pspec)
 {
-  OscatsIrtModel *self = OSCATS_IRT_MODEL(object);
+  OscatsContModel *self = OSCATS_CONT_MODEL(object);
   switch (prop_id)
   {
     case PROP_DIMS:			// construction only
@@ -244,10 +244,10 @@ static void oscats_irt_model_set_property(GObject *object, guint prop_id,
   }
 }
 
-static void oscats_irt_model_get_property(GObject *object, guint prop_id,
+static void oscats_cont_model_get_property(GObject *object, guint prop_id,
                                           GValue *value, GParamSpec *pspec)
 {
-  OscatsIrtModel *self = OSCATS_IRT_MODEL(object);
+  OscatsContModel *self = OSCATS_CONT_MODEL(object);
   switch (prop_id)
   {
     case PROP_N_PARAMS:
@@ -278,20 +278,20 @@ static void oscats_irt_model_get_property(GObject *object, guint prop_id,
 }
 
 /**
- * oscats_irt_model_get_max:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_get_max:
+ * @model: an #OscatsContModel
  *
  * Returns: the maximum valid response category for this model
  */
-guint8 oscats_irt_model_get_max(const OscatsIrtModel *model)
+guint8 oscats_cont_model_get_max(const OscatsContModel *model)
 {
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model), 0);
-  return OSCATS_IRT_MODEL_GET_CLASS(model)->get_max(model);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model), 0);
+  return OSCATS_CONT_MODEL_GET_CLASS(model)->get_max(model);
 }
 
 /**
- * oscats_irt_model_P:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_P:
+ * @model: an #OscatsContModel
  * @resp: the examinee response value
  * @theta: the #GGslVector parameter value
  * @covariates: the values for covariates
@@ -300,17 +300,17 @@ guint8 oscats_irt_model_get_max(const OscatsIrtModel *model)
  *
  * Returns: the computed probability
  */
-gdouble oscats_irt_model_P(const OscatsIrtModel *model, guint resp,
+gdouble oscats_cont_model_P(const OscatsContModel *model, guint resp,
                            const GGslVector *theta, const OscatsCovariates *covariates)
 {
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model) && G_GSL_IS_VECTOR(theta) && theta->v, 0);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model) && G_GSL_IS_VECTOR(theta) && theta->v, 0);
   g_return_val_if_fail(theta->v->size == model->testDim, 0);
-  return OSCATS_IRT_MODEL_GET_CLASS(model)->P(model, resp, theta, covariates);
+  return OSCATS_CONT_MODEL_GET_CLASS(model)->P(model, resp, theta, covariates);
 }
 
 /**
- * oscats_irt_model_distance:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_distance:
+ * @model: an #OscatsContModel
  * @theta: the #GGslVector parameter value
  * @covariates: the values of covariates
  *
@@ -319,18 +319,18 @@ gdouble oscats_irt_model_P(const OscatsIrtModel *model, guint resp,
  *
  * Returns: the distance metric
  */
-gdouble oscats_irt_model_distance(const OscatsIrtModel *model,
+gdouble oscats_cont_model_distance(const OscatsContModel *model,
                                   const GGslVector *theta,
                                   const OscatsCovariates *covariates)
 {
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model) && G_GSL_IS_VECTOR(theta), 0);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model) && G_GSL_IS_VECTOR(theta), 0);
   g_return_val_if_fail(theta->v->size == model->testDim, 0);
-  return OSCATS_IRT_MODEL_GET_CLASS(model)->distance(model, theta, covariates);
+  return OSCATS_CONT_MODEL_GET_CLASS(model)->distance(model, theta, covariates);
 }
 
 /**
- * oscats_irt_model_logLik_dtheta:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_logLik_dtheta:
+ * @model: an #OscatsContModel
  * @resp: the examinee response value 
  * @theta: the #GGslVector parameter value
  * @covariates: the value of covariates
@@ -343,25 +343,25 @@ gdouble oscats_irt_model_distance(const OscatsIrtModel *model,
  * to @grad, and the Hessian (second derivatives) to @hes.  The vectors and
  * matrix must have dimension @model->dims->size.
  */
-void oscats_irt_model_logLik_dtheta(const OscatsIrtModel *model,
+void oscats_cont_model_logLik_dtheta(const OscatsContModel *model,
                                     guint resp, const GGslVector *theta,
                                     const OscatsCovariates *covariates,
                                     GGslVector *grad, GGslMatrix *hes)
 {
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model) && G_GSL_IS_VECTOR(theta));
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model) && G_GSL_IS_VECTOR(theta));
   g_return_if_fail(theta->v->size == model->testDim);
   if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v && 
                              grad->v->size == model->testDim);
   if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v &&
                             hes->v->size1 == model->testDim && 
                             hes->v->size2 == model->testDim);
-  OSCATS_IRT_MODEL_GET_CLASS(model)->logLik_dtheta(model, resp, theta,
+  OSCATS_CONT_MODEL_GET_CLASS(model)->logLik_dtheta(model, resp, theta,
                                               covariates, grad, hes, FALSE);
 }
 
 /**
- * oscats_irt_model_logLik_dparam:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_logLik_dparam:
+ * @model: an #OscatsContModel
  * @resp: the examinee response value 
  * @theta: the #GGslVector parameter value
  * @covariates: the values of covariates
@@ -375,25 +375,25 @@ void oscats_irt_model_logLik_dtheta(const OscatsIrtModel *model,
  * must have dimension @model->Np, and the latent ability @theta must have
  * dimension @model->dims->size.
  */
-void oscats_irt_model_logLik_dparam(const OscatsIrtModel *model,
+void oscats_cont_model_logLik_dparam(const OscatsContModel *model,
                                     guint resp, const GGslVector *theta,
                                     const OscatsCovariates *covariates,
                                     GGslVector *grad, GGslMatrix *hes)
 {
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model) && G_GSL_IS_VECTOR(theta));
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model) && G_GSL_IS_VECTOR(theta));
   g_return_if_fail(theta->v->size == model->testDim);
   if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v &&
                              grad->v->size == model->Np);
   if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v &&
                             hes->v->size1 == model->Np && 
                             hes->v->size2 == model->Np);
-  OSCATS_IRT_MODEL_GET_CLASS(model)->logLik_dparam(model, resp, theta,
+  OSCATS_CONT_MODEL_GET_CLASS(model)->logLik_dparam(model, resp, theta,
                                               covariates, grad, hes);
 }
 
 /**
- * oscats_irt_model_fisher_inf:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_fisher_inf:
+ * @model: an #OscatsContModel
  * @theta: the #GGslVector parameter value
  * @covariates: the value of covariates
  * @I: a #GGslMatrix for returning the Fisher Information
@@ -403,93 +403,93 @@ void oscats_irt_model_logLik_dparam(const OscatsIrtModel *model,
  * The informatoin is <emphasis>added</emphasis> to @I.
  * The vector and matrix must have dimension @model->dims->size.
  */
-void oscats_irt_model_fisher_inf(const OscatsIrtModel *model,
+void oscats_cont_model_fisher_inf(const OscatsContModel *model,
                                  const GGslVector *theta,
                                  const OscatsCovariates *covariates,
                                  GGslMatrix *I)
 {
-  OscatsIrtModelClass *klass;
+  OscatsContModelClass *klass;
   guint k, max;
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model) && G_GSL_IS_VECTOR(theta));
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model) && G_GSL_IS_VECTOR(theta));
   g_return_if_fail(theta->v->size == model->testDim);
   g_return_if_fail(G_GSL_IS_MATRIX(I) && I->v &&
                             I->v->size1 == model->testDim && 
                             I->v->size2 == model->testDim);
-  klass = OSCATS_IRT_MODEL_GET_CLASS(model);
+  klass = OSCATS_CONT_MODEL_GET_CLASS(model);
   max = klass->get_max(model);
   for (k=0; k <= max; k++)
     klass->logLik_dtheta(model, k, theta, covariates, NULL, I, TRUE);
 }
 
 /**
- * oscats_irt_model_get_param_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_get_param_name:
+ * @model: an #OscatsContModel
  * @index: the parameter index
  * 
- * Returns: the name of parameter @index < #OscatsIrtModel:Np
+ * Returns: the name of parameter @index < #OscatsContModel:Np
  */
-const gchar* oscats_irt_model_get_param_name(const OscatsIrtModel *model,
+const gchar* oscats_cont_model_get_param_name(const OscatsContModel *model,
                                              guint index)
 {
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model) && index < model->Np, NULL);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model) && index < model->Np, NULL);
   return g_quark_to_string(model->names[index]);
 }
 
 /**
- * oscats_irt_model_has_param_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_has_param_name:
+ * @model: an #OscatsContModel
  * @name: parameter name to check
  *
  * Returns: %TRUE if @model has a parameter called @name.
  */
-gboolean oscats_irt_model_has_param_name(const OscatsIrtModel *model, 
+gboolean oscats_cont_model_has_param_name(const OscatsContModel *model, 
                                          const gchar *name)
 {
   GQuark q = g_quark_try_string(name);
   if (!q) return FALSE;
-  return oscats_irt_model_has_param(model, q);
+  return oscats_cont_model_has_param(model, q);
 }
 
 /**
- * oscats_irt_model_has_param:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_has_param:
+ * @model: an #OscatsContModel
  * @name: parameter name (as a #GQuark) to check
  *
  * Returns: %TRUE if @model has a parameter called @name.
  */
-gboolean oscats_irt_model_has_param(const OscatsIrtModel *model, GQuark name)
+gboolean oscats_cont_model_has_param(const OscatsContModel *model, GQuark name)
 {
   guint i;
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model), FALSE);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model), FALSE);
   for (i=0; i < model->Np; i++)
     if (name == model->names[i]) return TRUE;
   return FALSE;
 }
 
 /**
- * oscats_irt_model_get_param_by_index:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_get_param_by_index:
+ * @model: an #OscatsContModel
  * @index: the parameter index
  * 
- * Returns: the parameter @index < #OscatsIrtModel:Np
+ * Returns: the parameter @index < #OscatsContModel:Np
  */
-gdouble oscats_irt_model_get_param_by_index(const OscatsIrtModel *model, guint index)
+gdouble oscats_cont_model_get_param_by_index(const OscatsContModel *model, guint index)
 {
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model) && index < model->Np, 0);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model) && index < model->Np, 0);
   return model->params[index];
 }
 
 /**
- * oscats_irt_model_get_param:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_get_param:
+ * @model: an #OscatsContModel
  * @name: the parameter name (as a #GQuark)
  * 
  * Returns: the parameter @name
  */
-gdouble oscats_irt_model_get_param(const OscatsIrtModel *model, GQuark name)
+gdouble oscats_cont_model_get_param(const OscatsContModel *model, GQuark name)
 {
   guint i;
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model), 0);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model), 0);
   for (i=0; i < model->Np; i++)
     if (name == model->names[i]) return model->params[i];
   g_critical("Unknown parameter %s", g_quark_to_string(name));
@@ -497,46 +497,46 @@ gdouble oscats_irt_model_get_param(const OscatsIrtModel *model, GQuark name)
 }
 
 /**
- * oscats_irt_model_get_param_by_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_get_param_by_name:
+ * @model: an #OscatsContModel
  * @name: the parameter name
  * 
- * The #GQuark version oscats_irt_model_get_param() is faster.
+ * The #GQuark version oscats_cont_model_get_param() is faster.
  *
  * Returns: the parameter called @name
  */
-gdouble oscats_irt_model_get_param_by_name(const OscatsIrtModel *model,
+gdouble oscats_cont_model_get_param_by_name(const OscatsContModel *model,
                                            const gchar *name)
 {
   GQuark q = g_quark_try_string(name);
   g_return_val_if_fail(q != 0, 0);
-  return oscats_irt_model_get_param(model, q);
+  return oscats_cont_model_get_param(model, q);
 }
 
 /**
- * oscats_irt_model_set_param_by_index:
- * @model: an #OscatsIrtModel
- * @index: the parameter index < #OscatsIrtModel:Np
+ * oscats_cont_model_set_param_by_index:
+ * @model: an #OscatsContModel
+ * @index: the parameter index < #OscatsContModel:Np
  * @value: the #gdouble value to set
  */
-void oscats_irt_model_set_param_by_index(OscatsIrtModel *model, guint index,
+void oscats_cont_model_set_param_by_index(OscatsContModel *model, guint index,
                                          gdouble value)
 {
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model) && index < model->Np);
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model) && index < model->Np);
   model->params[index] = value;
 }
 
 /**
- * oscats_irt_model_set_param:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_set_param:
+ * @model: an #OscatsContModel
  * @name: the parameter name (as a #GQuark)
  * @value: the #gdouble to set
  */
-void oscats_irt_model_set_param(OscatsIrtModel *model,
+void oscats_cont_model_set_param(OscatsContModel *model,
                                 GQuark name, gdouble value)
 {
   guint i;
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model));
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model));
   for (i=0; i < model->Np; i++)
     if (model->names[i] == name)
     {
@@ -547,98 +547,98 @@ void oscats_irt_model_set_param(OscatsIrtModel *model,
 }
 
 /**
- * oscats_irt_model_set_param_by_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_set_param_by_name:
+ * @model: an #OscatsContModel
  * @name: the parameter name
  * @value: the #gdouble to set
  *
- * The #GQuark version oscats_irt_model_set_param() is faster.
+ * The #GQuark version oscats_cont_model_set_param() is faster.
  */
-void oscats_irt_model_set_param_by_name(OscatsIrtModel *model,
+void oscats_cont_model_set_param_by_name(OscatsContModel *model,
                                         const gchar *name, gdouble value)
 {
   GQuark q = g_quark_try_string(name);
   g_return_if_fail(q != 0);
-  oscats_irt_model_set_param(model, q, value);
+  oscats_cont_model_set_param(model, q, value);
 }
 
 /**
- * oscats_irt_model_get_covariate_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_get_covariate_name:
+ * @model: an #OscatsContModel
  * @index: the covariate index
  *
  * Returns: the name of the covariate
  */
-const gchar * oscats_irt_model_get_covariate_name(const OscatsIrtModel *model,
+const gchar * oscats_cont_model_get_covariate_name(const OscatsContModel *model,
                                                   guint index)
 {
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model) &&
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model) &&
                        index < model->Ncov, NULL);
   return g_quark_to_string(model->covariates[index]);
 }
 
 /**
- * oscats_irt_model_has_covariate:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_has_covariate:
+ * @model: an #OscatsContModel
  * @name: covariate name (as a #GQuark)
  *
  * Returns: %TRUE if @model incorporates covariate @name
  */
-gboolean oscats_irt_model_has_covariate(const OscatsIrtModel *model,
+gboolean oscats_cont_model_has_covariate(const OscatsContModel *model,
                                         GQuark name)
 {
   guint i;
-  g_return_val_if_fail(OSCATS_IS_IRT_MODEL(model), FALSE);
+  g_return_val_if_fail(OSCATS_IS_CONT_MODEL(model), FALSE);
   for (i=0; i < model->Ncov; i++)
     if (model->covariates[i] == name) return TRUE;
   return FALSE;
 }
 
 /**
- * oscats_irt_model_has_covariate_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_has_covariate_name:
+ * @model: an #OscatsContModel
  * @name: covariate name
  *
  * Returns: %TRUE if @model incorporates covariate @name
  */
-gboolean oscats_irt_model_has_covariate_name(const OscatsIrtModel *model,
+gboolean oscats_cont_model_has_covariate_name(const OscatsContModel *model,
                                              const gchar *name)
 {
   GQuark q = g_quark_try_string(name);
   if (!q) return FALSE;
-  return oscats_irt_model_has_covariate(model, q);
+  return oscats_cont_model_has_covariate(model, q);
 }
 
 /**
- * oscats_irt_model_set_covariate_name:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_set_covariate_name:
+ * @model: an #OscatsContModel
  * @index: covariate number in this model
  * @name: the covariate name (as a #GQuark)
  *
  * Sets the name of covariate @index to @name.
  * Must have @index < @model:Ncov.
  */
-void oscats_irt_model_set_covariate_name(const OscatsIrtModel *model,
+void oscats_cont_model_set_covariate_name(const OscatsContModel *model,
                                          guint index, GQuark name)
 {
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model) && index < model->Ncov
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model) && index < model->Ncov
                    && name != 0);
   model->covariates[index] = name;
 }
 
 /**
- * oscats_irt_model_set_covariate_name_str:
- * @model: an #OscatsIrtModel
+ * oscats_cont_model_set_covariate_name_str:
+ * @model: an #OscatsContModel
  * @index: covariate number in this model
  * @name: the covariate name
  *
  * Sets the name of the covariate @index to @name.
  * Must have @index < @model:Ncov.
  */
-void oscats_irt_model_set_covariate_name_str(const OscatsIrtModel *model,
+void oscats_cont_model_set_covariate_name_str(const OscatsContModel *model,
                                              guint index, const gchar *name)
 {
-  g_return_if_fail(OSCATS_IS_IRT_MODEL(model) && index < model->Ncov
+  g_return_if_fail(OSCATS_IS_CONT_MODEL(model) && index < model->Ncov
                    && name != NULL);
   model->covariates[index] = g_quark_from_string(name);
 }

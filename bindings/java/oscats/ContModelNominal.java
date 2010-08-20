@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * 2PL IRT Model Java Wrapper Class
+ * Nominal IRT Model Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class IrtModelL2p extends IrtModel
+public final class ContModelNominal extends ContModel
 {
-    protected IrtModelL2p(long pointer) { super(pointer); }
+    protected ContModelNominal(long pointer) { super(pointer); }
 
-    public IrtModelL2p() {
-      this(OscatsIrtModelL2p.new_with_params());
+    public ContModelNominal() {
+      this(OscatsContModelNominal.new_with_params());
     }
 
-    public IrtModelL2p(BitArray dims) {
-      this(OscatsIrtModelL2p.new_with_params("dims", dims));
+    public ContModelNominal(BitArray dims) {
+      this(OscatsContModelNominal.new_with_params("dims", dims));
     }
 
 }

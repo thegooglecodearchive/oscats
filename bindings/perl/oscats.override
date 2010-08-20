@@ -10,8 +10,8 @@ oscats_attributes_	Attributes
 oscats_item_		Item
 oscats_item_bank_	ItemBank
 oscats_test_	Test
-oscats_irt_model_	IrtModel
-oscats_class_model_	ClassModel
+oscats_cont_model_	ContModel
+oscats_discr_model_	DiscrModel
 oscats_algorithm_	Algorithm
 oscats_alg_exposure_counter_	AlgExposureCounter
 oscats_alg_class_rates_	AlgClassRates

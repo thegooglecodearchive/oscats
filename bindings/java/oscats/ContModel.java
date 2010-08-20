@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * IrtModel Java Wrapper Class
+ * ContModel Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,86 +23,86 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public abstract class IrtModel extends Object
+public abstract class ContModel extends Object
 {
-    protected IrtModel(long pointer) { super(pointer); }
+    protected ContModel(long pointer) { super(pointer); }
 
-    public IrtModel() {
-      this(OscatsIrtModel.new_with_params());
+    public ContModel() {
+      this(OscatsContModel.new_with_params());
     }
     
-    public IrtModel(BitArray dims) {
-      this(OscatsIrtModel.new_with_params("dims", dims));
+    public ContModel(BitArray dims) {
+      this(OscatsContModel.new_with_params("dims", dims));
     }
 
-    public byte getMax() { return OscatsIrtModel.getMax(this); }
+    public byte getMax() { return OscatsContModel.getMax(this); }
     
     public double P(byte resp, GslVector theta, Covariates covariates) {
-      return OscatsIrtModel.P(this, resp, theta, covariates);
+      return OscatsContModel.P(this, resp, theta, covariates);
     }
     
     public double distance(GslVector theta, Covariates covariates) {
-      return OscatsIrtModel.distance(this, theta, covariates);
+      return OscatsContModel.distance(this, theta, covariates);
     }
     
     public void logLikDtheta(byte resp, GslVector theta, Covariates covariates, GslVector grad, GslMatrix hes) {
-      OscatsIrtModel.logLikDtheta(this, resp, theta, covariates, grad, hes);
+      OscatsContModel.logLikDtheta(this, resp, theta, covariates, grad, hes);
     }
     
     public void logLikDparam(byte resp, GslVector theta, Covariates covariates, GslVector grad, GslMatrix hes) {
-      OscatsIrtModel.logLikDparam(this, resp, theta, covariates, grad, hes);
+      OscatsContModel.logLikDparam(this, resp, theta, covariates, grad, hes);
     }
     
     public void fisherInf(GslVector theta, Covariates covariates, GslMatrix I) {
-      OscatsIrtModel.fisherInf(this, theta, covariates, I);
+      OscatsContModel.fisherInf(this, theta, covariates, I);
     }
     
-    public String getParamName(int i) { return OscatsIrtModel.getParamName(this, i); }
+    public String getParamName(int i) { return OscatsContModel.getParamName(this, i); }
     
     public boolean hasParamName(String name) {
-      return OscatsIrtModel.hasParamName(this, name);
+      return OscatsContModel.hasParamName(this, name);
     }
     
-    public boolean hasParam(int param) { return OscatsIrtModel.hasParam(this, param); }
+    public boolean hasParam(int param) { return OscatsContModel.hasParam(this, param); }
     
-    public double getParam(int param) { return OscatsIrtModel.getParam(this, param); }
+    public double getParam(int param) { return OscatsContModel.getParam(this, param); }
     
-    public double getParamByIndex(int i) { return OscatsIrtModel.getParamByIndex(this, i); }
+    public double getParamByIndex(int i) { return OscatsContModel.getParamByIndex(this, i); }
     
     public double getParam(String name) {
-      return OscatsIrtModel.getParamByName(this, name);
+      return OscatsContModel.getParamByName(this, name);
     }
     
     public double getParamByName(String name) {
-      return OscatsIrtModel.getParamByName(this, name);
+      return OscatsContModel.getParamByName(this, name);
     }
     
     public void setParam(int param, double x) {
-      OscatsIrtModel.setParam(this, param, x);
+      OscatsContModel.setParam(this, param, x);
     }
     
     public void setParamByIndex(int i, double x) {
-      OscatsIrtModel.setParamByIndex(this, i, x);
+      OscatsContModel.setParamByIndex(this, i, x);
     }
     
     public void setParam(String name, double x) {
-      OscatsIrtModel.setParamByName(this, name, x);
+      OscatsContModel.setParamByName(this, name, x);
     }
     
     public void setParamByName(String name, double x) {
-      OscatsIrtModel.setParamByName(this, name, x);
+      OscatsContModel.setParamByName(this, name, x);
     }
 
-    public String getCovariateName(int i) { return OscatsIrtModel.getCovariateName(this, i); }
+    public String getCovariateName(int i) { return OscatsContModel.getCovariateName(this, i); }
     
-    public boolean hasCovariate(int name) { return OscatsIrtModel.hasCovariate(this, name); }
+    public boolean hasCovariate(int name) { return OscatsContModel.hasCovariate(this, name); }
     
-    public boolean hasCovariate(String name) { return OscatsIrtModel.hasCovariateName(this, name); }
+    public boolean hasCovariate(String name) { return OscatsContModel.hasCovariateName(this, name); }
     
-    public boolean hasCovariateName(String name) { return OscatsIrtModel.hasCovariateName(this, name); }
+    public boolean hasCovariateName(String name) { return OscatsContModel.hasCovariateName(this, name); }
     
     public void setCovariateName(int i, String name) {
-      OscatsIrtModel.setCovariateNameStr(this, i, name);
+      OscatsContModel.setCovariateNameStr(this, i, name);
     }
 
 }

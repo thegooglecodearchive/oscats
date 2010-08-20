@@ -17,24 +17,24 @@
  *  along with OSCATS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBOSCATS_ALGORITHM_ESTIMATE_CLASS_H_
-#define _LIBOSCATS_ALGORITHM_ESTIMATE_CLASS_H_
+#ifndef _LIBOSCATS_ALGORITHM_ESTIMATE_ALPHA_H_
+#define _LIBOSCATS_ALGORITHM_ESTIMATE_ALPHA_H_
 #include <glib-object.h>
 #include <algorithm.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_ALG_ESTIMATE_CLASS	(oscats_alg_estimate_class_get_type())
-#define OSCATS_ALG_ESTIMATE_CLASS(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_ESTIMATE_CLASS, OscatsAlgEstimateClass))
-#define OSCATS_IS_ALG_ESTIMATE_CLASS(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_ESTIMATE_CLASS))
-#define OSCATS_ALG_ESTIMATE_CLASS_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_ESTIMATE_CLASS, OscatsAlgEstimateClassClass))
-#define OSCATS_IS_ALG_ESTIMATE_CLASS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_ESTIMATE_CLASS))
-#define OSCATS_ALG_ESTIMATE_CLASS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_ESTIMATE_CLASS, OscatsAlgEstimateClassClass))
+#define OSCATS_TYPE_ALG_ESTIMATE_ALPHA	(oscats_alg_estimate_alpha_get_type())
+#define OSCATS_ALG_ESTIMATE_ALPHA(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_ESTIMATE_ALPHA, OscatsAlgEstimateAlpha))
+#define OSCATS_IS_ALG_ESTIMATE_ALPHA(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_ESTIMATE_ALPHA))
+#define OSCATS_ALG_ESTIMATE_ALPHA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_ESTIMATE_ALPHA, OscatsAlgEstimateAlphaClass))
+#define OSCATS_IS_ALG_ESTIMATE_ALPHA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_ESTIMATE_ALPHA))
+#define OSCATS_ALG_ESTIMATE_ALPHA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_ESTIMATE_ALPHA, OscatsAlgEstimateAlphaClass))
 
-typedef struct _OscatsAlgEstimateClass OscatsAlgEstimateClass;
-typedef struct _OscatsAlgEstimateClassClass OscatsAlgEstimateClassClass;
+typedef struct _OscatsAlgEstimateAlpha OscatsAlgEstimateAlpha;
+typedef struct _OscatsAlgEstimateAlphaClass OscatsAlgEstimateAlphaClass;
 
 /**
- * OscatsAlgEstimateClass
+ * OscatsAlgEstimateAlpha
  *
  * Statistics algorithm (#OscatsTest::administered).
  * Update the examinee's latent classification estimate.
@@ -44,15 +44,15 @@ typedef struct _OscatsAlgEstimateClassClass OscatsAlgEstimateClassClass;
  * in the test.  Consequently, this algorithm may be very slow for large
  * numbers of attributes.
  */
-struct _OscatsAlgEstimateClass {
+struct _OscatsAlgEstimateAlpha {
   OscatsAlgorithm parent_instance;
 };
 
-struct _OscatsAlgEstimateClassClass {
+struct _OscatsAlgEstimateAlphaClass {
   OscatsAlgorithmClass parent_class;
 };
 
-GType oscats_alg_estimate_class_get_type();
+GType oscats_alg_estimate_alpha_get_type();
 
 G_END_DECLS
 #endif

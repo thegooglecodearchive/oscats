@@ -27,11 +27,11 @@ def gen_items() :
   bank = gobject.new(oscats.ItemBank, sizeHint=N_ITEMS)
   for i in range(N_ITEMS) :
     # First we create an IRT model container for our item
-    model = gobject.new(oscats.IrtModelL1p)
+    model = gobject.new(oscats.ContModelL1p)
     # Then, set the parameters.  Here there is only one, the difficulty (b).
     model.set_param_by_index(0, oscats.oscats_rnd_normal(1))
     # Create an item based on this model
-    item = gobject.new(oscats.Item, irtmodel=model)
+    item = gobject.new(oscats.Item, contmodel=model)
     # Add the item to the item bank
     bank.add_item(item)
     # Since Python is garbage collected, we don't have to worry about
@@ -76,7 +76,7 @@ exposures = []
 # A test must have at minimum a selection algorithm, and administration
 # algorithm, and a stoping critierion.
 for test in tests :
-  oscats.oscats_algorithm_register(oscats.AlgSimulateIrt, test)
+  oscats.oscats_algorithm_register(oscats.AlgSimulateTheta, test)
   oscats.oscats_algorithm_register(oscats.AlgEstimateTheta, test)
   
   # All calls to oscats_algorithm_register() return an algorithm

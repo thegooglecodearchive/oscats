@@ -17,26 +17,26 @@
  *  along with OSCATS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBOSCATS_ALGORITHM_MAX_KL_IRT_H_
-#define _LIBOSCATS_ALGORITHM_MAX_KL_IRT_H_
+#ifndef _LIBOSCATS_ALGORITHM_MAX_KL_CONT_H_
+#define _LIBOSCATS_ALGORITHM_MAX_KL_CONT_H_
 #include <glib-object.h>
 #include <algorithm.h>
 #include <algorithms/chooser.h>
 #include <integrate.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_ALG_MAX_KL_IRT	(oscats_alg_max_kl_irt_get_type())
-#define OSCATS_ALG_MAX_KL_IRT(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_MAX_KL_IRT, OscatsAlgMaxKlIrt))
-#define OSCATS_IS_ALG_MAX_KL_IRT(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_MAX_KL_IRT))
-#define OSCATS_ALG_MAX_KL_IRT_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_MAX_KL_IRT, OscatsAlgMaxKlIrtClass))
-#define OSCATS_IS_ALG_MAX_KL_IRT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_MAX_KL_IRT))
-#define OSCATS_ALG_MAX_KL_IRT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_MAX_KL_IRT, OscatsAlgMaxKlIrtClass))
+#define OSCATS_TYPE_ALG_MAX_KL_CONT	(oscats_alg_max_kl_cont_get_type())
+#define OSCATS_ALG_MAX_KL_CONT(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_MAX_KL_CONT, OscatsAlgMaxKlCont))
+#define OSCATS_IS_ALG_MAX_KL_CONT(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_MAX_KL_CONT))
+#define OSCATS_ALG_MAX_KL_CONT_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_MAX_KL_CONT, OscatsAlgMaxKlContClass))
+#define OSCATS_IS_ALG_MAX_KL_CONT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_MAX_KL_CONT))
+#define OSCATS_ALG_MAX_KL_CONT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_MAX_KL_CONT, OscatsAlgMaxKlContClass))
 
-typedef struct _OscatsAlgMaxKlIrt OscatsAlgMaxKlIrt;
-typedef struct _OscatsAlgMaxKlIrtClass OscatsAlgMaxKlIrtClass;
+typedef struct _OscatsAlgMaxKlCont OscatsAlgMaxKlCont;
+typedef struct _OscatsAlgMaxKlContClass OscatsAlgMaxKlContClass;
 
 /**
- * OscatsAlgMaxKlIrt:
+ * OscatsAlgMaxKlCont:
  *
  * Item selection algorithm (#OscatsTest::select).
  * Picks the item with greatest Kullback-Leibler index.
@@ -93,7 +93,7 @@ typedef struct _OscatsAlgMaxKlIrtClass OscatsAlgMaxKlIrtClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsAlgMaxKlIrt {
+struct _OscatsAlgMaxKlCont {
   OscatsAlgorithm parent_instance;
   gdouble c;
   /*< private >*/
@@ -106,17 +106,17 @@ struct _OscatsAlgMaxKlIrt {
   gsl_matrix *Sigma_half;
   // Integration working space
   OscatsExaminee *e;
-  OscatsIrtModel *model;
+  OscatsContModel *model;
   gdouble p_sum, *p;
   gsl_vector *tmp, *tmp2;	// for posterior
   GGslMatrix *Inf_inv;		// for ellipse
 };
 
-struct _OscatsAlgMaxKlIrtClass {
+struct _OscatsAlgMaxKlContClass {
   OscatsAlgorithmClass parent_class;
 };
 
-GType oscats_alg_max_kl_irt_get_type();
+GType oscats_alg_max_kl_cont_get_type();
 
 G_END_DECLS
 #endif

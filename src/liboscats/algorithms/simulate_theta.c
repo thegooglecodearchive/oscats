@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * CAT Algorithm: Simulate Item Administration with underlying Classification model
+ * CAT Algorithm: Simulate Item Administration with underlying IRT model
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -19,31 +19,31 @@
 
 #include "random.h"
 #include "algorithm.h"
-#include "algorithms/simulate_class.h"
+#include "algorithms/simulate_theta.h"
 
-G_DEFINE_TYPE(OscatsAlgSimulateClass, oscats_alg_simulate_class, OSCATS_TYPE_ALGORITHM);
+G_DEFINE_TYPE(OscatsAlgSimulateTheta, oscats_alg_simulate_theta, OSCATS_TYPE_ALGORITHM);
 
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
 
-static void oscats_alg_simulate_class_class_init (OscatsAlgSimulateClassClass *klass)
+static void oscats_alg_simulate_theta_class_init (OscatsAlgSimulateThetaClass *klass)
 {
 //  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
   OSCATS_ALGORITHM_CLASS(klass)->reg = alg_register;
 }
 
-static void oscats_alg_simulate_class_init (OscatsAlgSimulateClass *self)
+static void oscats_alg_simulate_theta_init (OscatsAlgSimulateTheta *self)
 {
 }
 
 static guint administer (OscatsTest *test, OscatsExaminee *e,
                          OscatsItem *item, gpointer alg_data)
 {
-  guint resp, max = oscats_class_model_get_max(item->class_model);
+  guint resp, max = oscats_cont_model_get_max(item->cont_model);
   gdouble p, rnd = oscats_rnd_uniform();
   for (resp=0; resp <= max; resp++)
-    if (rnd < (p=oscats_class_model_P(item->class_model, resp,
-                                      e->true_class)))
+    if (rnd < (p=oscats_cont_model_P(item->cont_model, resp,
+                                    e->true_theta, e->covariates)))
       return resp;
     else
       rnd -= p;
@@ -60,7 +60,8 @@ static guint administer (OscatsTest *test, OscatsExaminee *e,
  */
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-  g_return_if_fail(oscats_item_bank_is_class(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
   g_signal_connect_data(test, "administer", G_CALLBACK(administer),
                         alg_data, oscats_algorithm_closure_finalize, 0);
 }
+                   

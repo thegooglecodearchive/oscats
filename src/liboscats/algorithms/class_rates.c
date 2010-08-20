@@ -126,8 +126,8 @@ static void finalize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
 
   self->num_examinees++;
   for (i=0; i < self->num_attrs; i++)
-    if (oscats_attributes_get(e->true_class, i) !=
-        oscats_attributes_get(e->class_hat, i))
+    if (oscats_attributes_get(e->true_alpha, i) !=
+        oscats_attributes_get(e->alpha_hat, i))
       num++;
     else
       self->correct_attribute[i]++;
@@ -136,11 +136,11 @@ static void finalize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
   
   if (self->rate_by_pattern)
   {
-    guint *data = g_tree_lookup(self->rate_by_pattern, e->true_class);
+    guint *data = g_tree_lookup(self->rate_by_pattern, e->true_alpha);
     if (!data)
     {
       OscatsAttributes *attr = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
-      oscats_attributes_copy(attr, e->true_class);
+      oscats_attributes_copy(attr, e->true_alpha);
       data = g_new0(guint, 2);
       g_tree_insert(self->rate_by_pattern, attr, data);
     }
@@ -159,7 +159,7 @@ static void finalize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgClassRates *self = OSCATS_ALG_CLASS_RATES(alg_data);
-  g_return_if_fail(oscats_item_bank_is_class(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_discr(test->itembank));
 
   g_signal_connect_data(test, "finalize", G_CALLBACK(finalize),
                         alg_data, oscats_algorithm_closure_finalize, 0);

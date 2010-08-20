@@ -19,7 +19,7 @@
 
 /**
  * SECTION:l1p
- * @title:OscatsIrtModelL1p
+ * @title:OscatsContModelL1p
  * @short_description: One-Parameter Logistic (1PL) Model
  */
 
@@ -27,7 +27,7 @@
 #include <gsl/gsl_vector.h>
 #include "models/l1p.h"
 
-G_DEFINE_TYPE(OscatsIrtModelL1p, oscats_irt_model_l1p, OSCATS_TYPE_IRT_MODEL);
+G_DEFINE_TYPE(OscatsContModelL1p, oscats_cont_model_l1p, OSCATS_TYPE_CONT_MODEL);
 
 enum
 {
@@ -36,22 +36,22 @@ enum
 };
 
 static void model_constructed (GObject *object);
-static guint8 get_max (const OscatsIrtModel *model);
-static gdouble P(const OscatsIrtModel *model, guint resp, const GGslVector *theta, const OscatsCovariates *covariates);
-static gdouble distance(const OscatsIrtModel *model, const GGslVector *theta, const OscatsCovariates *covariates);
-static void logLik_dtheta(const OscatsIrtModel *model,
+static guint8 get_max (const OscatsContModel *model);
+static gdouble P(const OscatsContModel *model, guint resp, const GGslVector *theta, const OscatsCovariates *covariates);
+static gdouble distance(const OscatsContModel *model, const GGslVector *theta, const OscatsCovariates *covariates);
+static void logLik_dtheta(const OscatsContModel *model,
                           guint resp, const GGslVector *theta,
                           const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes, gboolean I);
-static void logLik_dparam(const OscatsIrtModel *model,
+static void logLik_dparam(const OscatsContModel *model,
                           guint resp, const GGslVector *theta,
                           const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes);
 
-static void oscats_irt_model_l1p_class_init (OscatsIrtModelL1pClass *klass)
+static void oscats_cont_model_l1p_class_init (OscatsContModelL1pClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  OscatsIrtModelClass *model_class = OSCATS_IRT_MODEL_CLASS(klass);
+  OscatsContModelClass *model_class = OSCATS_CONT_MODEL_CLASS(klass);
 
   gobject_class->constructed = model_constructed;
 
@@ -63,14 +63,14 @@ static void oscats_irt_model_l1p_class_init (OscatsIrtModelL1pClass *klass)
   
 }
 
-static void oscats_irt_model_l1p_init (OscatsIrtModelL1p *self)
+static void oscats_cont_model_l1p_init (OscatsContModelL1p *self)
 {
 }
 
 static void model_constructed(GObject *object)
 {
-  OscatsIrtModel *model = OSCATS_IRT_MODEL(object);
-  G_OBJECT_CLASS(oscats_irt_model_l1p_parent_class)->constructed(object);
+  OscatsContModel *model = OSCATS_CONT_MODEL(object);
+  G_OBJECT_CLASS(oscats_cont_model_l1p_parent_class)->constructed(object);
 
   model->Np = NUM_PARAMS + model->Ncov;
   model->params = g_new0(gdouble, model->Np);
@@ -92,12 +92,12 @@ static void model_constructed(GObject *object)
 
 }
 
-static guint8 get_max (const OscatsIrtModel *model)
+static guint8 get_max (const OscatsContModel *model)
 {
   return 1;
 }
 
-static gdouble P(const OscatsIrtModel *model, guint resp,
+static gdouble P(const OscatsContModel *model, guint resp,
                  const GGslVector *theta, const OscatsCovariates *covariates)
 {
   guint i;
@@ -122,7 +122,7 @@ static gdouble P(const OscatsIrtModel *model, guint resp,
   return 1/(1+exp(resp ? z : -z));
 }
 
-static gdouble distance(const OscatsIrtModel *model, const GGslVector *theta,
+static gdouble distance(const OscatsContModel *model, const GGslVector *theta,
                         const OscatsCovariates *covariates)
 {
   guint i;
@@ -151,7 +151,7 @@ static gdouble distance(const OscatsIrtModel *model, const GGslVector *theta,
  * d[log(P), theta_i, theta_j] = -PQ
  * d[log(Q), theta_i, theta_j] = -PQ
  */
-static void logLik_dtheta(const OscatsIrtModel *model,
+static void logLik_dtheta(const OscatsContModel *model,
                           guint resp, const GGslVector *theta,
                           const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes, gboolean Inf)
@@ -208,7 +208,7 @@ static void logLik_dtheta(const OscatsIrtModel *model,
  * d[log(P), b^2] = -PQ
  * d[log(Q), b^2] = -PQ
  */
-static void logLik_dparam(const OscatsIrtModel *model,
+static void logLik_dparam(const OscatsContModel *model,
                           guint resp, const GGslVector *theta,
                           const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes)

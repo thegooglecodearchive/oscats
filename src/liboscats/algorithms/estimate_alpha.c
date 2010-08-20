@@ -20,13 +20,13 @@
 #include <math.h>
 #include "gsl.h"
 #include "algorithm.h"
-#include "algorithms/estimate_class.h"
+#include "algorithms/estimate_alpha.h"
 
-G_DEFINE_TYPE(OscatsAlgEstimateClass, oscats_alg_estimate_class, OSCATS_TYPE_ALGORITHM);
+G_DEFINE_TYPE(OscatsAlgEstimateAlpha, oscats_alg_estimate_alpha, OSCATS_TYPE_ALGORITHM);
 
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
 
-static void oscats_alg_estimate_class_class_init (OscatsAlgEstimateClassClass *klass)
+static void oscats_alg_estimate_alpha_class_init (OscatsAlgEstimateAlphaClass *klass)
 {
 //  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   
@@ -34,26 +34,26 @@ static void oscats_alg_estimate_class_class_init (OscatsAlgEstimateClassClass *k
 
 }
 
-static void oscats_alg_estimate_class_init (OscatsAlgEstimateClass *self)
+static void oscats_alg_estimate_alpha_init (OscatsAlgEstimateAlpha *self)
 {
 }
 
 static void administered (OscatsTest *test, OscatsExaminee *e,
                           OscatsItem *item, guint resp, gpointer alg_data)
 {
-  OscatsAttributes *attr = oscats_examinee_get_class_hat(e);
+  OscatsAttributes *attr = oscats_examinee_get_alpha_hat(e);
   gdouble L, L_max;
   _AttributesType K, max=0;
   guint i;
   
   if (!attr)
   {
-    oscats_examinee_set_class_hat(e,
+    oscats_examinee_set_alpha_hat(e,
       attr = g_object_new(OSCATS_TYPE_ATTRIBUTES,
                           "num", oscats_item_bank_num_attrs(test->itembank),
                           NULL));
     g_object_unref(attr);
-    attr = oscats_examinee_get_class_hat(e);
+    attr = oscats_examinee_get_alpha_hat(e);
   }
 
   K = (1 << attr->num);
@@ -61,7 +61,7 @@ static void administered (OscatsTest *test, OscatsExaminee *e,
   for (L_max=0,i=0; i < e->items->len; i++)
   {
     OscatsItem *itm = g_ptr_array_index(e->items, i);
-    L_max += log(oscats_class_model_P(itm->class_model,
+    L_max += log(oscats_discr_model_P(itm->discr_model,
                                       e->resp->data[i], attr));
   }
   for (attr->data++; attr->data < K; attr->data++)
@@ -69,7 +69,7 @@ static void administered (OscatsTest *test, OscatsExaminee *e,
     for (L=0,i=0; i < e->items->len; i++)
     {
       OscatsItem *itm = g_ptr_array_index(e->items, i);
-      L += log(oscats_class_model_P(itm->class_model,
+      L += log(oscats_discr_model_P(itm->discr_model,
                                     e->resp->data[i], attr));
     }
     if (L > L_max) { max = attr->data;  L_max = L; }
@@ -87,8 +87,8 @@ static void administered (OscatsTest *test, OscatsExaminee *e,
  */
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-//  OscatsAlgEstimateClass *self = OSCATS_ALG_ESTIMATE_CLASS(alg_data);
-  g_return_if_fail(oscats_item_bank_is_class(test->itembank));
+//  OscatsAlgEstimateAlpha *self = OSCATS_ALG_ESTIMATE_ALPHA(alg_data);
+  g_return_if_fail(oscats_item_bank_is_discr(test->itembank));
 
   g_signal_connect_data(test, "administered", G_CALLBACK(administered),
                         alg_data, oscats_algorithm_closure_finalize, 0);

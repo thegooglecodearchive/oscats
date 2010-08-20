@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * ClassModel Java Wrapper Class
+ * DiscrModel Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,62 +23,62 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public abstract class ClassModel extends Object
+public abstract class DiscrModel extends Object
 {
-    protected ClassModel(long pointer) { super(pointer); }
+    protected DiscrModel(long pointer) { super(pointer); }
 
-    public ClassModel() {
-      this(OscatsClassModel.new_with_params());
+    public DiscrModel() {
+      this(OscatsDiscrModel.new_with_params());
     }
     
-    public ClassModel(Attributes attr) {
-      this(OscatsClassModel.new_with_params("dims", attr));
+    public DiscrModel(Attributes attr) {
+      this(OscatsDiscrModel.new_with_params("dims", attr));
     }
 
-    public byte getMax() { return OscatsClassModel.getMax(this); }
+    public byte getMax() { return OscatsDiscrModel.getMax(this); }
     
     public double P(byte resp, Attributes attr) {
-      return OscatsClassModel.P(this, resp, attr);
+      return OscatsDiscrModel.P(this, resp, attr);
     }
     
     public void logLikDparam(byte resp, Attributes attr, GslVector grad, GslMatrix hes) {
-      OscatsClassModel.logLikDparam(this, resp, attr, grad, hes);
+      OscatsDiscrModel.logLikDparam(this, resp, attr, grad, hes);
     }
     
-    public String getParamName(int i) { return OscatsClassModel.getParamName(this, i); }
+    public String getParamName(int i) { return OscatsDiscrModel.getParamName(this, i); }
     
     public boolean hasParamName(String name) {
-      return OscatsClassModel.hasParamName(this, name);
+      return OscatsDiscrModel.hasParamName(this, name);
     }
     
-    public boolean hasParam(int param) { return OscatsClassModel.hasParam(this, param); }
+    public boolean hasParam(int param) { return OscatsDiscrModel.hasParam(this, param); }
     
-    public double getParam(int param) { return OscatsClassModel.getParam(this, param); }
+    public double getParam(int param) { return OscatsDiscrModel.getParam(this, param); }
     
-    public double getParamByIndex(int i) { return OscatsClassModel.getParamByIndex(this, i); }
+    public double getParamByIndex(int i) { return OscatsDiscrModel.getParamByIndex(this, i); }
     
     public double getParam(String name) {
-      return OscatsClassModel.getParamByName(this, name);
+      return OscatsDiscrModel.getParamByName(this, name);
     }
     
     public double getParamByName(String name) {
-      return OscatsClassModel.getParamByName(this, name);
+      return OscatsDiscrModel.getParamByName(this, name);
     }
     
     public void setParam(int param, double x) {
-      OscatsClassModel.setParam(this, param, x);
+      OscatsDiscrModel.setParam(this, param, x);
     }
     
     public void setParamByIndex(int i, double x) {
-      OscatsClassModel.setParamByIndex(this, i, x);
+      OscatsDiscrModel.setParamByIndex(this, i, x);
     }
     
     public void setParam(String name, double x) {
-      OscatsClassModel.setParamByName(this, name, x);
+      OscatsDiscrModel.setParamByName(this, name, x);
     }
     
     public void setParamByName(String name, double x) {
-      OscatsClassModel.setParamByName(this, name, x);
+      OscatsDiscrModel.setParamByName(this, name, x);
     }
 
 }

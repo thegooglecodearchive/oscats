@@ -17,26 +17,26 @@
  *  along with OSCATS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIBOSCATS_ALGORITHM_MAX_KL_CLASS_H_
-#define _LIBOSCATS_ALGORITHM_MAX_KL_CLASS_H_
+#ifndef _LIBOSCATS_ALGORITHM_MAX_KL_DISCR_H_
+#define _LIBOSCATS_ALGORITHM_MAX_KL_DISCR_H_
 #include <glib-object.h>
 #include <algorithm.h>
 #include <algorithms/chooser.h>
 #include <integrate.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_ALG_MAX_KL_CLASS	(oscats_alg_max_kl_class_get_type())
-#define OSCATS_ALG_MAX_KL_CLASS(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_MAX_KL_CLASS, OscatsAlgMaxKlClass))
-#define OSCATS_IS_ALG_MAX_KL_CLASS(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_MAX_KL_CLASS))
-#define OSCATS_ALG_MAX_KL_CLASS_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_MAX_KL_CLASS, OscatsAlgMaxKlClassClass))
-#define OSCATS_IS_ALG_MAX_KL_CLASS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_MAX_KL_CLASS))
-#define OSCATS_ALG_MAX_KL_CLASS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_MAX_KL_CLASS, OscatsAlgMaxKlClassClass))
+#define OSCATS_TYPE_ALG_MAX_KL_DISCR	(oscats_alg_max_kl_discr_get_type())
+#define OSCATS_ALG_MAX_KL_DISCR(obj)	(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_ALG_MAX_KL_DISCR, OscatsAlgMaxKlDiscr))
+#define OSCATS_IS_ALG_MAX_KL_DISCR(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_ALG_MAX_KL_DISCR))
+#define OSCATS_ALG_MAX_KL_DISCR_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_ALG_MAX_KL_DISCR, OscatsAlgMaxKlDiscrClass))
+#define OSCATS_IS_ALG_MAX_KL_DISCR_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_ALG_MAX_KL_DISCR))
+#define OSCATS_ALG_MAX_KL_DISCR_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_ALG_MAX_KL_DISCR, OscatsAlgMaxKlDiscrClass))
 
-typedef struct _OscatsAlgMaxKlClass OscatsAlgMaxKlClass;
-typedef struct _OscatsAlgMaxKlClassClass OscatsAlgMaxKlClassClass;
+typedef struct _OscatsAlgMaxKlDiscr OscatsAlgMaxKlDiscr;
+typedef struct _OscatsAlgMaxKlDiscrClass OscatsAlgMaxKlDiscrClass;
 
 /**
- * OscatsAlgMaxKlClass:
+ * OscatsAlgMaxKlDiscr:
  *
  * Item selection algorithm (#OscatsTest::select).
  * Picks the item with greatest Kullback-Leibler index.
@@ -88,7 +88,7 @@ typedef struct _OscatsAlgMaxKlClassClass OscatsAlgMaxKlClassClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsAlgMaxKlClass {
+struct _OscatsAlgMaxKlDiscr {
   OscatsAlgorithm parent_instance;
   /*< private >*/
   gboolean posterior;
@@ -99,11 +99,11 @@ struct _OscatsAlgMaxKlClass {
   OscatsAttributes *attr;
 };
 
-struct _OscatsAlgMaxKlClassClass {
+struct _OscatsAlgMaxKlDiscrClass {
   OscatsAlgorithmClass parent_class;
 };
 
-GType oscats_alg_max_kl_class_get_type();
+GType oscats_alg_max_kl_discr_get_type();
 
 G_END_DECLS
 #endif

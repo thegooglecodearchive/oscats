@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * CAT Algorithm: Simulate Item Administration with underlying IRT model
+ * CAT Algorithm: Simulate Item Administration with underlying Classification model
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -19,31 +19,31 @@
 
 #include "random.h"
 #include "algorithm.h"
-#include "algorithms/simulate_irt.h"
+#include "algorithms/simulate_alpha.h"
 
-G_DEFINE_TYPE(OscatsAlgSimulateIrt, oscats_alg_simulate_irt, OSCATS_TYPE_ALGORITHM);
+G_DEFINE_TYPE(OscatsAlgSimulateAlpha, oscats_alg_simulate_alpha, OSCATS_TYPE_ALGORITHM);
 
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
 
-static void oscats_alg_simulate_irt_class_init (OscatsAlgSimulateIrtClass *klass)
+static void oscats_alg_simulate_alpha_class_init (OscatsAlgSimulateAlphaClass *klass)
 {
 //  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
   OSCATS_ALGORITHM_CLASS(klass)->reg = alg_register;
 }
 
-static void oscats_alg_simulate_irt_init (OscatsAlgSimulateIrt *self)
+static void oscats_alg_simulate_alpha_init (OscatsAlgSimulateAlpha *self)
 {
 }
 
 static guint administer (OscatsTest *test, OscatsExaminee *e,
                          OscatsItem *item, gpointer alg_data)
 {
-  guint resp, max = oscats_irt_model_get_max(item->irt_model);
+  guint resp, max = oscats_discr_model_get_max(item->discr_model);
   gdouble p, rnd = oscats_rnd_uniform();
   for (resp=0; resp <= max; resp++)
-    if (rnd < (p=oscats_irt_model_P(item->irt_model, resp,
-                                    e->true_theta, e->covariates)))
+    if (rnd < (p=oscats_discr_model_P(item->discr_model, resp,
+                                      e->true_alpha)))
       return resp;
     else
       rnd -= p;
@@ -60,8 +60,7 @@ static guint administer (OscatsTest *test, OscatsExaminee *e,
  */
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-  g_return_if_fail(oscats_item_bank_is_irt(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_discr(test->itembank));
   g_signal_connect_data(test, "administer", G_CALLBACK(administer),
                         alg_data, oscats_algorithm_closure_finalize, 0);
 }
-                   

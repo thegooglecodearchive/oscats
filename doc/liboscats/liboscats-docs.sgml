@@ -41,16 +41,16 @@
       <xi:include href="xml/attributes.xml"/>
     </chapter>
     <chapter>
-      <title>IRT Models</title>
-      <xi:include href="xml/irtmodel.xml"/>
+      <title>Continuous Models</title>
+      <xi:include href="xml/contmodel.xml"/>
       <xi:include href="xml/l1p.xml"/>
       <xi:include href="xml/l2p.xml"/>
       <xi:include href="xml/l3p.xml"/>
       <xi:include href="xml/nominal.xml"/>
     </chapter>
     <chapter>
-      <title>Classification Models</title>
-      <xi:include href="xml/classmodel.xml"/>
+      <title>Discrete Models</title>
+      <xi:include href="xml/discrmodel.xml"/>
       <xi:include href="xml/dina.xml"/>
       <xi:include href="xml/nida.xml"/>
     </chapter>
@@ -60,16 +60,16 @@
       <xi:include href="xml/chooser.xml"/>
       <xi:include href="xml/class_rates.xml"/>
       <xi:include href="xml/closest_diff.xml"/>
-      <xi:include href="xml/estimate_class.xml"/>
       <xi:include href="xml/estimate_theta.xml"/>
+      <xi:include href="xml/estimate_alpha.xml"/>
       <xi:include href="xml/exposure_counter.xml"/>
       <xi:include href="xml/fixed_length.xml"/>
       <xi:include href="xml/max_fisher.xml"/>
-      <xi:include href="xml/max_kl_class.xml"/>
-      <xi:include href="xml/max_kl_irt.xml"/>
+      <xi:include href="xml/max_kl_cont.xml"/>
+      <xi:include href="xml/max_kl_discr.xml"/>
       <xi:include href="xml/pick_rand.xml"/>
-      <xi:include href="xml/simulate_class.xml"/>
-      <xi:include href="xml/simulate_irt.xml"/>
+      <xi:include href="xml/simulate_theta.xml"/>
+      <xi:include href="xml/simulate_alpha.xml"/>
     </chapter>
   </part>
 

@@ -20,21 +20,21 @@
 #ifndef _LIBOSCATS_MODEL_DINA_H_
 #define _LIBOSCATS_MODEL_DINA_H_
 #include <glib.h>
-#include <classmodel.h>
+#include <discrmodel.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_CLASS_MODEL_DINA		(oscats_class_model_dina_get_type())
-#define OSCATS_CLASS_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CLASS_MODEL_DINA, OscatsClassModelDina))
-#define OSCATS_IS_CLASS_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CLASS_MODEL_DINA))
-#define OSCATS_CLASS_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CLASS_MODEL_DINA, OscatsClassModelDinaClass))
-#define OSCATS_IS_CLASS_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CLASS_MODEL_DINA))
-#define OSCATS_CLASS_MODEL_DINA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CLASS_MODEL_DINA, OscatsClassModelDinaClass))
+#define OSCATS_TYPE_DISCR_MODEL_DINA		(oscats_discr_model_dina_get_type())
+#define OSCATS_DISCR_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_DISCR_MODEL_DINA, OscatsDiscrModelDina))
+#define OSCATS_IS_DISCR_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_DISCR_MODEL_DINA))
+#define OSCATS_DISCR_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_DISCR_MODEL_DINA, OscatsDiscrModelDinaClass))
+#define OSCATS_IS_DISCR_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_DISCR_MODEL_DINA))
+#define OSCATS_DISCR_MODEL_DINA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_DISCR_MODEL_DINA, OscatsDiscrModelDinaClass))
 
-typedef struct _OscatsClassModelDina OscatsClassModelDina;
-typedef struct _OscatsClassModelDinaClass OscatsClassModelDinaClass;
+typedef struct _OscatsDiscrModelDina OscatsDiscrModelDina;
+typedef struct _OscatsDiscrModelDinaClass OscatsDiscrModelDinaClass;
 
 /**
- * OscatsClassModelDina:
+ * OscatsDiscrModelDina:
  *
  * Deterministic Inputs Noisy And Gate (DINA) Classification model:
  * P(X=1|alpha) = (1-s)^(prod_i alpha_i) g^(1-prod_i alpha_i)
@@ -84,15 +84,15 @@ typedef struct _OscatsClassModelDinaClass OscatsClassModelDinaClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsClassModelDina {
-  OscatsClassModel parent_instance;
+struct _OscatsDiscrModelDina {
+  OscatsDiscrModel parent_instance;
 };
 
-struct _OscatsClassModelDinaClass {
-  OscatsClassModelClass parent_class;
+struct _OscatsDiscrModelDinaClass {
+  OscatsDiscrModelClass parent_class;
 };
 
-GType oscats_class_model_dina_get_type();
+GType oscats_discr_model_dina_get_type();
 
 G_END_DECLS
 #endif

@@ -19,7 +19,7 @@
 
 #include "random.h"
 #include "algorithms/max_fisher.h"
-#include "irtmodel.h"
+#include "contmodel.h"
 
 enum {
   PROP_0,
@@ -157,9 +157,9 @@ static gdouble criterion(const OscatsItem *item,
     g_gsl_matrix_copy(alg_data->work, alg_data->base);
   else
     g_gsl_matrix_set_all(alg_data->work, 0);
-  oscats_irt_model_fisher_inf(item->irt_model, e->theta_hat, e->covariates,
+  oscats_cont_model_fisher_inf(item->cont_model, e->theta_hat, e->covariates,
                               alg_data->work);
-  if (item->irt_model->testDim == 1)
+  if (item->cont_model->testDim == 1)
     return -alg_data->work->v->data[0];
     // max I_j(theta) <==> min -I_j(theta)
   if (alg_data->A_opt)
@@ -167,7 +167,7 @@ static gdouble criterion(const OscatsItem *item,
     gdouble ret = 0, *data = alg_data->inv->v->data;
     guint stride = alg_data->inv->v->tda;
     g_gsl_matrix_invert(alg_data->work, alg_data->inv, alg_data->perm);
-    for (k=0; k < item->irt_model->testDim; k++)
+    for (k=0; k < item->cont_model->testDim; k++)
       ret += data[k*stride+k];
     return ret;
     // min tr{[sum I_j(theta)]^-1}
@@ -183,7 +183,7 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
   
   if (self->base)
     for (; self->base_num < e->items->len; self->base_num++)
-      oscats_irt_model_fisher_inf(g_ptr_array_index(e->items, self->base_num),
+      oscats_cont_model_fisher_inf(g_ptr_array_index(e->items, self->base_num),
                                   e->theta_hat, e->covariates, self->base);
 
   return oscats_alg_chooser_choose(self->chooser, e, eligible, alg_data);
@@ -200,7 +200,7 @@ static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgMaxFisher *self = OSCATS_ALG_MAX_FISHER(alg_data);
   guint num = oscats_item_bank_num_dims(test->itembank);
-  g_return_if_fail(oscats_item_bank_is_irt(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
 
   self->work = g_gsl_matrix_new(num, num);
   if (num > 1)

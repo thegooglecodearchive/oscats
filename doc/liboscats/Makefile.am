@@ -55,7 +55,8 @@ HTML_IMAGES=
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 # e.g. content_files=running.sgml building.sgml changes-2.0.sgml
-content_files=version.xml intro.xml build.xml bindings.xml hacking.xml
+content_files= intro.xml build.xml bindings.xml hacking.xml \
+		$(srcdir)/version.xml
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
 # These files must be listed here *and* in content_files
@@ -85,3 +86,5 @@ EXTRA_DIST += version.xml.in
 # Comment this out if you want your docs-status tested during 'make check'
 #TESTS = $(GTKDOC_CHECK)
 
+$(srcdir)/version.xml : $(builddir)/version.xml
+	cp $(builddir)/version.xml $(srcdir)/version.xml

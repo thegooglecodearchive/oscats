@@ -81,13 +81,13 @@ static void oscats_test_class_init (OscatsTestClass *klass)
 /**
  * OscatsTest:Ndims:
  *
- * The number of dimensions for IRT models in the item bank used for
+ * The number of dimensions for continuous models in the item bank used for
  * this test.  Initial values for examinee's latent IRT ability must
  * have this dimension.  A value of 0 indicates that the item bank
- * does not use IRT models.
+ * does not use continuous models.
  */
   pspec = g_param_spec_uint("Ndims", "Num Dims", 
-                            "Number of dimensions for IRT models",
+                            "Number of dimensions for continuous IRT models",
                             0, G_MAXUINT, 0,
                             G_PARAM_READABLE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
@@ -443,7 +443,7 @@ void oscats_test_administer(OscatsTest *test, OscatsExaminee *e)
   g_return_if_fail(OSCATS_IS_TEST(test) && OSCATS_IS_EXAMINEE(e));
   num_items = oscats_item_bank_num_items(test->itembank);
   g_return_if_fail(num_items > 0);
-  if (oscats_item_bank_is_irt(test->itembank))
+  if (oscats_item_bank_is_cont(test->itembank))
     g_return_if_fail(G_GSL_IS_VECTOR(e->theta_hat) && e->theta_hat->v &&
                      e->theta_hat->v->size ==
                        oscats_item_bank_num_dims(test->itembank));

@@ -31,8 +31,8 @@ enum
 {
   PROP_0,
   PROP_ID,
-  PROP_IRT_MODEL,
-  PROP_CLASS_MODEL,
+  PROP_CONT_MODEL,
+  PROP_DISCR_MODEL,
 };
 
 static gint ptr_compare(gconstpointer a, gconstpointer b) {  return b-a;  }
@@ -77,32 +77,32 @@ static void oscats_item_class_init (OscatsItemClass *klass)
   g_object_class_install_property(gobject_class, PROP_ID, pspec);
 
 /**
- * OscatsItem:irtmodel:
+ * OscatsItem:contmodel:
  *
- * The IRT model used for the item.  Either an IRT or a Classification model
- * must be specified (or both).
+ * The Continuous IRT model used for the item.  Either a continuous or
+ * discrete model must be specified (or both).
  */
-  pspec = g_param_spec_object("irtmodel", "IRT Model", 
-                            "IRT model used for the item",
-                            OSCATS_TYPE_IRT_MODEL,
+  pspec = g_param_spec_object("contmodel", "Continuous Model", 
+                            "Continuous IRT model used for the item",
+                            OSCATS_TYPE_CONT_MODEL,
                             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
-  g_object_class_install_property(gobject_class, PROP_IRT_MODEL, pspec);
+  g_object_class_install_property(gobject_class, PROP_CONT_MODEL, pspec);
 
 /**
- * OscatsItem:classmodel:
+ * OscatsItem:discrmodel:
  *
- * The Classification model used for the item.  Either an IRT or a
- * Classification model must be specified (or both).
+ * The discrete IRT (classification) model used for the item.  Either a
+ * continuous or discrete model must be specified (or both).
  */
-  pspec = g_param_spec_object("classmodel", "Classification Model", 
-                            "Classification model used for the item",
-                            OSCATS_TYPE_CLASS_MODEL,
+  pspec = g_param_spec_object("discrmodel", "Discrete Model", 
+                            "Discrete IRT (Classification) model used for the item",
+                            OSCATS_TYPE_DISCR_MODEL,
                             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
-  g_object_class_install_property(gobject_class, PROP_CLASS_MODEL, pspec);
+  g_object_class_install_property(gobject_class, PROP_DISCR_MODEL, pspec);
 
 }
 
@@ -119,13 +119,13 @@ static void oscats_item_constructed(GObject *object)
   OscatsItem *item = OSCATS_ITEM(object);
 //  G_OBJECT_CLASS(oscats_item_parent_class)->constructed(object);
 
-  if (!item->irt_model && !item->class_model)
-    g_critical("An IRT Model or Classification Model must be specified!");
+  if (!item->cont_model && !item->discr_model)
+    g_critical("A Continous or Discrete Model must be specified!");
   
-  if ((item->irt_model && item->class_model) &&
-      (oscats_irt_model_get_max(item->irt_model) !=
-       oscats_class_model_get_max(item->class_model)))
-    g_critical("IRT Model and Classification Model do not have compatible response categories!");
+  if ((item->cont_model && item->discr_model) &&
+      (oscats_cont_model_get_max(item->cont_model) !=
+       oscats_discr_model_get_max(item->discr_model)))
+    g_critical("Continous and Discrete Models do not have compatible response categories!");
 
 }
 
@@ -133,11 +133,11 @@ static void oscats_item_dispose (GObject *object)
 {
   OscatsItem *self = OSCATS_ITEM(object);
   G_OBJECT_CLASS(oscats_item_parent_class)->dispose(object);
-  if (self->irt_model) g_object_unref(self->irt_model);
-  if (self->class_model) g_object_unref(self->class_model);
+  if (self->cont_model) g_object_unref(self->cont_model);
+  if (self->discr_model) g_object_unref(self->discr_model);
   if (self->characteristics) g_object_unref(self->characteristics);
-  self->irt_model = NULL;
-  self->class_model = NULL;
+  self->cont_model = NULL;
+  self->discr_model = NULL;
   self->characteristics = NULL;
   g_tree_remove(OSCATS_ITEM_GET_CLASS(self)->items, self);
 }
@@ -167,12 +167,12 @@ static void oscats_item_set_property(GObject *object, guint prop_id,
       }
       break;
     
-    case PROP_IRT_MODEL:		// construction only
-      self->irt_model = g_value_dup_object(value);
+    case PROP_CONT_MODEL:		// construction only
+      self->cont_model = g_value_dup_object(value);
       break;
 
-    case PROP_CLASS_MODEL:		// construction only
-      self->class_model = g_value_dup_object(value);
+    case PROP_DISCR_MODEL:		// construction only
+      self->discr_model = g_value_dup_object(value);
       break;
     
     default:
@@ -192,12 +192,12 @@ static void oscats_item_get_property(GObject *object, guint prop_id,
       g_value_set_string(value, self->id);
       break;
     
-    case PROP_IRT_MODEL:
-      g_value_set_object(value, self->irt_model);
+    case PROP_CONT_MODEL:
+      g_value_set_object(value, self->cont_model);
       break;
 
-    case PROP_CLASS_MODEL:
-      g_value_set_object(value, self->class_model);
+    case PROP_DISCR_MODEL:
+      g_value_set_object(value, self->discr_model);
       break;
     
     default:

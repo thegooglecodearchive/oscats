@@ -19,7 +19,7 @@
 
 /**
  * SECTION:dina
- * @title:OscatsClassModelDina
+ * @title:OscatsDiscrModelDina
  * @short_description: Deterministic Inputs Noisy And Gate (DINA) Model
  */
 
@@ -27,7 +27,7 @@
 #include <gsl/gsl_vector.h>
 #include "models/dina.h"
 
-G_DEFINE_TYPE(OscatsClassModelDina, oscats_class_model_dina, OSCATS_TYPE_CLASS_MODEL);
+G_DEFINE_TYPE(OscatsDiscrModelDina, oscats_discr_model_dina, OSCATS_TYPE_DISCR_MODEL);
 
 enum
 {
@@ -37,16 +37,16 @@ enum
 };
 
 static void model_constructed (GObject *object);
-static guint8 get_max (const OscatsClassModel *model);
-static gdouble P(const OscatsClassModel *model, guint resp, const OscatsAttributes *attr);
-static void logLik_dparam(const OscatsClassModel *model,
+static guint8 get_max (const OscatsDiscrModel *model);
+static gdouble P(const OscatsDiscrModel *model, guint resp, const OscatsAttributes *attr);
+static void logLik_dparam(const OscatsDiscrModel *model,
                           guint resp, const OscatsAttributes *attr,
                           GGslVector *grad, GGslMatrix *hes);
 
-static void oscats_class_model_dina_class_init (OscatsClassModelDinaClass *klass)
+static void oscats_discr_model_dina_class_init (OscatsDiscrModelDinaClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  OscatsClassModelClass *model_class = OSCATS_CLASS_MODEL_CLASS(klass);
+  OscatsDiscrModelClass *model_class = OSCATS_DISCR_MODEL_CLASS(klass);
 
   gobject_class->constructed = model_constructed;
 
@@ -56,14 +56,14 @@ static void oscats_class_model_dina_class_init (OscatsClassModelDinaClass *klass
   
 }
 
-static void oscats_class_model_dina_init (OscatsClassModelDina *self)
+static void oscats_discr_model_dina_init (OscatsDiscrModelDina *self)
 {
 }
 
 static void model_constructed(GObject *object)
 {
-  OscatsClassModel *model = OSCATS_CLASS_MODEL(object);
-  G_OBJECT_CLASS(oscats_class_model_dina_parent_class)->constructed(object);
+  OscatsDiscrModel *model = OSCATS_DISCR_MODEL(object);
+  G_OBJECT_CLASS(oscats_discr_model_dina_parent_class)->constructed(object);
 
   model->Np = NUM_PARAMS;
   model->params = g_new0(gdouble, model->Np);
@@ -74,12 +74,12 @@ static void model_constructed(GObject *object)
   
 }
 
-static guint8 get_max (const OscatsClassModel *model)
+static guint8 get_max (const OscatsDiscrModel *model)
 {
   return 1;
 }
 
-static gdouble P(const OscatsClassModel *model, guint resp,
+static gdouble P(const OscatsDiscrModel *model, guint resp,
                  const OscatsAttributes *attr)
 {
   gboolean pass = TRUE;
@@ -99,7 +99,7 @@ static gdouble P(const OscatsClassModel *model, guint resp,
  *   s, s          -1/(s-1)^2    -1/s^2         0              0
  *   g, s          0             0              0              0
  */
-static void logLik_dparam(const OscatsClassModel *model,
+static void logLik_dparam(const OscatsDiscrModel *model,
                           guint resp, const OscatsAttributes *attr,
                           GGslVector *grad, GGslMatrix *hes)
 {

@@ -175,17 +175,17 @@ OSCATS_FILES = oscats/Plumbing.java \
 	oscats/Random.java	   \
 	oscats/AlgClosestDiff.java \
 	oscats/AlgEstimateTheta.java \
-	oscats/AlgEstimateClass.java \
+	oscats/AlgEstimateAlpha.java \
 	oscats/AlgExposureCounter.java \
 	oscats/AlgClassRates.java \
 	oscats/AlgFixedLength.java \
 	oscats/AlgPickRand.java \
 	oscats/AlgChooser.java \
 	oscats/AlgMaxFisher.java \
-	oscats/AlgMaxKlIrt.java \
-	oscats/AlgMaxKlClass.java \
-	oscats/AlgSimulateIrt.java \
-	oscats/AlgSimulateClass.java \
+	oscats/AlgMaxKlCont.java \
+	oscats/AlgMaxKlDiscr.java \
+	oscats/AlgSimulateTheta.java \
+	oscats/AlgSimulateAlpha.java \
 	oscats/Algorithm.java \
 	oscats/OscatsAlgorithmOverride.java \
 	oscats/BitArray.java \
@@ -196,16 +196,16 @@ OSCATS_FILES = oscats/Plumbing.java \
 	oscats/GslPermutation.java \
 	oscats/GslVector.java \
 	oscats/Integrate.java \
-	oscats/IrtModel.java \
-	oscats/ClassModel.java \
+	oscats/ContModel.java \
+	oscats/DiscrModel.java \
 	oscats/Item.java \
 	oscats/ItemBank.java \
-	oscats/IrtModelL1p.java \
-	oscats/IrtModelL2p.java \
-	oscats/IrtModelL3p.java \
-	oscats/IrtModelNominal.java \
-	oscats/ClassModelDina.java \
-	oscats/ClassModelNida.java \
+	oscats/ContModelL1p.java \
+	oscats/ContModelL2p.java \
+	oscats/ContModelL3p.java \
+	oscats/ContModelNominal.java \
+	oscats/DiscrModelDina.java \
+	oscats/DiscrModelNida.java \
 	oscats/Test.java
 
 OSCATS_GENERATED_SOURCES = generated/oscats/GBitArray.c \
@@ -215,29 +215,29 @@ OSCATS_GENERATED_SOURCES = generated/oscats/GBitArray.c \
 	generated/oscats/OscatsIntegrate.c \
 	generated/oscats/OscatsAlgClosestDiff.c \
 	generated/oscats/OscatsAlgEstimateTheta.c \
-	generated/oscats/OscatsAlgEstimateClass.c \
+	generated/oscats/OscatsAlgEstimateAlpha.c \
 	generated/oscats/OscatsAlgExposureCounter.c \
 	generated/oscats/OscatsAlgClassRates.c \
 	generated/oscats/OscatsAlgFixedLength.c \
 	generated/oscats/OscatsAlgPickRand.c \
 	generated/oscats/OscatsAlgChooser.c \
 	generated/oscats/OscatsAlgMaxFisher.c \
-	generated/oscats/OscatsAlgMaxKlIrt.c \
-	generated/oscats/OscatsAlgMaxKlClass.c \
-	generated/oscats/OscatsAlgSimulateIrt.c \
-	generated/oscats/OscatsAlgSimulateClass.c \
+	generated/oscats/OscatsAlgMaxKlCont.c \
+	generated/oscats/OscatsAlgMaxKlDiscr.c \
+	generated/oscats/OscatsAlgSimulateTheta.c \
+	generated/oscats/OscatsAlgSimulateAlpha.c \
 	generated/oscats/OscatsAlgorithm.c \
 	generated/oscats/OscatsExaminee.c \
 	generated/oscats/OscatsCovariates.c \
 	generated/oscats/OscatsAttributes.c \
-	generated/oscats/OscatsIrtModel.c \
-	generated/oscats/OscatsClassModel.c \
-	generated/oscats/OscatsIrtModelL1p.c \
-	generated/oscats/OscatsIrtModelL2p.c \
-	generated/oscats/OscatsIrtModelL3p.c \
-	generated/oscats/OscatsIrtModelNominal.c \
-	generated/oscats/OscatsClassModelDina.c \
-	generated/oscats/OscatsClassModelNida.c \
+	generated/oscats/OscatsContModel.c \
+	generated/oscats/OscatsDiscrModel.c \
+	generated/oscats/OscatsContModelL1p.c \
+	generated/oscats/OscatsContModelL2p.c \
+	generated/oscats/OscatsContModelL3p.c \
+	generated/oscats/OscatsContModelNominal.c \
+	generated/oscats/OscatsDiscrModelDina.c \
+	generated/oscats/OscatsDiscrModelNida.c \
 	generated/oscats/OscatsItem.c \
 	generated/oscats/OscatsItemBank.c \
 	generated/oscats/OscatsTest.c \

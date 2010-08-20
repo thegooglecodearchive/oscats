@@ -20,21 +20,21 @@
 #ifndef _LIBOSCATS_MODEL_NOMINAL_H_
 #define _LIBOSCATS_MODEL_NOMINAL_H_
 #include <glib.h>
-#include <irtmodel.h>
+#include <contmodel.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_IRT_MODEL_NOMINAL		(oscats_irt_model_nominal_get_type())
-#define OSCATS_IRT_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_IRT_MODEL_NOMINAL, OscatsIrtModelNominal))
-#define OSCATS_IS_IRT_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_IRT_MODEL_NOMINAL))
-#define OSCATS_IRT_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_IRT_MODEL_NOMINAL, OscatsIrtModelNominalClass))
-#define OSCATS_IS_IRT_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_IRT_MODEL_NOMINAL))
-#define OSCATS_IRT_MODEL_NOMINAL_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_IRT_MODEL_NOMINAL, OscatsIrtModelNominalClass))
+#define OSCATS_TYPE_CONT_MODEL_NOMINAL		(oscats_cont_model_nominal_get_type())
+#define OSCATS_CONT_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CONT_MODEL_NOMINAL, OscatsContModelNominal))
+#define OSCATS_IS_CONT_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CONT_MODEL_NOMINAL))
+#define OSCATS_CONT_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CONT_MODEL_NOMINAL, OscatsContModelNominalClass))
+#define OSCATS_IS_CONT_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CONT_MODEL_NOMINAL))
+#define OSCATS_CONT_MODEL_NOMINAL_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CONT_MODEL_NOMINAL, OscatsContModelNominalClass))
 
-typedef struct _OscatsIrtModelNominal OscatsIrtModelNominal;
-typedef struct _OscatsIrtModelNominalClass OscatsIrtModelNominalClass;
+typedef struct _OscatsContModelNominal OscatsContModelNominal;
+typedef struct _OscatsContModelNominalClass OscatsContModelNominalClass;
 
 /**
- * OscatsIrtModelNominal:
+ * OscatsContModelNominal:
  *
  * The Nominal Response IRT model:
  * P(X=k|theta) = f_k(theta)/[1+sum_j f_j(theta)],
@@ -74,16 +74,16 @@ typedef struct _OscatsIrtModelNominalClass OscatsIrtModelNominalClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsIrtModelNominal {
-  OscatsIrtModel parent_instance;
+struct _OscatsContModelNominal {
+  OscatsContModel parent_instance;
   guint Ncat;		// number of non-zero categories
 };
 
-struct _OscatsIrtModelNominalClass {
-  OscatsIrtModelClass parent_class;
+struct _OscatsContModelNominalClass {
+  OscatsContModelClass parent_class;
 };
 
-GType oscats_irt_model_nominal_get_type();
+GType oscats_cont_model_nominal_get_type();
 
 G_END_DECLS
 #endif

@@ -24,7 +24,7 @@
 
 OscatsItemBank * gen_items()
 {
-  OscatsIrtModel *model;
+  OscatsContModel *model;
   OscatsItem *item;
   // Create an item bank to store the items.
   // Setting the property "sizeHint" increases allocation efficiency.
@@ -35,11 +35,11 @@ OscatsItemBank * gen_items()
   for (i=0; i < N_ITEMS; i++)
   {
     // First we create an IRT model container for our item
-    model = g_object_new(OSCATS_TYPE_IRT_MODEL_L1P, NULL);
+    model = g_object_new(OSCATS_TYPE_CONT_MODEL_L1P, NULL);
     // Then, set the parameters.  Here there is only one, the difficulty (b).
-    oscats_irt_model_set_param_by_index(model, 0, oscats_rnd_normal(1));
+    oscats_cont_model_set_param_by_index(model, 0, oscats_rnd_normal(1));
     // Create an item based on this model
-    item = g_object_new(OSCATS_TYPE_ITEM, "irtmodel", model, NULL);
+    item = g_object_new(OSCATS_TYPE_ITEM, "contmodel", model, NULL);
     // Add the item to the item bank
     oscats_item_bank_add_item(bank, item);
     // We no longer need item and model (they're stored safely in the bank)
@@ -114,7 +114,7 @@ int main()
 
     // Notice that the GType (not an instantiated object) is given
     // Be sure to end all calls to oscats_algorithm_register() with NULL!
-    oscats_algorithm_register(OSCATS_TYPE_ALG_SIMULATE_IRT, test[j], NULL);
+    oscats_algorithm_register(OSCATS_TYPE_ALG_SIMULATE_THETA, test[j], NULL);
     oscats_algorithm_register(OSCATS_TYPE_ALG_ESTIMATE_THETA, test[j], NULL);
 
     // All calls to oscats_algorithm_register() return an algorithm
@@ -182,7 +182,7 @@ int main()
   {
     // Get the item's difficulty parameter
     fprintf(f, "%d\t%g", i+1,
-            oscats_irt_model_get_param_by_index(oscats_item_bank_get_item(bank, i)->irt_model, 0));
+            oscats_cont_model_get_param_by_index(oscats_item_bank_get_item(bank, i)->cont_model, 0));
     // Get the exposure rate for this item in each test
     for (j=0; j < num_tests; j++)
       fprintf(f, "\t%g",

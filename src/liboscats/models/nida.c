@@ -19,7 +19,7 @@
 
 /**
  * SECTION:nida
- * @title:OscatsClassModelNida
+ * @title:OscatsDiscrModelNida
  * @short_description: Noisy Input Determistic And Gate (NIDA) Model
  */
 
@@ -33,19 +33,19 @@ enum
   PARAM_SLIP,
 };
 
-G_DEFINE_TYPE(OscatsClassModelNida, oscats_class_model_nida, OSCATS_TYPE_CLASS_MODEL);
+G_DEFINE_TYPE(OscatsDiscrModelNida, oscats_discr_model_nida, OSCATS_TYPE_DISCR_MODEL);
 
 static void model_constructed (GObject *object);
-static guint8 get_max (const OscatsClassModel *model);
-static gdouble P(const OscatsClassModel *model, guint resp, const OscatsAttributes *attr);
-static void logLik_dparam(const OscatsClassModel *model,
+static guint8 get_max (const OscatsDiscrModel *model);
+static gdouble P(const OscatsDiscrModel *model, guint resp, const OscatsAttributes *attr);
+static void logLik_dparam(const OscatsDiscrModel *model,
                           guint resp, const OscatsAttributes *attr,
                           GGslVector *grad, GGslMatrix *hes);
 
-static void oscats_class_model_nida_class_init (OscatsClassModelNidaClass *klass)
+static void oscats_discr_model_nida_class_init (OscatsDiscrModelNidaClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  OscatsClassModelClass *model_class = OSCATS_CLASS_MODEL_CLASS(klass);
+  OscatsDiscrModelClass *model_class = OSCATS_DISCR_MODEL_CLASS(klass);
 
   gobject_class->constructed = model_constructed;
 
@@ -55,16 +55,16 @@ static void oscats_class_model_nida_class_init (OscatsClassModelNidaClass *klass
   
 }
 
-static void oscats_class_model_nida_init (OscatsClassModelNida *self)
+static void oscats_discr_model_nida_init (OscatsDiscrModelNida *self)
 {
 }
 
 static void model_constructed(GObject *object)
 {
-  OscatsClassModel *model = OSCATS_CLASS_MODEL(object);
+  OscatsDiscrModel *model = OSCATS_DISCR_MODEL(object);
   GString *str;
   guint i;
-  G_OBJECT_CLASS(oscats_class_model_nida_parent_class)->constructed(object);
+  G_OBJECT_CLASS(oscats_discr_model_nida_parent_class)->constructed(object);
 
   model->Np = 2*model->Ndims;
   model->params = g_new0(gdouble, model->Np);
@@ -82,12 +82,12 @@ static void model_constructed(GObject *object)
   
 }
 
-static guint8 get_max (const OscatsClassModel *model)
+static guint8 get_max (const OscatsDiscrModel *model)
 {
   return 1;
 }
 
-static gdouble P(const OscatsClassModel *model, guint resp,
+static gdouble P(const OscatsDiscrModel *model, guint resp,
                  const OscatsAttributes *attr)
 {
   gdouble p = 1;
@@ -100,7 +100,7 @@ static gdouble P(const OscatsClassModel *model, guint resp,
   return (resp ? p : 1-p);
 }
 
-static void logLik_dparam(const OscatsClassModel *model,
+static void logLik_dparam(const OscatsDiscrModel *model,
                           guint resp, const OscatsAttributes *attr,
                           GGslVector *grad, GGslMatrix *hes)
 {

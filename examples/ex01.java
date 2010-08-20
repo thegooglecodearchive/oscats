@@ -15,7 +15,7 @@
  */
 
 import oscats.GslVector;
-import oscats.IrtModelL1p;
+import oscats.ContModelL1p;
 import oscats.ItemBank;
 import oscats.Item;
 import oscats.Examinee;
@@ -39,7 +39,7 @@ public class ex01 {
     for (int i=0; i < N_ITEMS; i++)
     {
       // First we create an IRT model container for our item
-      IrtModelL1p model = new IrtModelL1p();
+      ContModelL1p model = new ContModelL1p();
       // Then, set the parameters.  Here there is only one, the difficulty (b).
       model.setParamByIndex(0, oscats.Random.normal(1));
       // Create an item based on this model
@@ -102,7 +102,7 @@ public class ex01 {
       // A test must have at minimum a selection algorithm, and administration
       // algorithm, and a stoping critierion.
 
-      oscats.AlgSimulateIrt.register(test[j]);
+      oscats.AlgSimulateTheta.register(test[j]);
       oscats.AlgEstimateTheta.register(test[j]);
 
       // All calls to oscats.Algorithm.register() return an algorithm
@@ -164,7 +164,7 @@ public class ex01 {
     for (i=0; i < N_ITEMS; i++)
     {
       // Get the item's difficulty parameter
-      f.format("%d\t%g", i+1, bank.getItem(i).getIrtModel().getParamByIndex(0));
+      f.format("%d\t%g", i+1, bank.getItem(i).getContModel().getParamByIndex(0));
       // Get the exposure rate for this item in each test
       for (j=0; j < num_tests; j++)
         f.format("\t%g", exposure[j].getRate(bank.getItem(i)) );

@@ -19,7 +19,7 @@
 
 #include "random.h"
 #include "algorithms/closest_diff.h"
-#include "irtmodel.h"
+#include "contmodel.h"
 
 enum {
   PROP_0,
@@ -114,7 +114,7 @@ static void oscats_alg_closest_diff_get_property(GObject *object,
 static gdouble criterion(const OscatsItem *item, const OscatsExaminee *e,
                          gpointer data)
 {
-  return oscats_irt_model_distance(item->irt_model, e->theta_hat,
+  return oscats_cont_model_distance(item->cont_model, e->theta_hat,
                                    e->covariates);
 }
 
@@ -135,7 +135,7 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgClosestDiff *self = OSCATS_ALG_CLOSEST_DIFF(alg_data);
-  g_return_if_fail(oscats_item_bank_is_irt(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
   self->chooser->bank = g_object_ref(test->itembank);
   self->chooser->criterion = criterion;
   g_signal_connect_data(test, "select", G_CALLBACK(select),

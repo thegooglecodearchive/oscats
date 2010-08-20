@@ -23,13 +23,13 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class AlgSimulateIrt extends Algorithm
+public final class AlgSimulateTheta extends Algorithm
 {
-    protected AlgSimulateIrt(long pointer) { super(pointer); }
+    protected AlgSimulateTheta(long pointer) { super(pointer); }
 
-    public static AlgSimulateIrt register(Test test, java.lang.Object... params)
+    public static AlgSimulateTheta register(Test test, java.lang.Object... params)
     {
-      AlgSimulateIrt alg_data = new AlgSimulateIrt(OscatsAlgSimulateIrt.new_with_params(params));
+      AlgSimulateTheta alg_data = new AlgSimulateTheta(OscatsAlgSimulateTheta.new_with_params(params));
       OscatsAlgorithmOverride.register(alg_data, test);
       return alg_data;
     }

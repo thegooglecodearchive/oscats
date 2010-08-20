@@ -142,11 +142,11 @@ static void administered (OscatsTest *test, OscatsExaminee *e,
   if (e->items->len == 1)
   {
     if (resp == 0) self->flag = -1;
-    else if (resp == oscats_irt_model_get_max(item->irt_model))
+    else if (resp == oscats_cont_model_get_max(item->cont_model))
       self->flag = 1;
     else self->flag = 0;
   } else if (self->flag &&
-      (resp != (self->flag == 1 ? oscats_irt_model_get_max(item->irt_model)
+      (resp != (self->flag == 1 ? oscats_cont_model_get_max(item->cont_model)
                                  : 0) ))
       self->flag = 0;
   if (self->flag)
@@ -172,7 +172,7 @@ static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgEstimateTheta *self = OSCATS_ALG_ESTIMATE_THETA(alg_data);
   guint dims = oscats_item_bank_num_dims(test->itembank);
-  g_return_if_fail(oscats_item_bank_is_irt(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
   if (self->mu)
     g_return_if_fail(self->mu->v->size == dims);
   else
@@ -228,8 +228,8 @@ gboolean oscats_estimate_theta_mle(const GPtrArray *items, const GByteArray *res
                        G_GSL_IS_VECTOR(theta) && theta->v, TRUE);
   g_return_val_if_fail(items->len == resp->len && items->len > 0, TRUE);
   item = g_ptr_array_index(items, 0);
-  g_return_val_if_fail(item->irt_model && 
-                       theta->v->size == item->irt_model->testDim, TRUE);
+  g_return_val_if_fail(item->cont_model && 
+                       theta->v->size == item->cont_model->testDim, TRUE);
   if (err)
     g_return_val_if_fail(G_GSL_IS_MATRIX(err) && err->v &&
                          err->v->size1 == err->v->size2 &&
@@ -249,7 +249,7 @@ gboolean oscats_estimate_theta_mle(const GPtrArray *items, const GByteArray *res
     for (i=0; i < num; i++)
     {
       item = g_ptr_array_index(items, i);
-      oscats_irt_model_logLik_dtheta(item->irt_model, resp->data[i],
+      oscats_cont_model_logLik_dtheta(item->cont_model, resp->data[i],
                                      theta, covariates, grad, hes);
     }
     // delta = hes^(-1) * grad
@@ -315,8 +315,8 @@ void oscats_estimate_theta_eap(const GPtrArray *items, const GByteArray *resp,
                    G_GSL_IS_MATRIX(Sigma) && Sigma->v);
   g_return_if_fail(items->len == resp->len && items->len > 0);
   item = g_ptr_array_index(items, 0);
-  g_return_if_fail(item->irt_model &&
-                   theta->v->size == item->irt_model->testDim);
+  g_return_if_fail(item->cont_model &&
+                   theta->v->size == item->cont_model->testDim);
   if (err)
     g_return_if_fail(G_GSL_IS_MATRIX(err) && err->v &&
                      err->v->size1 == err->v->size2 &&
@@ -344,7 +344,7 @@ void oscats_estimate_theta_eap(const GPtrArray *items, const GByteArray *resp,
       for (i=0; i < items->len; i++)
       {
         item = g_ptr_array_index(items, i);
-        posterior[z] += log(oscats_irt_model_P(item->irt_model, resp->data[i],
+        posterior[z] += log(oscats_cont_model_P(item->cont_model, resp->data[i],
                                                theta_temp, covariates));
       }
       sum += (posterior[z] = exp(posterior[z])*A[z]);

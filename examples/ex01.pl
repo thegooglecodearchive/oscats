@@ -27,11 +27,11 @@ sub gen_items {
   my $bank = new oscats::ItemBank("sizeHint", $N_ITEMS);
   for my $i (1 .. $N_ITEMS) {
     # First we create an IRT model container for our item
-    my $model = new oscats::IrtModelL1p();
+    my $model = new oscats::ContModelL1p();
     # Then, set the parameters.  Here there is only one, the difficulty (b).
     $model->set_param_by_index(0, oscats::Random::normal(1));
     # Create an item based on this model
-    my $item = new oscats::Item("irtmodel", $model);
+    my $item = new oscats::Item("contmodel", $model);
     # Add the item to the item bank
     $bank->add_item($item)
     # Since Perl is garbage collected, we don't have to worry about
@@ -81,7 +81,7 @@ for $name (@test_names) {
 # A test must have at minimum a selection algorithm, and administration
 # algorithm, and a stoping critierion.
 for $test (@tests) {
-  oscats::Algorithm::register(oscats::AlgSimulateIrt, $test);
+  oscats::Algorithm::register(oscats::AlgSimulateTheta, $test);
   oscats::Algorithm::register(oscats::AlgEstimateTheta, $test);
   
   # All calls to oscats_algorithm_register() return an algorithm

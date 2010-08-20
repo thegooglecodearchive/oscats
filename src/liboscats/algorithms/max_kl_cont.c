@@ -20,8 +20,8 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 #include "random.h"
-#include "algorithms/max_kl_irt.h"
-#include "irtmodel.h"
+#include "algorithms/max_kl_cont.h"
+#include "contmodel.h"
 
 enum {
   PROP_0,
@@ -33,34 +33,34 @@ enum {
   PROP_SIGMA,
 };
 
-G_DEFINE_TYPE(OscatsAlgMaxKlIrt, oscats_alg_max_kl_irt, OSCATS_TYPE_ALGORITHM);
+G_DEFINE_TYPE(OscatsAlgMaxKlCont, oscats_alg_max_kl_cont, OSCATS_TYPE_ALGORITHM);
 
-static void oscats_alg_max_kl_irt_dispose(GObject *object);
-static void oscats_alg_max_kl_irt_finalize(GObject *object);
-static void oscats_alg_max_kl_irt_set_property(GObject *object,
+static void oscats_alg_max_kl_cont_dispose(GObject *object);
+static void oscats_alg_max_kl_cont_finalize(GObject *object);
+static void oscats_alg_max_kl_cont_set_property(GObject *object,
               guint prop_id, const GValue *value, GParamSpec *pspec);
-static void oscats_alg_max_kl_irt_get_property(GObject *object,
+static void oscats_alg_max_kl_cont_get_property(GObject *object,
               guint prop_id, GValue *value, GParamSpec *pspec);
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
 
-static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
+static void oscats_alg_max_kl_cont_class_init (OscatsAlgMaxKlContClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GParamSpec *pspec;
 
-  gobject_class->dispose = oscats_alg_max_kl_irt_dispose;
-  gobject_class->finalize = oscats_alg_max_kl_irt_finalize;
-  gobject_class->set_property = oscats_alg_max_kl_irt_set_property;
-  gobject_class->get_property = oscats_alg_max_kl_irt_get_property;
+  gobject_class->dispose = oscats_alg_max_kl_cont_dispose;
+  gobject_class->finalize = oscats_alg_max_kl_cont_finalize;
+  gobject_class->set_property = oscats_alg_max_kl_cont_set_property;
+  gobject_class->get_property = oscats_alg_max_kl_cont_get_property;
 
   OSCATS_ALGORITHM_CLASS(klass)->reg = alg_register;
 
 /**
- * OscatsAlgMaxKlIrt:num:
+ * OscatsAlgMaxKlCont:num:
  *
  * Number of items from which to choose.  If one, then the exact optimal
  * item is selected.  If greater than one, then a random item is chosen
- * from among the #OscatsAlgMaxKlIrt:num optimal items.
+ * from among the #OscatsAlgMaxKlCont:num optimal items.
  */
   pspec = g_param_spec_uint("num", "", 
                             "Number of items from which to choose",
@@ -71,7 +71,7 @@ static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
   g_object_class_install_property(gobject_class, PROP_NUM, pspec);
 
 /**
- * OscatsAlgMaxKlIrt:inf-bounds:
+ * OscatsAlgMaxKlCont:inf-bounds:
  *
  * If true, integrate over the confidence ellipsoid.
  * Otherwise, integrate over the box theta.hat +/- c/sqrt(n).
@@ -85,10 +85,10 @@ static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
   g_object_class_install_property(gobject_class, PROP_INF_BOUNDS, pspec);
 
 /**
- * OscatsAlgMaxKlIrt:posterior:
+ * OscatsAlgMaxKlCont:posterior:
  *
  * If true, use posterior-weighted KL index.  (Note: if true, 
- * #OscatsAlgMaxKlIrt:inf-bounds is ignored.)
+ * #OscatsAlgMaxKlCont:inf-bounds is ignored.)
  */
   pspec = g_param_spec_boolean("posterior", "Posterior-weighted", 
                                "Use posterior-weighted KL index",
@@ -99,7 +99,7 @@ static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
   g_object_class_install_property(gobject_class, PROP_POSTERIOR, pspec);
 
 /**
- * OscatsAlgMaxKlIrt:c:
+ * OscatsAlgMaxKlCont:c:
  *
  * The constant c in integration bounds.
  */
@@ -112,7 +112,7 @@ static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
   g_object_class_install_property(gobject_class, PROP_C, pspec);
 
 /**
- * OscatsAlgMaxKlIrt:mu:
+ * OscatsAlgMaxKlCont:mu:
  *
  * Prior population mean for posterior weight.  Default: 0.
  */
@@ -125,7 +125,7 @@ static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
   g_object_class_install_property(gobject_class, PROP_MU, pspec);
 
 /**
- * OscatsAlgMaxKlIrt:Sigma:
+ * OscatsAlgMaxKlCont:Sigma:
  *
  * Prior population covariance matrix for posterior weight.
  * Default: identity.
@@ -140,15 +140,15 @@ static void oscats_alg_max_kl_irt_class_init (OscatsAlgMaxKlIrtClass *klass)
 
 }
 
-static void oscats_alg_max_kl_irt_init (OscatsAlgMaxKlIrt *self)
+static void oscats_alg_max_kl_cont_init (OscatsAlgMaxKlCont *self)
 {
   self->integrator = g_object_new(OSCATS_TYPE_INTEGRATE, NULL);
 }
 
-static void oscats_alg_max_kl_irt_dispose (GObject *object)
+static void oscats_alg_max_kl_cont_dispose (GObject *object)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(object);
-  G_OBJECT_CLASS(oscats_alg_max_kl_irt_parent_class)->dispose(object);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(object);
+  G_OBJECT_CLASS(oscats_alg_max_kl_cont_parent_class)->dispose(object);
   if (self->chooser) g_object_unref(self->chooser);
   if (self->Inf) g_object_unref(self->Inf);
   if (self->integrator) g_object_unref(self->integrator);
@@ -159,21 +159,21 @@ static void oscats_alg_max_kl_irt_dispose (GObject *object)
   self->Inf_inv = NULL;
 }
 
-static void oscats_alg_max_kl_irt_finalize (GObject *object)
+static void oscats_alg_max_kl_cont_finalize (GObject *object)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(object);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(object);
   if (self->mu) gsl_vector_free(self->mu);
   if (self->Sigma_half) gsl_matrix_free(self->Sigma_half);
   if (self->p) g_free(self->p);
   if (self->tmp) gsl_vector_free(self->tmp);
   if (self->tmp2) gsl_vector_free(self->tmp2);
-  G_OBJECT_CLASS(oscats_alg_max_kl_irt_parent_class)->finalize(object);
+  G_OBJECT_CLASS(oscats_alg_max_kl_cont_parent_class)->finalize(object);
 }
 
-static void oscats_alg_max_kl_irt_set_property(GObject *object,
+static void oscats_alg_max_kl_cont_set_property(GObject *object,
               guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(object);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(object);
   switch (prop_id)
   {
     case PROP_NUM:			// construction only
@@ -231,10 +231,10 @@ static void oscats_alg_max_kl_irt_set_property(GObject *object,
   }
 }
 
-static void oscats_alg_max_kl_irt_get_property(GObject *object,
+static void oscats_alg_max_kl_cont_get_property(GObject *object,
               guint prop_id, GValue *value, GParamSpec *pspec)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(object);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(object);
   switch (prop_id)
   {
     case PROP_NUM:
@@ -291,7 +291,7 @@ static void oscats_alg_max_kl_irt_get_property(GObject *object,
 
 static void initialize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(alg_data);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(alg_data);
   if (self->Inf) g_gsl_matrix_set_all(self->Inf, 0);
   self->base_num = 0;
   self->e = e;
@@ -299,27 +299,27 @@ static void initialize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
 
 static gdouble integrand(const GGslVector *theta, gpointer data)
 {
-  OscatsAlgMaxKlIrt *self = (OscatsAlgMaxKlIrt*)data;
+  OscatsAlgMaxKlCont *self = (OscatsAlgMaxKlCont*)data;
   guint k;
   gdouble val = 0;
   for (k=0; k <= self->max; k++)
-    val += self->p[k] * log(oscats_irt_model_P(self->model, k, theta,
+    val += self->p[k] * log(oscats_cont_model_P(self->model, k, theta,
                                                self->e->covariates));
   return (val - self->p_sum);
 }
 
 static gdouble integrand_posterior(const GGslVector *theta, gpointer data)
 {
-  OscatsAlgMaxKlIrt *self = (OscatsAlgMaxKlIrt*)data;
+  OscatsAlgMaxKlCont *self = (OscatsAlgMaxKlCont*)data;
   GPtrArray *items = self->e->items;
   guint8 *resp = self->e->resp->data;
   guint k, num = self->e->items->len;
   gdouble g, L=1, sum=0;
   for (k=0; k <= self->max; k++)
-    sum += self->p[k] * log(oscats_irt_model_P(self->model, k, theta,
+    sum += self->p[k] * log(oscats_cont_model_P(self->model, k, theta,
                                                self->e->covariates));
   for (k=0; k < num; k++)
-    L *= oscats_irt_model_P(g_ptr_array_index(items, k), resp[k], theta,
+    L *= oscats_cont_model_P(g_ptr_array_index(items, k), resp[k], theta,
                             self->e->covariates);
   gsl_vector_memcpy(self->tmp, theta->v);
   gsl_vector_sub(self->tmp, self->mu);
@@ -334,14 +334,14 @@ static gdouble criterion(const OscatsItem *item,
                          const OscatsExaminee *e,
                          gpointer data)
 {
-  OscatsAlgMaxKlIrt *alg_data = OSCATS_ALG_MAX_KL_IRT(data);
+  OscatsAlgMaxKlCont *alg_data = OSCATS_ALG_MAX_KL_CONT(data);
   gdouble I = 0;
   guint k;
-  alg_data->model = item->irt_model;
-  alg_data->max = oscats_irt_model_get_max(item->irt_model);
+  alg_data->model = item->cont_model;
+  alg_data->max = oscats_cont_model_get_max(item->cont_model);
   for (k=0; k <= alg_data->max; k++)
   {
-    gdouble p = oscats_irt_model_P(item->irt_model, k,
+    gdouble p = oscats_cont_model_P(item->cont_model, k,
                                    e->theta_hat, e->covariates);
     alg_data->p[k] = p;
     I += p * log(p);
@@ -368,7 +368,7 @@ static gdouble criterion(const OscatsItem *item,
 static gint select (OscatsTest *test, OscatsExaminee *e,
                     GBitArray *eligible, gpointer alg_data)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(alg_data);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(alg_data);
   OscatsItem *item;
 
   if (self->Inf)
@@ -376,7 +376,7 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
     for (; self->base_num < e->items->len; self->base_num++)
     {
       item = g_ptr_array_index(e->items, self->base_num);
-      oscats_irt_model_fisher_inf(item->irt_model, e->theta_hat,
+      oscats_cont_model_fisher_inf(item->cont_model, e->theta_hat,
                                   e->covariates, self->Inf);
     }
     g_gsl_matrix_copy(self->Inf_inv, self->Inf);
@@ -396,9 +396,9 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
  */
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-  OscatsAlgMaxKlIrt *self = OSCATS_ALG_MAX_KL_IRT(alg_data);
+  OscatsAlgMaxKlCont *self = OSCATS_ALG_MAX_KL_CONT(alg_data);
   guint dims = oscats_item_bank_num_dims(test->itembank);
-  g_return_if_fail(oscats_item_bank_is_irt(test->itembank));
+  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
 
   if (self->posterior)
   {

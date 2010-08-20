@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * 1PL IRT Model Java Wrapper Class
+ * DINA Classification Model Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class IrtModelL1p extends IrtModel
+public final class DiscrModelDina extends DiscrModel
 {
-    protected IrtModelL1p(long pointer) { super(pointer); }
+    protected DiscrModelDina(long pointer) { super(pointer); }
 
-    public IrtModelL1p() {
-      this(OscatsIrtModelL1p.new_with_params());
+    public DiscrModelDina() {
+      this(OscatsDiscrModelDina.new_with_params());
     }
 
-    public IrtModelL1p(BitArray dims) {
-      this(OscatsIrtModelL1p.new_with_params("dims", dims));
+    public DiscrModelDina(Attributes dims) {
+      this(OscatsDiscrModelDina.new_with_params("dims", dims));
     }
 
 }

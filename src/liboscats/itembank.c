@@ -166,13 +166,13 @@ void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsItem *item)
   g_return_if_fail(bank->items);
   if (bank->items->len == 0)
   {
-    if (item->irt_model) bank->Ndims = item->irt_model->testDim;
-    if (item->class_model) bank->Nattrs = item->class_model->dimsFlags->num;
+    if (item->cont_model) bank->Ndims = item->cont_model->testDim;
+    if (item->discr_model) bank->Nattrs = item->discr_model->dimsFlags->num;
   }
-  if (item->irt_model)
-    g_return_if_fail(bank->Ndims == item->irt_model->testDim);
-  if (item->class_model)
-    g_return_if_fail(bank->Nattrs == item->class_model->dimsFlags->num);
+  if (item->cont_model)
+    g_return_if_fail(bank->Ndims == item->cont_model->testDim);
+  if (item->discr_model)
+    g_return_if_fail(bank->Nattrs == item->discr_model->dimsFlags->num);
   g_ptr_array_add(bank->items, item);
   g_object_ref(item);
 }
@@ -235,14 +235,14 @@ guint oscats_item_bank_max_response(const OscatsItemBank *bank)
   gboolean irt;
   guint i, k, max = 0;
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), 0);
-  irt = oscats_item_bank_is_irt(bank);
+  irt = oscats_item_bank_is_cont(bank);
   for (i=0; i < bank->items->len; i++)
   {
     item = g_ptr_array_index(bank->items, i);
     if (irt)
-      k = oscats_irt_model_get_max(item->irt_model);
+      k = oscats_cont_model_get_max(item->cont_model);
     else
-      k = oscats_class_model_get_max(item->class_model);
+      k = oscats_discr_model_get_max(item->discr_model);
     if (k > max) max = k;
   }
   return max;
@@ -266,31 +266,31 @@ guint oscats_item_bank_num_attrs(const OscatsItemBank *bank)
 }
 
 /**
- * oscats_item_bank_is_irt:
+ * oscats_item_bank_is_cont:
  * @bank: an #OscatsItemBank
  *
  * Returns: %TRUE if items @bank have IRT models
  */
-gboolean oscats_item_bank_is_irt(const OscatsItemBank *bank)
+gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank)
 {
   OscatsItem *item;
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), FALSE);
   if (!bank->items || bank->items->len == 0) return FALSE;
   item = g_ptr_array_index(bank->items, 0);
-  return OSCATS_IS_IRT_MODEL(item->irt_model);
+  return OSCATS_IS_CONT_MODEL(item->cont_model);
 }
 
 /**
- * oscats_item_bank_is_class:
+ * oscats_item_bank_is_discr:
  * @bank: an #OscatsItemBank
  *
  * Returns: %TRUE if items @bank have Classification models
  */
-gboolean oscats_item_bank_is_class(const OscatsItemBank *bank)
+gboolean oscats_item_bank_is_discr(const OscatsItemBank *bank)
 {
   OscatsItem *item;
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), FALSE);
   if (!bank->items || bank->items->len == 0) return FALSE;
   item = g_ptr_array_index(bank->items, 0);
-  return OSCATS_IS_CLASS_MODEL(item->class_model);
+  return OSCATS_IS_DISCR_MODEL(item->discr_model);
 }

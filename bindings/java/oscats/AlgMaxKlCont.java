@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * Nominal IRT Model Java Wrapper Class
+ * Maximum KL Divergence (IRT) Algorithm Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class IrtModelNominal extends IrtModel
+public final class AlgMaxKlCont extends Algorithm
 {
-    protected IrtModelNominal(long pointer) { super(pointer); }
+    protected AlgMaxKlCont(long pointer) { super(pointer); }
 
-    public IrtModelNominal() {
-      this(OscatsIrtModelNominal.new_with_params());
-    }
-
-    public IrtModelNominal(BitArray dims) {
-      this(OscatsIrtModelNominal.new_with_params("dims", dims));
+    public static AlgMaxKlCont register(Test test, java.lang.Object... params)
+    {
+      AlgMaxKlCont alg_data = new AlgMaxKlCont(OscatsAlgMaxKlCont.new_with_params(params));
+      OscatsAlgorithmOverride.register(alg_data, test);
+      return alg_data;
     }
 
 }
+

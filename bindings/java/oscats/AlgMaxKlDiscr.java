@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * $Id$
- * NIDA Classification Model Java Wrapper Class
+ * Maximum KL Divergence (Class) Algorithm Java Wrapper Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ClassModelNida extends ClassModel
+public final class AlgMaxKlDiscr extends Algorithm
 {
-    protected ClassModelNida(long pointer) { super(pointer); }
+    protected AlgMaxKlDiscr(long pointer) { super(pointer); }
 
-    public ClassModelNida() {
-      this(OscatsClassModelNida.new_with_params());
-    }
-
-    public ClassModelNida(Attributes dims) {
-      this(OscatsClassModelNida.new_with_params("dims", dims));
+    public static AlgMaxKlDiscr register(Test test, java.lang.Object... params)
+    {
+      AlgMaxKlDiscr alg_data = new AlgMaxKlDiscr(OscatsAlgMaxKlDiscr.new_with_params(params));
+      OscatsAlgorithmOverride.register(alg_data, test);
+      return alg_data;
     }
 
 }
+

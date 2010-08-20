@@ -38,9 +38,9 @@ typedef struct _OscatsAlgClosestDiffClass OscatsAlgClosestDiffClass;
  * OscatsAlgClosestDiff
  *
  * Item selection algorithm (#OscatsTest::select).
- * Picks the item whose difficulty parameter is closest to the current 
- * IRT estimate.  Note: This algorithm won't work correctly if there are
- * multiple items with exactly the same location metric.
+ * Picks the item whose difficulty parameter is closest to the current
+ * estimate of theta.  Note: This algorithm won't work correctly if there
+ * are multiple items with exactly the same location metric.
  */
 struct _OscatsAlgClosestDiff {
   OscatsAlgorithm parent_instance;

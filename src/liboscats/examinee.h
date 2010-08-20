@@ -39,7 +39,7 @@ struct _OscatsExaminee {
   gchar *id;
   GGslVector *true_theta, *theta_hat;
   GGslMatrix *theta_err;
-  OscatsAttributes *true_class, *class_hat;
+  OscatsAttributes *true_alpha, *alpha_hat;
   OscatsCovariates *covariates;
   GPtrArray *items;
   GByteArray *resp;
@@ -58,12 +58,12 @@ GGslVector * oscats_examinee_get_theta_hat(OscatsExaminee *e);
 void oscats_examinee_init_theta_err(OscatsExaminee *e, guint dim);
 GGslMatrix * oscats_examinee_get_theta_err(OscatsExaminee *e);
 
-void oscats_examinee_set_true_class(OscatsExaminee *e,
+void oscats_examinee_set_true_alpha(OscatsExaminee *e,
                                     const OscatsAttributes *attr);
-OscatsAttributes * oscats_examinee_get_true_class(OscatsExaminee *e);
-void oscats_examinee_set_class_hat(OscatsExaminee *e,
+OscatsAttributes * oscats_examinee_get_true_alpha(OscatsExaminee *e);
+void oscats_examinee_set_alpha_hat(OscatsExaminee *e,
                                    const OscatsAttributes *attr);
-OscatsAttributes * oscats_examinee_get_class_hat(OscatsExaminee *e);
+OscatsAttributes * oscats_examinee_get_alpha_hat(OscatsExaminee *e);
 
 void oscats_examinee_prep(OscatsExaminee *e, guint length_hint);
 void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, guint8 resp);
