@@ -129,7 +129,7 @@ for i in range(N_ITEMS) :
   item = bank.get_item(i)
   # Get item's difficulty paramter
   out.write("%d\t%g" % (i+1,
-    item.get_property("irtmodel").get_param_by_index(0) ))
+    item.get_property("contmodel").get_param_by_index(0) ))
   for exposure in exposures :
     out.write("\t%g" % exposure.get_rate(item))
   out.write("\n")

@@ -149,7 +149,7 @@
     $item = $bank->get_item($i);
     # Get item's difficulty paramter
     fwrite($out, sprintf("%d\t%g", $i+1,
-                         $item->get_property("irtmodel")->get_param_by_index(0)) );
+                         $item->get_property("contmodel")->get_param_by_index(0)) );
     foreach ($exposures as $exposure) {
       fwrite($out, sprintf("\t%g", $exposure->get_rate($item)) );
     }

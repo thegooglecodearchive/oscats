@@ -135,7 +135,7 @@ print OUT "ID\tb\t" . join("\t", @test_names) . "\n";
 for $i (1 .. $N_ITEMS) {
   $item = $bank->get_item($i-1);
   # Get item's difficulty paramter
-  printf OUT "%d\t%g", $i, $item->get_property("irtmodel")->get_param_by_index(0);
+  printf OUT "%d\t%g", $i, $item->get_property("contmodel")->get_param_by_index(0);
   for $exposure (@exposures) {
     printf OUT "\t%g", $exposure->get_rate($item);
   }
