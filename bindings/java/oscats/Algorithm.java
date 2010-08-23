@@ -27,4 +27,11 @@ public abstract class Algorithm extends Object
 {
     protected Algorithm(long pointer) { super(pointer); }
 
+    public Algorithm() { this(OscatsAlgorithm.new_with_params()); }
+
+    public Algorithm register(Test test)
+    {
+        return OscatsAlgorithm.register(this, test);
+    }
+
 }

@@ -27,16 +27,12 @@ public final class AlgClosestDiff extends Algorithm
 {
     protected AlgClosestDiff(long pointer) { super(pointer); }
 
-    public static AlgClosestDiff register(Test test, int num)
+    public AlgClosestDiff() { this(OscatsAlgClosestDiff.new_with_params()); }
+
+    public static AlgClosestDiff createAlgClosestDiff(int num)
     {
-      return register(test, "num", num);
+      return new AlgClosestDiff(OscatsAlgClosestDiff.new_with_params("num", num));
     }
 
-    public static AlgClosestDiff register(Test test, java.lang.Object... params)
-    {
-      AlgClosestDiff alg_data = new AlgClosestDiff(OscatsAlgClosestDiff.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
 }
 

@@ -27,12 +27,7 @@ public final class AlgSimulateAlpha extends Algorithm
 {
     protected AlgSimulateAlpha(long pointer) { super(pointer); }
 
-    public static AlgSimulateAlpha register(Test test, java.lang.Object... params)
-    {
-      AlgSimulateAlpha alg_data = new AlgSimulateAlpha(OscatsAlgSimulateAlpha.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgSimulateAlpha() { this(OscatsAlgSimulateAlpha.new_with_params()); }
 
 }
 

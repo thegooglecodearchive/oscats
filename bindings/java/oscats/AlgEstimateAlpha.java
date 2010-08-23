@@ -27,12 +27,7 @@ public final class AlgEstimateAlpha extends Algorithm
 {
     protected AlgEstimateAlpha(long pointer) { super(pointer); }
 
-    public static AlgEstimateAlpha register(Test test, java.lang.Object... params)
-    {
-      AlgEstimateAlpha alg_data = new AlgEstimateAlpha(OscatsAlgEstimateAlpha.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
-
+    public AlgEstimateAlpha() { this(OscatsAlgEstimateAlpha.new_with_params()); }
+    
 }
 

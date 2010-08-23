@@ -100,26 +100,30 @@ for j = 1:num_tests
       % algorithm, and a stoping critierion.
 
       % Have to pass empty set of parameters to appease Matlab
-      oscats.AlgSimulateTheta.register(test(j), {});
-      oscats.AlgEstimateTheta.register(test(j), {});
+      oscats.AlgSimulateTheta().register(test(j));
+      oscats.AlgEstimateTheta().register(test(j));
 
       % All calls to oscats.Algorithm.register() return an algorithm
       % data object.  In many cases, we don't care about this object, since
       % it doesn't contain any interesting information.  But, for the
       % item exposure counter, we want to have access to the item exposure
       % rates when the test is over, so we keep the object.
-      exposure(j) = oscats.AlgExposureCounter.register(test(j), {});
+      exposure(j) = oscats.AlgExposureCounter();
+      exposure(j).register(test(j));
 
-      oscats.AlgFixedLength.register(test(j), LEN);
+      alg = oscats.AlgFixedLength.createAlgFixedLength(LEN);
+      alg.register(test(j));
 end
     
 % Here we register the item selection criteria for the different tests
-oscats.AlgPickRand.register(test(1), {});
+oscats.AlgPickRand().register(test(1));
 % The default for OscatsAlgClosestDiff is to pick the exact closest item
-oscats.AlgClosestDiff.register(test(2), {});
+oscats.AlgClosestDiff().register(test(2));
 % But, we can have the algorithm choose randomly from among the num closest
-oscats.AlgClosestDiff.register(test(3), 5);
-oscats.AlgClosestDiff.register(test(4), 10);
+alg = oscats.AlgClosestDiff.createAlgClosestDiff(5);
+alg.register(test(3));
+alg = oscats.AlgClosestDiff.createAlgClosestDiff(10);
+alg.register(test(4));
     
 disp('Administering.');
 f = fopen('ex01-examinees.dat', 'w');

@@ -27,12 +27,7 @@ public final class AlgExposureCounter extends Algorithm
 {
     protected AlgExposureCounter(long pointer) { super(pointer); }
 
-    public static AlgExposureCounter register(Test test, java.lang.Object... params)
-    {
-      AlgExposureCounter alg_data = new AlgExposureCounter(OscatsAlgExposureCounter.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgExposureCounter() { this(OscatsAlgExposureCounter.new_with_params()); }
 
     public int numExaminees() {
       return OscatsAlgExposureCounter.numExaminees(this);

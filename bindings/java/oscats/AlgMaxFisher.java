@@ -27,12 +27,7 @@ public final class AlgMaxFisher extends Algorithm
 {
     protected AlgMaxFisher(long pointer) { super(pointer); }
 
-    public static AlgMaxFisher register(Test test, java.lang.Object... params)
-    {
-      AlgMaxFisher alg_data = new AlgMaxFisher(OscatsAlgMaxFisher.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgMaxFisher() { this(OscatsAlgMaxFisher.new_with_params()); }
 
 }
 

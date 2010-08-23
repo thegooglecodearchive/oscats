@@ -137,6 +137,7 @@ MODULE = $modname PACKAGE = $modname
 
 BOOT:
 #include "register-oscats.xsh"
+  gperl_register_sink_func(OSCATS_TYPE_ALGORITHM, g_object_ref_sink);
 
 END
 

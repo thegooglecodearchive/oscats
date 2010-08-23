@@ -25,7 +25,7 @@
 
 #include "algorithm.h"
 
-G_DEFINE_TYPE(OscatsAlgorithm, oscats_algorithm, G_TYPE_OBJECT);
+G_DEFINE_TYPE(OscatsAlgorithm, oscats_algorithm, G_TYPE_INITIALLY_UNOWNED);
 
 static void null_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
@@ -45,76 +45,22 @@ static void oscats_algorithm_init (OscatsAlgorithm *self)
 
 /**
  * oscats_algorithm_register:
- * @alg: the type id of the #OscatsAlgorithm descendant to register
+ * @alg_data: the #OscatsAlgorithm descendant to register
  * @test: the #OscatsTest on which to register the algorithm
- * @first_property_name: the name of the first property (or %NULL)
- * @...: value of the first property, followed optionally by more name/value
- *  pairs, followed by %NULL
  *
- * Registers the algorithm @alg for use in @test, and sets its properties.
- * The (implementation-specific) object returned is owned by @test,
- * so its reference count must be increased if kept.
+ * Registers the algorithm @alg_data for use in @test.  This will sink the
+ * floating reference to @alg_data.  (Callers who want to keep a pointer to
+ * @alg_data should call g_object_ref_sink() themselves.)  In general, an
+ * algorithm object is registered to only one test.
  *
- * Returns: a new #OscatsAlgorithm object for accessing algorithm variables
+ * Returns: @alg_data
  */
-gpointer oscats_algorithm_register(GType alg, OscatsTest *test,
-                                   const gchar *first_property_name, ...)
-/*
+OscatsAlgorithm * oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-  OscatsAlgorithm *alg_data;
-  va_list var_args;
-  OscatsAlgorithmClass *klass;
-  g_return_val_if_fail(g_type_is_a(alg, OSCATS_TYPE_ALGORITHM) &&
-                       OSCATS_IS_TEST(test), NULL);
-  va_start(var_args, first_property_name);
-        // Cast to gpointer okay because we checked type of alg above.
-  alg_data = (gpointer)g_object_new_valist(alg, first_property_name, var_args);
-  va_end(var_args);
-  g_return_val_if_fail(alg_data != NULL, alg_data);    // if bad properties
-  klass = g_type_class_ref(alg);
+  OscatsAlgorithmClass *klass = OSCATS_ALGORITHM_GET_CLASS(alg_data);
+  g_return_val_if_fail(OSCATS_IS_ALGORITHM(alg_data) && OSCATS_IS_TEST(test), NULL);
+  g_object_ref_sink(alg_data);
   klass->reg(alg_data, test);
-  g_type_class_unref(klass);
-  return alg_data;
-}
-*/
-{
-  OscatsAlgorithm *alg_data;
-  va_list var_args;
-  va_start(var_args, first_property_name);
-  alg_data = oscats_algorithm_register_valist(alg, test,
-                                              first_property_name, var_args);
-  va_end(var_args);
-  return alg_data;
-}
-
-/**
- * oscats_algorithm_register_valist:
- * @alg: the type id of the #OscatsAlgorithm descendant to register
- * @test: the #OscatsTest on which to register the algorithm
- * @first_property_name: the name of the first property (or %NULL)
- * @var_args: value of the first property, followed optionally by more
- * name/value pairs, followed by %NULL
- *
- * Registers the algorithm @alg for use in @test, and sets its properties.
- * The (implementation-specific) object returned is owned by @test,
- * so its reference count must be increased if kept.
- *
- * Returns: a new #OscatsAlgorithm object for accessing algorithm variables
- */
-gpointer oscats_algorithm_register_valist(GType alg, OscatsTest *test,  
-                                          const gchar *first_property_name,
-                                          va_list var_args)
-{
-  OscatsAlgorithm *alg_data;
-  OscatsAlgorithmClass *klass;
-  g_return_val_if_fail(g_type_is_a(alg, OSCATS_TYPE_ALGORITHM) &&
-                       OSCATS_IS_TEST(test), NULL);
-        // Cast to gpointer okay because we checked type of alg above.
-  alg_data = (gpointer)g_object_new_valist(alg, first_property_name, var_args);
-  g_return_val_if_fail(alg_data != NULL, alg_data);    // if bad properties
-  klass = g_type_class_ref(alg);
-  klass->reg(alg_data, test);
-  g_type_class_unref(klass);
   return alg_data;
 }
 

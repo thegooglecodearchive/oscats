@@ -27,12 +27,7 @@ public final class AlgClassRates extends Algorithm
 {
     protected AlgClassRates(long pointer) { super(pointer); }
 
-    public static AlgClassRates register(Test test, java.lang.Object... params)
-    {
-      AlgClassRates alg_data = new AlgClassRates(OscatsAlgClassRates.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgClassRates() { this(OscatsAlgClassRates.new_with_params()); }
 
     public int numExaminees() {
       return OscatsAlgClassRates.numExaminees(this);

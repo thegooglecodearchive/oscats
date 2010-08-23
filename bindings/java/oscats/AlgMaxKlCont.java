@@ -27,12 +27,7 @@ public final class AlgMaxKlCont extends Algorithm
 {
     protected AlgMaxKlCont(long pointer) { super(pointer); }
 
-    public static AlgMaxKlCont register(Test test, java.lang.Object... params)
-    {
-      AlgMaxKlCont alg_data = new AlgMaxKlCont(OscatsAlgMaxKlCont.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgMaxKlCont() { this(OscatsAlgMaxKlCont.new_with_params()); }
 
 }
 

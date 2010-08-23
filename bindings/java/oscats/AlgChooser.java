@@ -27,12 +27,7 @@ public final class AlgChooser extends Algorithm
 {
     protected AlgChooser(long pointer) { super(pointer); }
 
-    public static AlgChooser register(Test test, java.lang.Object... params)
-    {
-      AlgChooser alg_data = new AlgChooser(OscatsAlgChooser.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
-
+    public AlgChooser() { this(OscatsAlgChooser.new_with_params()); }
+    
 }
 

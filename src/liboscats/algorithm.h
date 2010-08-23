@@ -34,21 +34,17 @@ typedef struct _OscatsAlgorithm OscatsAlgorithm;
 typedef struct _OscatsAlgorithmClass OscatsAlgorithmClass;
 
 struct _OscatsAlgorithm {
-  GObject parent_instance;
+  GInitiallyUnowned parent_instance;
 };
 
 struct _OscatsAlgorithmClass {
-  GObjectClass parent_class;
+  GInitiallyUnownedClass parent_class;
   void (*reg) (OscatsAlgorithm *alg_data, OscatsTest *test);
 };
 
 GType oscats_algorithm_get_type();
 
-gpointer oscats_algorithm_register(GType alg, OscatsTest *test,
-                                   const gchar *first_property_name, ...);
-gpointer oscats_algorithm_register_valist(GType alg, OscatsTest *test,
-                                          const gchar *first_property_name,
-                                          va_list var_args);
+OscatsAlgorithm * oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test);
 
 // Protected
 void oscats_algorithm_closure_finalize (gpointer alg_data, GClosure *closure);

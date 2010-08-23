@@ -27,12 +27,7 @@ public final class AlgMaxKlDiscr extends Algorithm
 {
     protected AlgMaxKlDiscr(long pointer) { super(pointer); }
 
-    public static AlgMaxKlDiscr register(Test test, java.lang.Object... params)
-    {
-      AlgMaxKlDiscr alg_data = new AlgMaxKlDiscr(OscatsAlgMaxKlDiscr.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgMaxKlDiscr() { this(OscatsAlgMaxKlDiscr.new_with_params()); }
 
 }
 

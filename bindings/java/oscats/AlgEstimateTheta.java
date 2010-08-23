@@ -27,16 +27,11 @@ public final class AlgEstimateTheta extends Algorithm
 {
     protected AlgEstimateTheta(long pointer) { super(pointer); }
 
-    public static AlgEstimateTheta register(Test test, GslVector mu, GslMatrix sigma)
-    {
-      return register(test, "mu", mu, "Sigma", sigma);
-    }
+    public AlgEstimateTheta() { this(OscatsAlgEstimateTheta.new_with_params()); }
 
-    public static AlgEstimateTheta register(Test test, java.lang.Object... params)
+    public AlgEstimateTheta(GslVector mu, GslMatrix sigma)
     {
-      AlgEstimateTheta alg_data = new AlgEstimateTheta(OscatsAlgEstimateTheta.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
+      this(OscatsAlgEstimateTheta.new_with_params("mu", mu, "Sigma", sigma));
     }
 }
 

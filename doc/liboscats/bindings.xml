@@ -35,8 +35,7 @@ becomes <code>obj.get(i)</code> and
 <code><link linkend="oscats-test-administer">oscats_test_administer</link>(tst, ex)</code>
 becomes <code>tst.administer(ex)</code>.  Functions that are not object
 methods retain their full C names, for example
-<code>oscats.oscats_rnd_normal(1)</code> or
-<code>oscats.oscats_algorithm_register(oscats.AlgSimulateTheta, test)</code>.
+<code>oscats.oscats_rnd_normal(1)</code>.
 </para>
 
 <para>Objects with an explicit construction method,
@@ -67,9 +66,7 @@ becomes <code>$obj-&gt;get($i)</code> and
 becomes <code>$tst-&gt;administer($ex)</code>.  Functions that are not object
 methods have been placed in Perl modules corresponding to ther C package
 names, so <code><link linkend="oscats-rnd-normal">oscats_rnd_normal</link>(1)</code>
-becomes <code>oscats::Random::normal(1)</code> and
-<code><link linkend="oscats-algorithm-register">oscats_algorithm_register</link>(OscatsAlgSimulateTheta, test)</code>
-becomes <code>oscats::Algorithm::register(oscats::AlgSimulateTheta, $test)</code>.
+becomes <code>oscats::Random::normal(1)</code>.
 </para>
 
 <para>Objects are created with the usual Perl semantics.  Classes with an
@@ -103,9 +100,7 @@ becomes <code>$obj-&gt;get($i)</code> and
 <code><link linkend="oscats-test-administer">oscats_test_administer</link>(tst, ex)</code>
 becomes <code>$tst-&gt;administer($ex)</code>.  Functions that are not object
 methods have been stripped of the <structname>oscats_</structname> prefix,
-for example
-<code>Oscats::rnd_normal(1)</code> or
-<code>OscatsAlgorithm::register(OscatsAlgSimulateTheta, $test)</code>.
+for example <code>Oscats::rnd_normal(1)</code>.
 </para>
 
 <para>Objects with an explicit construction method,
@@ -139,15 +134,7 @@ becomes <code>tst.administer(ex)</code>, and
 becomes <code>ex.setTrueTheta(t)</code>.  Functions that are not object
 methods have been placed in Java packages corresponding to ther C package
 names, so <code><link linkend="oscats-rnd-normal">oscats_rnd_normal</link>(1)</code>
-becomes <code>oscats.Random.normal(1)</code>.  The
-<link linkend="oscats-algorithm-register"><function>oscats_algorithm_register</function></link>
-function is a static method of the <structname>oscats.Algorithm</structname>
-class (and its descendants), so
-<code><link linkend="oscats-algorithm-register">oscats_algorithm_register</link>(OscatsAlgSimulateTheta, test)</code>
-becomes <code>oscats.AlgSimulateTheta.register(test)</code>.  Construction
-properties can be supplied for algorithm registration by appending string
-property names and their values, as in C, for example
-<code>oscats.AlgClosestDiff.register(test, "num", num)</code>.
+becomes <code>oscats.Random.normal(1)</code>.
 </para>
 
 <para>Objects are created with the usual Java semantics.  Classes with an
@@ -166,15 +153,15 @@ explicitly.</para>
 
 <programlisting>
 public final class AlgClosestDiff extends Algorithm
-    public static AlgClosestDiff register(Test test, int num)
+    public static AlgClosestDiff createAlgClosestDiff(int num)
 public final class AlgEstimateTheta extends Algorithm
-    public static AlgEstimateTheta register(Test test, GslVector mu, GslMatrix sigma)
+    public AlgEstimateTheta(GslVector mu, GslMatrix sigma)
 public final class AlgFixedLength extends Algorithm
-    public static AlgFixedLength register(Test test, int len)
+    public static AlgFixedLength createAlgFixedLength(int len)
 public final class BitArray extends Object
     public static final BitArray createBitArray(int bitLength)
 public abstract class ContModel extends Object
-    public ConModel()
+    public ContModel()
     public ContModel(BitArray dims)
     public boolean hasParam(int param) // param is a Quark
     public double getParam(int param) // param is a Quark
@@ -257,11 +244,8 @@ and <filename>oscats.jar</filename> archives must be on Matlab's Java path
 <filename>libglibjni</filename> and <filename>liboscatsjni</filename>
 libraries must be in Matlab's
 <filename>toolbox/local/librarypath.txt</filename>.  Then, java functions
-and methods can be called as if they were Matlab functions.  The variable
-arguments to the <function>oscats.Algorithm.register</function> function are
-supplied as a cell array; and if there are no additional arguments, an empty
-cell array must be given, for example
-<code>oscats.AlgSimulateTheta.register(test, {})</code>. </para>
+and methods can be called as if they were Matlab functions.
+</para>
 
 </section>
 

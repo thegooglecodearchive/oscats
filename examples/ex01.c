@@ -112,34 +112,36 @@ int main()
     // A test must have at minimum a selection algorithm, and administration
     // algorithm, and a stoping critierion.
 
-    // Notice that the GType (not an instantiated object) is given
-    // Be sure to end all calls to oscats_algorithm_register() with NULL!
-    oscats_algorithm_register(OSCATS_TYPE_ALG_SIMULATE_THETA, test[j], NULL);
-    oscats_algorithm_register(OSCATS_TYPE_ALG_ESTIMATE_THETA, test[j], NULL);
+    // Algorithms are "floating" when they are created.  Registration
+    // "sinks" the floating reference.  In other words, we don't have to
+    // worry about keeping track of references to algorithms, unless we want
+    // to keep a copy of the pointer ourselves, in which case, we need to
+    // call g_object_ref_sink() or g_object_ref() on the algorithm.
+    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_SIMULATE_THETA, NULL), test[j]);
+    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_ESTIMATE_THETA, NULL), test[j]);
 
-    // All calls to oscats_algorithm_register() return an algorithm
-    // data object.  In many cases, we don't care about this object, since
-    // it doesn't contain any interesting information.  But, for the
-    // item exposure counter, we want to have access to the item exposure
-    // rates when the test is over, so we keep the object.
-    exposure[j] = oscats_algorithm_register(OSCATS_TYPE_ALG_EXPOSURE_COUNTER, 
-                                            test[j], NULL);
+    // In many cases, we don't care about the algorithm objects we create
+    // after they're registered, since they don't contain any interesting
+    // information.  But, for the item exposure counter, we want to have
+    // access to the item exposure rates when the test is over, so we keep
+    // the object.
+    exposure[j] = oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_EXPOSURE_COUNTER, NULL), test[j]);
     // But, the object doesn't belong to us, yet, so increase ref count:
     g_object_ref(exposure[j]);
 
-    oscats_algorithm_register(OSCATS_TYPE_ALG_FIXED_LENGTH, test[j],
-                              "len", LEN, NULL);
+    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_FIXED_LENGTH,
+                                           "len", LEN, NULL), test[j]);
   }
   
   // Here we register the item selection criteria for the different tests
-  oscats_algorithm_register(OSCATS_TYPE_ALG_PICK_RAND, test[0], NULL);
+  oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_PICK_RAND, NULL), test[0]);
   // The default for OscatsAlgClosestDiff is to pick the exact closest item
-  oscats_algorithm_register(OSCATS_TYPE_ALG_CLOSEST_DIFF, test[1], NULL);
+  oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_CLOSEST_DIFF, NULL), test[1]);
   // But, we can have the algorithm choose randomly from among the num closest
-  oscats_algorithm_register(OSCATS_TYPE_ALG_CLOSEST_DIFF, test[2],
-                            "num", 5, NULL);
-  oscats_algorithm_register(OSCATS_TYPE_ALG_CLOSEST_DIFF, test[3],
-                            "num", 10, NULL);
+  oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_CLOSEST_DIFF,
+                                         "num", 5, NULL), test[2]);
+  oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_CLOSEST_DIFF,
+                                         "num", 10, NULL), test[3]);
   
   printf("Administering.\n");
   f = fopen("ex01-examinees.dat", "w");

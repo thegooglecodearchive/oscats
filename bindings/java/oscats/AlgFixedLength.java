@@ -27,16 +27,12 @@ public final class AlgFixedLength extends Algorithm
 {
     protected AlgFixedLength(long pointer) { super(pointer); }
 
-    public static AlgFixedLength register(Test test, int len)
+    public AlgFixedLength() { this(OscatsAlgFixedLength.new_with_params()); }
+
+    public static AlgFixedLength createAlgFixedLength(int len)
     {
-      return register(test, "len", len);
+      return new AlgFixedLength(OscatsAlgFixedLength.new_with_params("len", len));
     }
 
-    public static AlgFixedLength register(Test test, java.lang.Object... params)
-    {
-      AlgFixedLength alg_data = new AlgFixedLength(OscatsAlgFixedLength.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
 }
 

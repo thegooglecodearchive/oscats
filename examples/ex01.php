@@ -92,27 +92,36 @@
   # algorithm, and a stoping critierion.
   $exposures = array();
   foreach ($tests as $test) {
-    OscatsAlgorithm::register(OscatsAlgSimulateTheta, $test);
-    OscatsAlgorithm::register(OscatsAlgEstimateTheta, $test);
+    $alg = new OscatsAlgSimulateTheta();
+    $alg->register($test);
+    $alg = new OscatsAlgEstimateTheta();
+    $alg->register($test);
     
     # All calls to oscats_algorithm_register() return an algorithm
     # data object.  In many cases, we don't care about this object, since
     # it doesn't contain any interesting information.  But, for the
     # item exposure counter, we want to have access to the item exposure
     # rates when the test is over, so we keep the object.
-    $exposures[] = OscatsAlgorithm::register(OscatsAlgExposureCounter, $test);
+    $alg = new OscatsAlgExposureCounter();
+    $alg->register($test);
+    $exposures[] = $alg;
     
-    OscatsAlgorithm::register(OscatsAlgFixedLength, $test, 
-                              array("len" => $LEN));
+    $alg = new OscatsAlgFixedLength('OscatsAlgFixedLength',
+                                    array("len" => $LEN));
+    $alg->register($test);
   }
 
   # Here we register the item selection criteria for the different tests
-  OscatsAlgorithm::register(OscatsAlgPickRand, $tests[0]);
+  $alg = new OscatsAlgPickRand();
+  $alg->register($tests[0]);
   # The default for OscatsAlgClosestDiff is to pick the exact closest item
-  OscatsAlgorithm::register(OscatsAlgClosestDiff, $tests[1]);
+  $alg = new OscatsAlgClosestDiff();
+  $alg->register($tests[1]);
   # But, we can have the algorithm choose randomly from among the num closest
-  OscatsAlgorithm::register(OscatsAlgClosestDiff, $tests[2], array("num" => 5));
-  OscatsAlgorithm::register(OscatsAlgClosestDiff, $tests[3], array("num" => 10));
+  $alg = new OscatsAlgClosestDiff('OscatsAlgClosestDiff', array("num" => 5));
+  $alg->register($tests[2]);
+  $alg = new OscatsAlgClosestDiff('OscatsAlgClosestDiff', array("num" => 10));
+  $alg->register($tests[3]);
 
   print "Administering.\n";
   $out = fopen("ex01-examinees.dat", "w");

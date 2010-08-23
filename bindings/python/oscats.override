@@ -27,105 +27,12 @@ headers
 #include "pygobject.h"
 #include <oscats.h>
 #include "pyalgorithm.h"
+#define PyGInitiallyUnowned_Type PyGObject_Type
 
 %%
 modulename oscats
 %%
 import gobject.GObject as PyGObject_Type
 %%
-ignore
-  oscats_algorithm_register_valist
-%%
 ignore-glob
   *_get_type
-%%
-override oscats_algorithm_register kwargs
-static PyObject *
-_wrap_oscats_algorithm_register (PyGObject *self, PyObject *args, PyObject *kwargs)
-{
-  PyObject *pytype, *pytest;
-  OscatsAlgorithmClass *alg;
-  OscatsAlgorithm *alg_data = NULL;
-  GType type;
-  GParameter *params = NULL;
-  guint i, num = 0;
-
-  if (!PyArg_ParseTuple(args, "OO", &pytype, &pytest))
-    return NULL;
-  if ((type = pyg_type_from_object(pytype)) == 0)
-    return NULL;
-  if (!g_type_is_a(type, OSCATS_TYPE_ALGORITHM))
-  {
-    PyErr_SetString(PyExc_TypeError, "first argument must be an oscats.Algorithm");
-    return NULL;
-  }
-  if (!pygobject_check(pytest, &PyOscatsTest_Type))
-  {
-    PyErr_SetString(PyExc_TypeError, "second argument must be an oscats.Test");
-    return NULL;
-  }
-  if ((alg = g_type_class_ref(type)) == NULL)
-  {
-    PyErr_Format(PyExc_TypeError, "could not get a reference to type class");
-    return NULL;
-  }
-
-  if (kwargs)
-  {
-    PyObject *key, *value;
-    Py_ssize_t pos = 0;
-    
-    params = g_new0(GParameter, PyDict_Size(kwargs));
-    while (PyDict_Next(kwargs, &pos, &key, &value))
-    {
-      GParamSpec *pspec;
-      const gchar *param = PyString_AsString(key);
-      
-      pspec = g_object_class_find_property((GObjectClass*)alg, param);
-      if (!pspec)
-      {
-        PyErr_Format(PyExc_TypeError, "%s doesn't have property %s",
-                     g_type_name(type), param);
-        goto bail;
-      }
-      g_value_init(&params[num].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
-      if (pyg_param_gvalue_from_pyobject(&params[num].value, value, pspec) < 0)
-      {
-        PyErr_Format(PyExc_TypeError,
-          "could not convert value for property [%s] from %s to %s",
-          param, value->ob_type->tp_name,
-          g_type_name(G_PARAM_SPEC_VALUE_TYPE(pspec)) );
-        goto bail;
-      }
-      params[num++].name = g_strdup(param);
-    }
-  } // kwargs
-  
-  alg_data = g_object_newv(type, num, params);
-  if (!alg_data)
-    PyErr_SetString(PyExc_RuntimeError, "could not create object");
-  else
-    alg->reg(alg_data, (OscatsTest*)pygobject_get(pytest));
-  if (PyErr_Occurred())
-  {
-    g_object_unref(alg_data);
-    alg_data = NULL;
-  }
-  
-bail:
-  for (i=0; i < num; i++)
-  {
-    g_free((gchar*)params[i].name);
-    g_value_unset(&params[i].value);
-  }
-  g_free(params);
-  g_type_class_unref(alg);
-  
-  if (alg_data)
-  {
-    self = (PyGObject *) pygobject_new((GObject *)alg_data);
-    // we don't unref alg_data, since it's reference is owned by test
-  } else self = NULL;
-  
-  return (PyObject*) self;
-}

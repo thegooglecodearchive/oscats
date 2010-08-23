@@ -26,6 +26,7 @@
 
 /* include this first, before NO_IMPORT_PYGOBJECT is defined */
 #include <pygobject.h>
+#include <oscats.h>
 
 void pyoscats_register_classes (PyObject *d);
 void pyoscats_add_constants(PyObject *module, const gchar *strip_prefix);
@@ -45,5 +46,6 @@ initoscats(void)
 //    _pyoscats_register_boxed_types();	
     pyoscats_register_classes (d);
 //    pyoscats_add_constants(m, "OSCATS_");
+    pygobject_register_sinkfunc(OSCATS_TYPE_ALGORITHM, g_object_ref_sink);
 }
 

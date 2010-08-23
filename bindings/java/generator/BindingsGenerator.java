@@ -101,7 +101,7 @@ import com.operationaldynamics.driver.ImproperDefsFileException;
 public class BindingsGenerator
 {
     public static void main(String[] args) throws IOException {
-        runGeneratorOutputToFiles(new File("defs/"), new File("generated/"));
+        runGeneratorOutputToFiles(new File("defs"+File.separator), new File("generated"+File.separator));
     }
 
     /**
@@ -168,7 +168,7 @@ public class BindingsGenerator
          */
         try {
             typeMapping = new PrintWriter(new BufferedWriter(new FileWriter(
-                    "generated/typeMapping.properties")));
+                    "generated"+File.separator+"typeMapping.properties")));
         } catch (IOException ie) {
             System.err.println("Can't open typeMapping file for writing!\n" + ie);
             return;
@@ -181,7 +181,7 @@ public class BindingsGenerator
 
             data = iter.next();
 
-            packageAndClassName = data.getType().fullyQualifiedTranslationClassName().replace('.', '/');
+            packageAndClassName = data.getType().fullyQualifiedTranslationClassName().replace('.', File.separatorChar);
             transTarget = new File(outputDir, packageAndClassName + ".java");
             jniTarget = new File(outputDir, packageAndClassName + ".c");
 

@@ -81,27 +81,26 @@ for $name (@test_names) {
 # A test must have at minimum a selection algorithm, and administration
 # algorithm, and a stoping critierion.
 for $test (@tests) {
-  oscats::Algorithm::register(oscats::AlgSimulateTheta, $test);
-  oscats::Algorithm::register(oscats::AlgEstimateTheta, $test);
+  (new oscats::AlgSimulateTheta())->register($test);
+  (new oscats::AlgEstimateTheta())->register($test);
   
-  # All calls to oscats_algorithm_register() return an algorithm
-  # data object.  In many cases, we don't care about this object, since
-  # it doesn't contain any interesting information.  But, for the
-  # item exposure counter, we want to have access to the item exposure
-  # rates when the test is over, so we keep the object.
+  # In many cases, we don't care about the algorithm objects after they've
+  # been registered, since they don't contain any interesting information. 
+  # But, for the item exposure counter, we want to have access to the item
+  # exposure rates when the test is over, so we keep the object.
   push @exposures,
-    oscats::Algorithm::register(oscats::AlgExposureCounter, $test);
+    (new oscats::AlgExposureCounter())->register($test);
   
-  oscats::Algorithm::register(oscats::AlgFixedLength, $test, "len", $LEN);
+  (new oscats::AlgFixedLength("len", $LEN))->register($test);
 }
 
 # Here we register the item selection criteria for the different tests
-oscats::Algorithm::register(oscats::AlgPickRand, $tests[0]);
+(new oscats::AlgPickRand())->register($tests[0]);
 # The default for OscatsAlgClosestDiff is to pick the exact closest item
-oscats::Algorithm::register(oscats::AlgClosestDiff, $tests[1]);
+(new oscats::AlgClosestDiff())->register($tests[1]);
 # But, we can have the algorithm choose randomly from among the num closest
-oscats::Algorithm::register(oscats::AlgClosestDiff, $tests[2], "num", 5);
-oscats::Algorithm::register(oscats::AlgClosestDiff, $tests[3], "num", 10);
+(new oscats::AlgClosestDiff("num", 5))->register($tests[2]);
+(new oscats::AlgClosestDiff("num", 10))->register($tests[3]);
 
 print "Administering.\n";
 open OUT, ">ex01-examinees.dat" or die "Can't open >ex01-examinees.dat: $!\n";

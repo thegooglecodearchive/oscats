@@ -2,8 +2,14 @@
 
 CLEANFILES = generator.jar glib.jar oscats.jar
 
+if WINDOWS
+CP_SEP = \;
+else
+CP_SEP = :
+endif
+
 generator.jar: generator/generator.files $(GENERATOR_FILES)
-	if test ! -d .libs/gnerator; then mkdir -p .libs/generator; fi
+	if test ! -d .libs/generator; then mkdir -p .libs/generator; fi
 	if test ! -d generator ; then ln -s $(srcdir)/generator . ; fi
 	$(JAVAC) @$(srcdir)/generator/generator.files -d .libs/generator
 	(cd .libs/generator && $(JAR) cf ../../generator.jar * )
@@ -66,7 +72,7 @@ libglibjni_la_CFLAGS = @GLIB_CFLAGS@ -I.libs/include @JAVA_CPPFLAGS0@ \
 libglibjni_la_LIBADD = @GLIB_LIBS@ -lgthread-2.0 @JAVA_LIBS0@
 
 liboscatsjni_la_DEPENDENCIES = oscats.jar libglibjni.la
-liboscatsjni_la_SOURCES = oscats/OscatsAlgorithmOverride.c
+#liboscatsjni_la_SOURCES = oscats/OscatsAlgorithmOverride.c
 nodist_liboscatsjni_la_SOURCES = $(OSCATS_GENERATED_SOURCES)
 liboscatsjni_la_CFLAGS = @GLIB_CFLAGS@ -I.libs/include @JAVA_CPPFLAGS0@ \
 			-I$(srcdir)/jni -I$(top_srcdir)/src/liboscats
@@ -187,7 +193,6 @@ OSCATS_FILES = oscats/Plumbing.java \
 	oscats/AlgSimulateTheta.java \
 	oscats/AlgSimulateAlpha.java \
 	oscats/Algorithm.java \
-	oscats/OscatsAlgorithmOverride.java \
 	oscats/BitArray.java \
 	oscats/Examinee.java \
 	oscats/Covariates.java \

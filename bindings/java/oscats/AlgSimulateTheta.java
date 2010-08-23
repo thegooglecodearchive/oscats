@@ -27,12 +27,7 @@ public final class AlgSimulateTheta extends Algorithm
 {
     protected AlgSimulateTheta(long pointer) { super(pointer); }
 
-    public static AlgSimulateTheta register(Test test, java.lang.Object... params)
-    {
-      AlgSimulateTheta alg_data = new AlgSimulateTheta(OscatsAlgSimulateTheta.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgSimulateTheta() { this(OscatsAlgSimulateTheta.new_with_params()); }
 
 }
 

@@ -27,12 +27,7 @@ public final class AlgPickRand extends Algorithm
 {
     protected AlgPickRand(long pointer) { super(pointer); }
 
-    public static AlgPickRand register(Test test, java.lang.Object... params)
-    {
-      AlgPickRand alg_data = new AlgPickRand(OscatsAlgPickRand.new_with_params(params));
-      OscatsAlgorithmOverride.register(alg_data, test);
-      return alg_data;
-    }
+    public AlgPickRand() { this(OscatsAlgPickRand.new_with_params()); }
 
 }
 

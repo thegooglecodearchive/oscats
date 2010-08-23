@@ -102,26 +102,27 @@ public class ex01 {
       // A test must have at minimum a selection algorithm, and administration
       // algorithm, and a stoping critierion.
 
-      oscats.AlgSimulateTheta.register(test[j]);
-      oscats.AlgEstimateTheta.register(test[j]);
+      new oscats.AlgSimulateTheta().register(test[j]);
+      new oscats.AlgEstimateTheta().register(test[j]);
 
       // All calls to oscats.Algorithm.register() return an algorithm
       // data object.  In many cases, we don't care about this object, since
       // it doesn't contain any interesting information.  But, for the
       // item exposure counter, we want to have access to the item exposure
       // rates when the test is over, so we keep the object.
-      exposure[j] = oscats.AlgExposureCounter.register(test[j]);
+      exposure[j] = new oscats.AlgExposureCounter();
+      exposure[j].register(test[j]);
 
-      oscats.AlgFixedLength.register(test[j], LEN);
+      oscats.AlgFixedLength.createAlgFixedLength(LEN).register(test[j]);
     }
     
     // Here we register the item selection criteria for the different tests
-    oscats.AlgPickRand.register(test[0]);
+    new oscats.AlgPickRand().register(test[0]);
     // The default for OscatsAlgClosestDiff is to pick the exact closest item
-    oscats.AlgClosestDiff.register(test[1]);
+    new oscats.AlgClosestDiff().register(test[1]);
     // But, we can have the algorithm choose randomly from among the num closest
-    oscats.AlgClosestDiff.register(test[2], 5);
-    oscats.AlgClosestDiff.register(test[3], 10);
+    oscats.AlgClosestDiff.createAlgClosestDiff(5).register(test[2]);
+    oscats.AlgClosestDiff.createAlgClosestDiff(10).register(test[3]);
     
     System.out.println("Administering.");
     FileOutputStream fos = new FileOutputStream("ex01-examinees.dat");
