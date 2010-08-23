@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * Abstract Discrete IRT Model (Classification) Class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

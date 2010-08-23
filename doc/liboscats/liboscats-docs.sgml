@@ -9,7 +9,7 @@
   <bookinfo>
     <title>liboscats Reference Manual</title>
     <releaseinfo>
-      $Id$ for liboscats &version;.
+      for liboscats &version;.
       The latest version of this documentation can be found on-line at
       <ulink role="online-location" url="http://[SERVER]/liboscats/index.html">http://[SERVER]/liboscats/</ulink>.
     </releaseinfo>

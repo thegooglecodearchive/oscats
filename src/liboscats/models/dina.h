@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * Deterministic Inputs Noisy And Gate (DINA) Classification Model
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

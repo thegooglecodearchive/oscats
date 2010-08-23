@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * Noisy Inputs Deterministic And Gate (NIDA) Classification Model
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

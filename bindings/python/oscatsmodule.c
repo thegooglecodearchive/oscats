@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * Python Bindings for liboscats
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

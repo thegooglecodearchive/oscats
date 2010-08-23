@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * CAT Algorithm: Estimate latent class
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * Wrapper for GNU Scientific Library Data Structures
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

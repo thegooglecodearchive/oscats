@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <chapter>
-  <chapterinfo><releaseinfo>$Id$</releaseinfo></chapterinfo>
   <title>Build and Installation Notes</title>
 
 <section><title>Dependencies</title>

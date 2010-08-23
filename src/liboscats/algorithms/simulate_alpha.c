@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * CAT Algorithm: Simulate Item Administration with underlying Classification model
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

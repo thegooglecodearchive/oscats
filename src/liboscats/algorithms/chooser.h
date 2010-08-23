@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * Support Algorithm: Select Item based on arbitrary Criterion
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *

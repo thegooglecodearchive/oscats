@@ -1,5 +1,4 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * $Id$
  * CAT Algorithm: Select Item based on Kullback-Leibler Divergence (Classification)
  * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
  *
