@@ -27,7 +27,12 @@ public abstract class Plumbing extends oscats.glib.Plumbing
   static
   {
     try { System.loadLibrary("oscatsjni"); }
-    catch (java.lang.UnsatisfiedLinkError e) { System.loadLibrary("liboscatsjni-0"); }
+    catch (java.lang.UnsatisfiedLinkError e1) {
+      try { System.loadLibrary("liboscatsjni-0"); }
+      catch (java.lang.UnsatisfiedLinkError e2) {
+        throw new java.lang.UnsatisfiedLinkError(e1.toString() + "\n" + e2.toString());
+      }
+    }
     registerTypes("oscats.typeMapping");
   }
   

@@ -83,7 +83,12 @@ public abstract class Plumbing
         loader = Plumbing.class.getClassLoader();
 
         try { System.loadLibrary("glibjni"); }
-        catch (java.lang.UnsatisfiedLinkError e) { System.loadLibrary("libglibjni-0"); }
+        catch (java.lang.UnsatisfiedLinkError e1) {
+          try { System.loadLibrary("libglibjni-0"); }
+          catch (java.lang.UnsatisfiedLinkError e2) {
+            throw new java.lang.UnsatisfiedLinkError(e1.toString() + "\n" + e2.toString());
+          }
+        }
     }
 
     /*
