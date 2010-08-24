@@ -109,7 +109,7 @@ bindings_java_getEnv()
  * We could probably check the syntax ourselves, but the class loader is
  * going to do so for us anyway.
  */
-void
+JNIEXPORT void
 bindings_java_throwByName
 (
 	JNIEnv* env,
@@ -160,7 +160,7 @@ bindings_java_throwByName
  * such a thing, we define a condition of this nature coming out of our
  * native code to be unrecoverable, and hence the java.lang.Error subclass.
  */
-void
+JNIEXPORT void
 bindings_java_throw
 (
 	JNIEnv* env,
@@ -182,7 +182,7 @@ bindings_java_throw
 	g_free(msg);
 }
 
-void 
+JNIEXPORT void 
 bindings_java_throwGlibException
 (
 	JNIEnv* env, 
@@ -397,7 +397,7 @@ bindings_java_logging_init
  *
  * You must call bindings_java_releaseString() on the returned gchar*!
  */
-const gchar*
+JNIEXPORT const gchar*
 bindings_java_getString
 (
 	JNIEnv* env,
@@ -459,7 +459,7 @@ bindings_java_getString
  * theoretically correct UTF-8 to UTF-16 conversion function, rather than
  * Java's internal non-compliant encoding.
  */
-jstring
+JNIEXPORT jstring
 bindings_java_newString
 (
 	JNIEnv* env,
@@ -501,7 +501,7 @@ bindings_java_newString
  * const-gchar* types, but it has the benefit of keeping our String conversion
  * utilities symmetric with the JNI API.
  */
-void
+JNIEXPORT void
 bindings_java_releaseString
 (
 	const gchar* str

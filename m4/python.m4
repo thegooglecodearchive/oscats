@@ -14,8 +14,14 @@ PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
 if test "$py_prefix" != "$py_exec_prefix"; then
   PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
 fi
+if test "${IS_WINDOWS}" = "yes"; then
+  PYTHON_INCLUDES=`echo $PYTHON_INCLUDES -I${py_prefix}/include | sed s%\\\\\\\\%/%g`
+  PYTHON_VER=`echo ${PYTHON_VERSION} | sed s:.::`
+  PYTHON_LIBS=`echo -L${py_prefix}/libs -lpython${PYTHON_VER} | sed s%\\\\\\\\%/%g`
+fi
 fi
 AC_SUBST(PYTHON_INCLUDES)
+AC_SUBST(PYTHON_LIBS)
 dnl check if the headers exist:
 save_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"

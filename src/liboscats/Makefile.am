@@ -2,6 +2,10 @@
 
 INCLUDES = -DG_LOG_DOMAIN=\"OSCATS\"
 
+if WINDOWS
+LDFLAGS += -no-undefined
+endif
+
 lib_LTLIBRARIES = liboscats.la
 liboscats_la_SOURCES = bitarray.c gsl.c random.c contmodel.c item.c 	\
 			itembank.c examinee.c marshal.c test.c		\

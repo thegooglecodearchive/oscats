@@ -58,7 +58,6 @@ AC_MSG_CHECKING(whether this is Windows)
 case "$host_os" in
   cygwin* | mingw* | pw32*)
     IS_WINDOWS=yes
-    LDFLAGS="$LDFLAGS -no-undefined"
     AC_MSG_RESULT(yes)
   ;;
 

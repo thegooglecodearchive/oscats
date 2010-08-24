@@ -206,7 +206,7 @@ bindings_java_memory_unref
 /*
  * TODO This needs a better name
  */
-void
+JNIEXPORT void
 bindings_java_memory_cleanup
 (
     GObject* object,

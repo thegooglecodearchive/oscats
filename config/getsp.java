@@ -18,7 +18,7 @@ public class getsp {
 		j=lp.length();
 		while (i<=j) {
 		    if (i==j || lp.charAt(i)==ps) {
-			String lib=lp.substring(k,i);
+			String lib=lp.substring(k,i).replace("\\", "/");
 			k=i+1;
 			if (lib.compareTo(".")!=0)
 			    r=(r==null)?(prefix+lib):(r+" "+prefix+lib);
@@ -27,7 +27,7 @@ public class getsp {
 		}
 		if (r!=null) System.out.println(r);
 	    } else
-		System.out.println(System.getProperty(args[0]));
+		System.out.println(System.getProperty(args[0]).replace("\\", "/"));
 	}
     }
 }

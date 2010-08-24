@@ -8,8 +8,9 @@ EXTRA_DIST = LICENSE oscats.overrides php_gtk.h php_gtk_module.h php_oscats.c
 
 if WINDOWS
 WIN_PHP_CFLAGS = -DPHP_WIN32=1 -DZEND_WIN32=1 -DZEND_DEBUG=0
-WIN_PHP_LDFLAGS = -L$(PHP_EXTENSIONS_DIR) php_gtk2.dll php5.dll
+WIN_PHP_LDFLAGS = -L$(PHP_EXTENSIONS_DIR) -lphp_gtk2 -lphp5
 PHP_LIB_NAME = libphp_oscats-0
+LDFLAGS += -no-undefined
 SHREXT = dll
 else
 WIN_PHP_CFLAGS =

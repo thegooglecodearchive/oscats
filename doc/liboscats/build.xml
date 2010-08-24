@@ -48,6 +48,8 @@ module, after executing <code>perl Makefile.PL</code> but before
 <code>make</code>, edit the <filename>Makefile</filename> replacing all
 instances of <filename>dll.exp</filename> with <filename>Glib</filename>.
 </para>
+
+<!--<para>Edit <filename>Build.PL</filename> after configure to change /usr/local/lib path to e:/msys/local/lib.</para>-->
   </section>
 
   <section><title>PHP Bindings</title>
@@ -69,11 +71,18 @@ files.  In <filename>Zend/zend_config.w32.h</filename> and
 <filename>TSRM/tsrm_config.w32.h</filename>, remove the lines with
 <filename>crtdbg.h</filename>, and in <filename>main/win95nt.h</filename>
 remove the <type>uint</type>, <type>uling</type>, and <type>pid_t</type>
-typedefs.  <!--Moreover, GCC expects libraries to start with
+typedefs.  Moreover, GCC/libtool expect libraries to start with
 <filename>lib</filename>.  So, make copies of
 <filename>php_gtk2.dll</filename> and <filename>php5.dll</filename> named
 <filename>libphp_gtk2.dll</filename> and <filename>libphp5.dll</filename> to
-keep the linker happy.-->
+keep the linker happy.
+</para>
+  </section>
+
+  <section><title>Java Bindings</title>
+<para>
+  You may need to copy the <filename>lib/jvm.lib</filename> file in the JDK
+to <filename>bin/libjvm.a</filename> to satisfy GCC/libtool.
 </para>
   </section>
 

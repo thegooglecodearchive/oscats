@@ -4,6 +4,7 @@ CLEANFILES = generator.jar glib.jar oscats.jar
 
 if WINDOWS
 CP_SEP = \;
+LDFLAGS += -no-undefined -Wl,--kill-at
 else
 CP_SEP = :
 endif
@@ -41,7 +42,7 @@ oscats.jar: generator.jar glib.jar defs/GBitArray.defs oscats/oscats.pkgs $(OSCA
 	$(JAVA) -classpath generator.jar BindingsGenerator
 	$(JAVAC) -d .libs/oscats -classpath glib.jar	\
 		oscats/*.java generated/oscats/*.java
-	$(JAVAH) -jni -d .libs/include -classpath .libs/oscats:glib.jar \
+	$(JAVAH) -jni -d .libs/include -classpath .libs/oscats$(CP_SEP)glib.jar \
 		`cat oscats/oscats.pkgs`
 	cp generated/typeMapping.properties .libs/oscats/oscats.typeMapping
 	(cd .libs/oscats && $(JAR) cf ../../oscats.jar * )

@@ -21,34 +21,34 @@
  * bindings_java_util.c
  */
 
-extern JNIEnv* bindings_java_getEnv();
+JNIEnv* bindings_java_getEnv();
 
-extern void bindings_java_throwByName(JNIEnv*, const char*, const char*);
-extern void bindings_java_throw(JNIEnv*, const char*, ...);
-extern void bindings_java_throwGlibException(JNIEnv*, GError*);
+void bindings_java_throwByName(JNIEnv*, const char*, const char*);
+void bindings_java_throw(JNIEnv*, const char*, ...);
+void bindings_java_throwGlibException(JNIEnv*, GError*);
 
-extern const gchar* bindings_java_typeToSignature(GType);
+const gchar* bindings_java_typeToSignature(GType);
 
-extern void bindings_java_logging_init();
+void bindings_java_logging_init();
 
-extern const gchar* bindings_java_getString(JNIEnv*, jstring);
-extern jstring bindings_java_newString(JNIEnv*, const gchar*);
-extern void bindings_java_releaseString(const gchar*);
+const gchar* bindings_java_getString(JNIEnv*, jstring);
+jstring bindings_java_newString(JNIEnv*, const gchar*);
+void bindings_java_releaseString(const gchar*);
 
 /*
  *  bindings_java_signal.c
  */
 
-extern GClosure* bindings_java_closure_new(JNIEnv*, jobject, jclass, const gchar*, guint);
+GClosure* bindings_java_closure_new(JNIEnv*, jobject, jclass, const gchar*, guint);
 
 /*
  * bindings_java_memory.c
  */
 
-extern void bindings_java_memory_ref(JNIEnv*, GObject*, jobject);
-extern void bindings_java_memory_unref(GObject*);
-extern void bindings_java_memory_cleanup(GObject*, gboolean);
-extern const gchar* bindings_java_memory_pointerToString(void*);
+void bindings_java_memory_ref(JNIEnv*, GObject*, jobject);
+void bindings_java_memory_unref(GObject*);
+void bindings_java_memory_cleanup(GObject*, gboolean);
+const gchar* bindings_java_memory_pointerToString(void*);
 
 // TODO derive this at compile time from org.freedesktop.bindings.Debug
 #define DEBUG_MEMORY_MANAGEMENT FALSE
@@ -56,36 +56,36 @@ extern const gchar* bindings_java_memory_pointerToString(void*);
  * bindings_java_threads.c
  */
 
-extern void bindings_java_threads_init(JNIEnv*, jobject);
-extern void bindings_java_threads_lock();
-extern void bindings_java_threads_unlock();
+void bindings_java_threads_init(JNIEnv*, jobject);
+void bindings_java_threads_lock();
+void bindings_java_threads_unlock();
 
 /*
  * bindings_java_convert.c
  */
  
-extern GList* bindings_java_convert_jarray_to_glist(JNIEnv*, jlongArray);
-extern GSList* bindings_java_convert_jarray_to_gslist(JNIEnv*, jlongArray);
-extern jlongArray bindings_java_convert_glist_to_jarray(JNIEnv*, GList*);
-extern jlongArray bindings_java_convert_gslist_to_jarray(JNIEnv*, GSList*);
-extern gpointer* bindings_java_convert_jarray_to_gpointer(JNIEnv*, jlongArray);
+GList* bindings_java_convert_jarray_to_glist(JNIEnv*, jlongArray);
+GSList* bindings_java_convert_jarray_to_gslist(JNIEnv*, jlongArray);
+jlongArray bindings_java_convert_glist_to_jarray(JNIEnv*, GList*);
+jlongArray bindings_java_convert_gslist_to_jarray(JNIEnv*, GSList*);
+gpointer* bindings_java_convert_jarray_to_gpointer(JNIEnv*, jlongArray);
 
 // the gpointer array is freed at the end
-extern void bindings_java_convert_gpointer_to_jarray(JNIEnv*, gpointer*, jlongArray);
+void bindings_java_convert_gpointer_to_jarray(JNIEnv*, gpointer*, jlongArray);
 
 // the gchar* arrays is not freed
-extern jobjectArray bindings_java_convert_gchararray_to_jarray(JNIEnv*, const gchar**);
-extern gchar** bindings_java_convert_strarray_to_gchararray(JNIEnv*, jobjectArray);
+jobjectArray bindings_java_convert_gchararray_to_jarray(JNIEnv*, const gchar**);
+gchar** bindings_java_convert_strarray_to_gchararray(JNIEnv*, jobjectArray);
 
 // the gchar* array is freed
-extern void bindings_java_convert_gchararray_to_strarray(JNIEnv*, gchar**, jobjectArray);
+void bindings_java_convert_gchararray_to_strarray(JNIEnv*, gchar**, jobjectArray);
 
 /*
  * bindings_java_type.c
  */
 
 extern GType BINDINGS_JAVA_TYPE_REFERENCE;
-extern GType bindings_java_type_lookup(const gchar*);
+GType bindings_java_type_lookup(const gchar*);
 
 /*
  * gnome_screenshot_capture.c
