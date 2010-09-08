@@ -241,7 +241,13 @@ static void oscats_test_class_init (OscatsTestClass *klass)
  * Item administration.  Only one administrator should connect to the
  * #OscatsTest::administer signal.  If multiple algorithms attach to
  * #OscatsTest::administer, only the response returned from the last
- * administrator will be used.
+ * administrator will be reported to algorithms connected to
+ * #OscatsTest::administered.  Note: An algorithm connected to this signal
+ * should call oscats_examinee_add_item(), as appropriate, to record the
+ * response for the examinee so that it can be used in subsequent
+ * ability/classification estimation.  Whether or not the response is
+ * recorded (tests with online calibration, for example, may not record
+ * every response), items are still not administered more than once.
  *
  * Returns: the #guint response of examinee @e to @item
  */
@@ -418,7 +424,7 @@ static void oscats_test_get_property(GObject *object, guint prop_id,
  *  <listitem><para>The item eligibility vector is initialized with the current hinted value (default: all items).</para></listitem>
  *  <listitem><para>The #OscatsTest::filter, #OscatsTest::select, and #OscatsTest::approve signals are emitted.</para></listitem>
  *  <listitem><para>If the approval handler returns %TRUE, goto 3 (not more than #OscatsTest:itermax_select times).</para></listitem>
- *  <listitem><para>The #OscatsTest::administer signal is emitted and the item/response pair are added to @e.</para></listitem>
+ *  <listitem><para>The #OscatsTest::administer signal is emitted (which should add the item/response pair to @e as necessary).</para></listitem>
  *  <listitem><para>The #OscatsTest::administered and #OscatsTest::stopcrit signals are emitted.</para></listitem>
  *  <listitem><para>If the stopping criterion has not been met, goto 3 (not more than #OscatsTest:itermax_items times).</para></listitem>
  *  <listitem><para>The #OscatsTest::finalize signal is emitted.</para></listitem>
@@ -492,7 +498,6 @@ void oscats_test_administer(OscatsTest *test, OscatsExaminee *e)
     }
     g_signal_emit(test, klass->administer, 0, e, item, &resp);
     g_array_append_val(seen_items, item_index);
-    oscats_examinee_add_item(e, item, resp);
     g_signal_emit(test, klass->administered, 0, e, item, resp);
     g_signal_emit(test, klass->stopcrit, 0, e, &stop);
   } while(!stop && ++iter_items < test->itermax_items);

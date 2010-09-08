@@ -41,6 +41,7 @@ typedef struct _OscatsAlgSimulateAlphaClass OscatsAlgSimulateAlphaClass;
  */
 struct _OscatsAlgSimulateAlpha {
   OscatsAlgorithm parent_instance;
+  gboolean record;
 };
 
 struct _OscatsAlgSimulateAlphaClass {

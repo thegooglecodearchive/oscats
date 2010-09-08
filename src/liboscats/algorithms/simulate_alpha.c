@@ -22,17 +22,78 @@
 
 G_DEFINE_TYPE(OscatsAlgSimulateAlpha, oscats_alg_simulate_alpha, OSCATS_TYPE_ALGORITHM);
 
-static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
+enum
+{
+  PROP_0,
+  PROP_AUTO_RECORD,
+};
 
+static void oscats_alg_set_property(GObject *object, guint prop_id,
+                                    const GValue *value, GParamSpec *pspec);
+static void oscats_alg_get_property(GObject *object, guint prop_id,
+                                    GValue *value, GParamSpec *pspec);
+static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
 static void oscats_alg_simulate_alpha_class_init (OscatsAlgSimulateAlphaClass *klass)
 {
-//  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GParamSpec *pspec;
+
+  gobject_class->set_property = oscats_alg_set_property;
+  gobject_class->get_property = oscats_alg_get_property;
 
   OSCATS_ALGORITHM_CLASS(klass)->reg = alg_register;
+
+/**
+ * OscatsAlgSimulateAlpha:auto-record:
+ *
+ * Whether to record all simulated responses.
+ */
+  pspec = g_param_spec_boolean("auto-record", "Auto-record", 
+                               "Record all simulated responses",
+                               TRUE,
+                               G_PARAM_READWRITE |
+                               G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                               G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_AUTO_RECORD, pspec);
+
 }
 
 static void oscats_alg_simulate_alpha_init (OscatsAlgSimulateAlpha *self)
 {
+}
+
+static void oscats_alg_set_property(GObject *object, guint prop_id,
+                                    const GValue *value, GParamSpec *pspec)
+{
+  OscatsAlgSimulateAlpha *self = OSCATS_ALG_SIMULATE_ALPHA(object);
+  switch (prop_id)
+  {
+    case PROP_AUTO_RECORD:
+      self->record = g_value_get_boolean(value);
+      break;
+    
+    default:
+      // Unknown property
+      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+      break;
+  }
+}
+
+static void oscats_alg_get_property(GObject *object, guint prop_id,
+                                    GValue *value, GParamSpec *pspec)
+{
+  OscatsAlgSimulateAlpha *self = OSCATS_ALG_SIMULATE_ALPHA(object);
+  switch (prop_id)
+  {
+    case PROP_AUTO_RECORD:
+      g_value_set_boolean(value, self->record);
+      break;
+    
+    default:
+      // Unknown property
+      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+      break;
+  }
 }
 
 static guint administer (OscatsTest *test, OscatsExaminee *e,
@@ -43,7 +104,11 @@ static guint administer (OscatsTest *test, OscatsExaminee *e,
   for (resp=0; resp <= max; resp++)
     if (rnd < (p=oscats_discr_model_P(item->discr_model, resp,
                                       e->true_alpha)))
+    {
+      if (OSCATS_ALG_SIMULATE_ALPHA(alg_data)->record)
+        oscats_examinee_add_item(e, item, resp);
       return resp;
+    }
     else
       rnd -= p;
   g_warn_if_reached();		// Model probabilities don't sum to 1.

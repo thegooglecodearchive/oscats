@@ -41,6 +41,7 @@ typedef struct _OscatsAlgSimulateThetaClass OscatsAlgSimulateThetaClass;
  */
 struct _OscatsAlgSimulateTheta {
   OscatsAlgorithm parent_instance;
+  gboolean record;
 };
 
 struct _OscatsAlgSimulateThetaClass {
