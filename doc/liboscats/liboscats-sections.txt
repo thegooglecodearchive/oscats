@@ -1,9 +1,38 @@
 <SECTION>
+<FILE>administrand</FILE>
+<TITLE>OscatsAdministrand</TITLE>
+OscatsAdministrand
+OscatsAdministrandClass
+oscats_administrand_reset_characteristics
+oscats_administrand_register_characteristic
+oscats_administrand_characteristic_from_string
+oscats_administrand_characteristic_as_string
+oscats_administrand_set_characteristic
+oscats_administrand_clear_characteristic
+oscats_administrand_clear_characteristics
+oscats_administrand_has_characteristic
+oscats_administrand_characteristics_iter_reset
+oscats_administrand_characteristics_iter_next
+oscats_administrand_is_cont
+oscats_administrand_is_discr
+oscats_administrand_num_dims
+oscats_administrand_num_attrs
+oscats_administrand_max_resp
+<SUBSECTION Standard>
+OSCATS_ADMINISTRAND
+OSCATS_IS_ADMINISTRAND
+OSCATS_TYPE_ADMINISTRAND
+oscats_administrand_get_type
+OSCATS_ADMINISTRAND_CLASS
+OSCATS_IS_ADMINISTRAND_CLASS
+OSCATS_ADMINISTRAND_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>algorithm</FILE>
 <TITLE>OscatsAlgorithm</TITLE>
 OscatsAlgorithm
 oscats_algorithm_register
-oscats_algorithm_register_valist
 oscats_algorithm_closure_finalize
 <SUBSECTION Standard>
 OSCATS_ALGORITHM
@@ -249,16 +278,6 @@ OSCATS_CONT_MODEL_GET_CLASS
 <FILE>item</FILE>
 <TITLE>OscatsItem</TITLE>
 OscatsItem
-oscats_item_reset_characteristics
-oscats_item_register_characteristic
-oscats_item_characteristic_from_string
-oscats_item_characteristic_as_string
-oscats_item_set_characteristic
-oscats_item_clear_characteristic
-oscats_item_clear_characteristics
-oscats_item_has_characteristic
-oscats_item_characteristics_iter_reset
-oscats_item_characteristics_iter_next
 <SUBSECTION Standard>
 OSCATS_ITEM
 OSCATS_IS_ITEM
@@ -274,13 +293,14 @@ OSCATS_ITEM_GET_CLASS
 <TITLE>OscatsItemBank</TITLE>
 OscatsItemBank
 oscats_item_bank_add_item
-oscats_item_bank_num_dims
-oscats_item_bank_num_attrs
 oscats_item_bank_num_items
-oscats_item_bank_max_response
+oscats_item_bank_is_pure
 oscats_item_bank_get_item
 oscats_item_bank_is_cont
 oscats_item_bank_is_discr
+oscats_item_bank_num_dims
+oscats_item_bank_num_attrs
+oscats_item_bank_max_response
 <SUBSECTION Standard>
 OSCATS_ITEM_BANK
 OSCATS_IS_ITEM_BANK

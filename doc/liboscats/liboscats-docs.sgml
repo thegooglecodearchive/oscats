@@ -33,6 +33,7 @@
     </chapter>
     <chapter>
       <title>Core Objects</title>
+      <xi:include href="xml/administrand.xml"/>
       <xi:include href="xml/item.xml"/>
       <xi:include href="xml/itembank.xml"/>
       <xi:include href="xml/test.xml"/>
