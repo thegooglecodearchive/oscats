@@ -33,7 +33,7 @@ typedef struct _OscatsItemBank OscatsItemBank;
 typedef struct _OscatsItemBankClass OscatsItemBankClass;
 
 struct _OscatsItemBank {
-  GObject parent_instance;
+  OscatsAdministrand parent_instance;
   gchar *id;
   GPtrArray *items;
   /*< private >*/
@@ -41,20 +41,20 @@ struct _OscatsItemBank {
 };
 
 struct _OscatsItemBankClass {
-  GObjectClass parent_class;
+  OscatsAdministrand parent_class;
 };
 
 GType oscats_item_bank_get_type();
 
 void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsAdministrand *item);
-guint oscats_item_bank_num_dims(const OscatsItemBank *bank);
-guint oscats_item_bank_num_attrs(const OscatsItemBank *bank);
 guint oscats_item_bank_num_items(const OscatsItemBank *bank);
-guint oscats_item_bank_max_response(const OscatsItemBank *bank);
 const OscatsAdministrand * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i);
 
-gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank);
-gboolean oscats_item_bank_is_discr(const OscatsItemBank *bank);
+#define oscats_item_bank_is_cont(bank) oscats_administrand_is_cont(OSCATS_ADMINISTRAND(bank))
+#define oscats_item_bank_is_discr(bank) oscats_administrand_is_discr(OSCATS_ADMINISTRAND(bank))
+#define oscats_item_bank_num_dims(bank) oscats_administrand_num_dims(OSCATS_ADMINISTRAND(bank))
+#define oscats_item_bank_num_attrs(bank) oscats_administrand_num_attrs(OSCATS_ADMINISTRAND(bank))
+#define oscats_item_bank_max_response(bank) oscats_administrand_max_resp(OSCATS_ADMINISTRAND(bank))
 
 G_END_DECLS
 #endif

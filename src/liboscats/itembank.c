@@ -20,11 +20,21 @@
  * SECTION:itembank
  * @title:OscatsItemBank
  * @short_description: Item Bank Class
+ *
+ * Note: Since an #OscatsItemBank is also an #OscatsAdministrand, it can be
+ * tagged with characteristics and can also serve as an item group for
+ * multi-stage testing or testlets, with appropriately coded algorithms.
+ *
+ * The total number of dimensions or attributes in the item group must be
+ * the same for the IRT models (either continuous or discrete) of each item,
+ * even though some items may load onto only a subset of the total number of
+ * dimensions or attributes.  The dimension of the group is set when the
+ * first item is added.
  */
 
 #include "itembank.h"
 
-G_DEFINE_TYPE(OscatsItemBank, oscats_item_bank, G_TYPE_OBJECT);
+G_DEFINE_TYPE(OscatsItemBank, oscats_item_bank, OSCATS_TYPE_ADMINISTRAND);
 
 enum
 {
@@ -41,9 +51,52 @@ static void oscats_item_bank_set_property(GObject *object, guint prop_id,
 static void oscats_item_bank_get_property(GObject *object, guint prop_id,
                                       GValue *value, GParamSpec *pspec);
                    
+static gboolean is_cont(const OscatsAdministrand *self)
+{
+  OscatsItemBank *bank = OSCATS_ITEM_BANK(self);
+  OscatsAdministrand *item;
+  if (!bank->items || bank->items->len == 0) return FALSE;
+  item = g_ptr_array_index(bank->items, 0);
+  return oscats_administrand_is_cont(item);
+}
+
+static gboolean is_discr(const OscatsAdministrand *self)
+{
+  OscatsItemBank *bank = OSCATS_ITEM_BANK(self);
+  OscatsAdministrand *item;
+  if (!bank->items || bank->items->len == 0) return FALSE;
+  item = g_ptr_array_index(bank->items, 0);
+  return oscats_administrand_is_discr(item);
+}
+
+static guint num_dims(const OscatsAdministrand *bank)
+{
+  return OSCATS_ITEM_BANK(bank)->Ndims;
+}
+
+static guint num_attrs(const OscatsAdministrand *bank)
+{
+  return OSCATS_ITEM_BANK(bank)->Nattrs;
+}
+
+static guint max_resp(const OscatsAdministrand *self)
+{
+  OscatsItemBank *bank = OSCATS_ITEM_BANK(self);
+  OscatsAdministrand *item;
+  guint i, k, max = 0;
+  for (i=0; i < bank->items->len; i++)
+  {
+    item = g_ptr_array_index(bank->items, i);
+    k = oscats_administrand_max_resp(item);
+    if (k > max) max = k;
+  }
+  return max;
+}
+
 static void oscats_item_bank_class_init (OscatsItemBankClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  OscatsAdministrandClass *admin_class = OSCATS_ADMINISTRAND_CLASS(klass);
   GParamSpec *pspec;
 
   gobject_class->constructed = oscats_item_bank_constructed;
@@ -52,6 +105,12 @@ static void oscats_item_bank_class_init (OscatsItemBankClass *klass)
   gobject_class->set_property = oscats_item_bank_set_property;
   gobject_class->get_property = oscats_item_bank_get_property;
   
+  admin_class->is_cont = is_cont;
+  admin_class->is_discr = is_discr;
+  admin_class->num_dims = num_dims;
+  admin_class->num_attrs = num_attrs;
+  admin_class->max_resp = max_resp;
+
 /**
  * OscatsItemBank:id:
  *
@@ -205,88 +264,4 @@ const OscatsAdministrand * oscats_item_bank_get_item(const OscatsItemBank *bank,
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank) && bank->items &&
                        i < bank->items->len, NULL);
   return g_ptr_array_index(bank->items, i);
-}
-
-/**
- * oscats_item_bank_num_dims:
- * @bank: an #OscatsItemBank
- *
- * The total number of dimensions in the test must be the same for the 
- * IRT model of each item, even though some items may load onto only a
- * subset of the total number of dimensions.  The dimension of the bank is
- * set when the first item is added.
- *
- * Returns: the total dimension of the item bank
- */
-guint oscats_item_bank_num_dims(const OscatsItemBank *bank)
-{
-  g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), 0);
-  return bank->Ndims;
-}
-
-/**
- * oscats_item_bank_max_response:
- * @bank: an #OscatsItemBank
- *
- * Returns: the largest permitted response category among all the items
- */
-guint oscats_item_bank_max_response(const OscatsItemBank *bank)
-{
-  OscatsAdministrand *item;
-  guint i, k, max = 0;
-  g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), 0);
-  for (i=0; i < bank->items->len; i++)
-  {
-    item = g_ptr_array_index(bank->items, i);
-    k = oscats_administrand_max_resp(item);
-    if (k > max) max = k;
-  }
-  return max;
-}
-
-/**
- * oscats_item_bank_num_attrs:
- * @bank: an #OscatsItemBank
- *
- * The total number of attributes in the test must be the same for the
- * Classification model of each item, even though items pertain only to a
- * subset of the total number of attributes.  The number of attributes for
- * the bank is set when the first item is added.
- *
- * Returns: the number of attributes of the item bank
- */
-guint oscats_item_bank_num_attrs(const OscatsItemBank *bank)
-{
-  g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), 0);
-  return bank->Nattrs;
-}
-
-/**
- * oscats_item_bank_is_cont:
- * @bank: an #OscatsItemBank
- *
- * Returns: %TRUE if items @bank have IRT models
- */
-gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank)
-{
-  OscatsAdministrand *item;
-  g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), FALSE);
-  if (!bank->items || bank->items->len == 0) return FALSE;
-  item = g_ptr_array_index(bank->items, 0);
-  return oscats_administrand_is_cont(item);
-}
-
-/**
- * oscats_item_bank_is_discr:
- * @bank: an #OscatsItemBank
- *
- * Returns: %TRUE if items @bank have Classification models
- */
-gboolean oscats_item_bank_is_discr(const OscatsItemBank *bank)
-{
-  OscatsAdministrand *item;
-  g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), FALSE);
-  if (!bank->items || bank->items->len == 0) return FALSE;
-  item = g_ptr_array_index(bank->items, 0);
-  return oscats_administrand_is_discr(item);
 }
