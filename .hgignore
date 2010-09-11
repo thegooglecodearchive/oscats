@@ -4,6 +4,7 @@ Makefile.in$
 ^aclocal\.m4$
 ^autom4te\.cache
 ^gtk-doc.make$
+^config/getsp.class$
 ^bindings/python/oscats.defs$
 ^doc/.*\.stamp
 ^doc/.*/html
