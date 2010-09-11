@@ -155,23 +155,25 @@ static void oscats_item_bank_get_property(GObject *object, guint prop_id,
 /**
  * oscats_item_bank_add_item:
  * @bank: an #OscatsItemBank
- * @item: an #OscatsItem
+ * @item: an #OscatsAdministrand
  *
  * Adds @item to the item bank @bank.  (Increases the @item reference count.)
  */
-void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsItem *item)
+void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsAdministrand *item)
 {
-  g_return_if_fail(OSCATS_IS_ITEM_BANK(bank) && OSCATS_IS_ITEM(item));
+  g_return_if_fail(OSCATS_IS_ITEM_BANK(bank) && OSCATS_IS_ADMINISTRAND(item));
   g_return_if_fail(bank->items);
   if (bank->items->len == 0)
   {
-    if (item->cont_model) bank->Ndims = item->cont_model->testDim;
-    if (item->discr_model) bank->Nattrs = item->discr_model->dimsFlags->num;
+    if (oscats_administrand_is_cont(item))
+      bank->Ndims = oscats_administrand_num_dims(item);
+    if (oscats_administrand_is_discr(item))
+      bank->Nattrs = oscats_administrand_num_attrs(item);
   }
-  if (item->cont_model)
-    g_return_if_fail(bank->Ndims == item->cont_model->testDim);
-  if (item->discr_model)
-    g_return_if_fail(bank->Nattrs == item->discr_model->dimsFlags->num);
+  if (oscats_administrand_is_cont(item))
+    g_return_if_fail(bank->Ndims == oscats_administrand_num_dims(item));
+  if (oscats_administrand_is_discr(item))
+    g_return_if_fail(bank->Nattrs == oscats_administrand_num_attrs(item));
   g_ptr_array_add(bank->items, item);
   g_object_ref(item);
 }
@@ -198,7 +200,7 @@ guint oscats_item_bank_num_items(const OscatsItemBank *bank)
  *
  * Returns: the item @i
  */
-const OscatsItem * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i)
+const OscatsAdministrand * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i)
 {
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank) && bank->items &&
                        i < bank->items->len, NULL);
@@ -230,18 +232,13 @@ guint oscats_item_bank_num_dims(const OscatsItemBank *bank)
  */
 guint oscats_item_bank_max_response(const OscatsItemBank *bank)
 {
-  OscatsItem *item;
-  gboolean irt;
+  OscatsAdministrand *item;
   guint i, k, max = 0;
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), 0);
-  irt = oscats_item_bank_is_cont(bank);
   for (i=0; i < bank->items->len; i++)
   {
     item = g_ptr_array_index(bank->items, i);
-    if (irt)
-      k = oscats_cont_model_get_max(item->cont_model);
-    else
-      k = oscats_discr_model_get_max(item->discr_model);
+    k = oscats_administrand_max_resp(item);
     if (k > max) max = k;
   }
   return max;
@@ -272,11 +269,11 @@ guint oscats_item_bank_num_attrs(const OscatsItemBank *bank)
  */
 gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank)
 {
-  OscatsItem *item;
+  OscatsAdministrand *item;
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), FALSE);
   if (!bank->items || bank->items->len == 0) return FALSE;
   item = g_ptr_array_index(bank->items, 0);
-  return OSCATS_IS_CONT_MODEL(item->cont_model);
+  return oscats_administrand_is_cont(item);
 }
 
 /**
@@ -287,9 +284,9 @@ gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank)
  */
 gboolean oscats_item_bank_is_discr(const OscatsItemBank *bank)
 {
-  OscatsItem *item;
+  OscatsAdministrand *item;
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank), FALSE);
   if (!bank->items || bank->items->len == 0) return FALSE;
   item = g_ptr_array_index(bank->items, 0);
-  return OSCATS_IS_DISCR_MODEL(item->discr_model);
+  return oscats_administrand_is_discr(item);
 }

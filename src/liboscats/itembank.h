@@ -19,7 +19,7 @@
 #ifndef _LIBOSCATS_ITEMBANK_H_
 #define _LIBOSCATS_ITEMBANK_H_
 #include <glib.h>
-#include "item.h"
+#include "administrand.h"
 G_BEGIN_DECLS
 
 #define OSCATS_TYPE_ITEM_BANK		(oscats_item_bank_get_type())
@@ -46,12 +46,12 @@ struct _OscatsItemBankClass {
 
 GType oscats_item_bank_get_type();
 
-void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsItem *item);
+void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsAdministrand *item);
 guint oscats_item_bank_num_dims(const OscatsItemBank *bank);
 guint oscats_item_bank_num_attrs(const OscatsItemBank *bank);
 guint oscats_item_bank_num_items(const OscatsItemBank *bank);
 guint oscats_item_bank_max_response(const OscatsItemBank *bank);
-const OscatsItem * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i);
+const OscatsAdministrand * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i);
 
 gboolean oscats_item_bank_is_cont(const OscatsItemBank *bank);
 gboolean oscats_item_bank_is_discr(const OscatsItemBank *bank);
