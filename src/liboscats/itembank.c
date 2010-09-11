@@ -33,6 +33,7 @@
  */
 
 #include "itembank.h"
+#include "item.h"
 
 G_DEFINE_TYPE(OscatsItemBank, oscats_item_bank, OSCATS_TYPE_ADMINISTRAND);
 
@@ -247,6 +248,25 @@ guint oscats_item_bank_num_items(const OscatsItemBank *bank)
 {
   g_return_val_if_fail(OSCATS_IS_ITEM_BANK(bank) && bank->items, 0);
   return bank->items->len;
+}
+
+/**
+ * oscats_item_bank_is_pure:
+ * @bank: an #OscatsItemBank
+ *
+ * Returns: %TRUE if @bank is composed exclusively of class #OscatsItem (or
+ * has no items).
+ */
+gboolean oscats_item_bank_is_pure(const OscatsItemBank *bank)
+{
+  OscatsAdministrand *item;
+  guint i;
+  for (i=0; i < bank->items->len; i++)
+  {
+    item = g_ptr_array_index(bank->items, i);
+    if (!OSCATS_IS_ITEM(item)) return FALSE;
+  }
+  return TRUE;
 }
 
 /**

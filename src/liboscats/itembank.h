@@ -41,13 +41,14 @@ struct _OscatsItemBank {
 };
 
 struct _OscatsItemBankClass {
-  OscatsAdministrand parent_class;
+  OscatsAdministrandClass parent_class;
 };
 
 GType oscats_item_bank_get_type();
 
 void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsAdministrand *item);
 guint oscats_item_bank_num_items(const OscatsItemBank *bank);
+gboolean oscats_item_bank_is_pure(const OscatsItemBank *bank);
 const OscatsAdministrand * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i);
 
 #define oscats_item_bank_is_cont(bank) oscats_administrand_is_cont(OSCATS_ADMINISTRAND(bank))
