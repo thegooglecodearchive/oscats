@@ -32,6 +32,11 @@ enum
   PROP_ID,
 };
 
+static gboolean static_initialized = FALSE;
+static GTree *administrands = NULL;
+static GHashTable *quark_to_char = NULL;
+static GArray *char_to_quark = NULL;
+
 static gint ptr_compare(gconstpointer a, gconstpointer b) {  return b-a;  }
 
 static void oscats_administrand_dispose (GObject *object);
@@ -40,23 +45,32 @@ static void oscats_administrand_set_property(GObject *object, guint prop_id,
                                       const GValue *value, GParamSpec *pspec);
 static void oscats_administrand_get_property(GObject *object, guint prop_id,
                                       GValue *value, GParamSpec *pspec);
+
+static inline void initialize_static()
+{
+  if (!static_initialized)
+  {
+    GQuark q = 0;
+    administrands = g_tree_new(ptr_compare);
+    quark_to_char = g_hash_table_new(g_direct_hash, g_direct_equal);
+    char_to_quark = g_array_new(FALSE, FALSE, sizeof(GQuark));
+    g_hash_table_insert(quark_to_char, 0, 0);
+    g_array_append_val(char_to_quark, q);
+    static_initialized = TRUE;
+  }
+}
                    
 static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GParamSpec *pspec;
-  GQuark q = 0;
 
   gobject_class->dispose = oscats_administrand_dispose;
   gobject_class->finalize = oscats_administrand_finalize;
   gobject_class->set_property = oscats_administrand_set_property;
   gobject_class->get_property = oscats_administrand_get_property;
   
-  klass->administrands = g_tree_new(ptr_compare);
-  klass->quark_to_char = g_hash_table_new(g_direct_hash, g_direct_equal);
-  klass->char_to_quark = g_array_new(FALSE, FALSE, sizeof(GQuark));
-  g_hash_table_insert(klass->quark_to_char, 0, 0);
-  g_array_append_val(klass->char_to_quark, q);
+  initialize_static();
   
 /**
  * OscatsAdministrand:id:
@@ -75,10 +89,8 @@ static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
 
 static void oscats_administrand_init (OscatsAdministrand *self)
 {
-  OscatsAdministrandClass *klass = OSCATS_ADMINISTRAND_GET_CLASS(self);
-  self->characteristics = g_bit_array_new(
-                              g_hash_table_size(klass->quark_to_char));
-  g_tree_insert(klass->administrands, self, NULL);
+  self->characteristics = g_bit_array_new(g_hash_table_size(quark_to_char));
+  g_tree_insert(administrands, self, NULL);
 }
 
 static void oscats_administrand_dispose (GObject *object)
@@ -87,7 +99,7 @@ static void oscats_administrand_dispose (GObject *object)
   G_OBJECT_CLASS(oscats_administrand_parent_class)->dispose(object);
   if (self->characteristics) g_object_unref(self->characteristics);
   self->characteristics = NULL;
-  g_tree_remove(OSCATS_ADMINISTRAND_GET_CLASS(self)->administrands, self);
+  g_tree_remove(administrands, self);
 }
 
 static void oscats_administrand_finalize (GObject *object)
@@ -162,12 +174,13 @@ static gboolean add_characteristic(gpointer key, gpointer val, gpointer data)
  */
 void oscats_administrand_reset_characteristics()
 {
-  OscatsAdministrandClass *klass = g_type_class_ref(OSCATS_TYPE_ADMINISTRAND);
-  g_hash_table_remove_all(klass->quark_to_char);
-  g_hash_table_insert(klass->quark_to_char, 0, 0);
-  g_array_set_size(klass->char_to_quark, 1);
-  g_tree_foreach(klass->administrands, kill_characteristics, NULL);
-  g_type_class_unref(klass);
+  if (static_initialized)
+  {
+    g_hash_table_remove_all(quark_to_char);
+    g_hash_table_insert(quark_to_char, 0, 0);
+    g_array_set_size(char_to_quark, 1);
+    g_tree_foreach(administrands, kill_characteristics, NULL);
+  }
 }
 
 /**
@@ -180,13 +193,11 @@ void oscats_administrand_reset_characteristics()
  */
 void oscats_administrand_register_characteristic(GQuark characteristic)
 {
-  OscatsAdministrandClass *klass = g_type_class_ref(OSCATS_TYPE_ADMINISTRAND);
-  int c = g_hash_table_size(klass->quark_to_char);
-  g_hash_table_insert(klass->quark_to_char,
-                      (gpointer)characteristic, (gpointer)c);
-  g_array_append_val(klass->char_to_quark, characteristic);
-  g_tree_foreach(klass->administrands, add_characteristic, NULL);
-  g_type_class_unref(klass);
+  int c = (static_initialized ? g_hash_table_size(quark_to_char) : 1);
+  initialize_static();
+  g_hash_table_insert(quark_to_char, (gpointer)characteristic, (gpointer)c);
+  g_array_append_val(char_to_quark, characteristic);
+  g_tree_foreach(administrands, add_characteristic, NULL);
 }
 
 /**
@@ -224,14 +235,12 @@ const gchar * oscats_administrand_characteristic_as_string(GQuark characteristic
  */
 void oscats_administrand_set_characteristic(OscatsAdministrand *administrand, GQuark characteristic)
 {
-  OscatsAdministrandClass *klass;
   guint c;
   g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
-  klass = OSCATS_ADMINISTRAND_GET_CLASS(administrand);
-  c = (guint)g_hash_table_lookup(klass->quark_to_char, (gpointer)characteristic);
+  c = (guint)g_hash_table_lookup(quark_to_char, (gpointer)characteristic);
   if (c == 0)
   {
-    c = g_hash_table_size(klass->quark_to_char);
+    c = g_hash_table_size(quark_to_char);
     oscats_administrand_register_characteristic(characteristic);
   }
   g_bit_array_set_bit(administrand->characteristics, c);
@@ -246,11 +255,9 @@ void oscats_administrand_set_characteristic(OscatsAdministrand *administrand, GQ
  */
 void oscats_administrand_clear_characteristic(OscatsAdministrand *administrand, GQuark characteristic)
 {
-  OscatsAdministrandClass *klass;
   guint c;
   g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
-  klass = OSCATS_ADMINISTRAND_GET_CLASS(administrand);
-  c = (guint)g_hash_table_lookup(klass->quark_to_char, (gpointer)characteristic);
+  c = (guint)g_hash_table_lookup(quark_to_char, (gpointer)characteristic);
   if (c) g_bit_array_clear_bit(administrand->characteristics, c);
 }
 
@@ -277,8 +284,7 @@ gboolean oscats_administrand_has_characteristic(OscatsAdministrand *administrand
 {
   g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
   return g_bit_array_get_bit(administrand->characteristics,
-    (guint)g_hash_table_lookup(OSCATS_ADMINISTRAND_GET_CLASS(administrand)->quark_to_char,
-                               (gpointer)characteristic));
+    (guint)g_hash_table_lookup(quark_to_char, (gpointer)characteristic));
 }
 
 /**
@@ -305,7 +311,5 @@ GQuark oscats_administrand_characteristics_iter_next(OscatsAdministrand *adminis
   gint index;
   g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), 0);
   index = g_bit_array_iter_next(administrand->characteristics);
-  return (index < 0 ? 0 :
-          g_array_index(OSCATS_ADMINISTRAND_GET_CLASS(administrand)->char_to_quark,
-                        GQuark, index) );
+  return (index < 0 ? 0 : g_array_index(char_to_quark, GQuark, index) );
 }

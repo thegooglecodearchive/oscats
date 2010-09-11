@@ -40,9 +40,6 @@ struct _OscatsAdministrand {
 
 struct _OscatsAdministrandClass {
   GObjectClass parent_class;
-  GTree *administrands;
-  GHashTable *quark_to_char;
-  GArray *char_to_quark;
 };
 
 GType oscats_administrand_get_type();
