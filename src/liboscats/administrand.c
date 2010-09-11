@@ -60,6 +60,9 @@ static inline void initialize_static()
   }
 }
                    
+static gboolean ret_false(const OscatsAdministrand *item) { return FALSE; }
+static guint ret_zero(const OscatsAdministrand *item) { return 0; }
+
 static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -70,6 +73,11 @@ static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
   gobject_class->set_property = oscats_administrand_set_property;
   gobject_class->get_property = oscats_administrand_get_property;
   
+  klass->is_cont = ret_false;
+  klass->is_discr = ret_false;
+  klass->num_dims = ret_zero;
+  klass->num_attrs = ret_zero;
+
   initialize_static();
   
 /**
@@ -312,4 +320,54 @@ GQuark oscats_administrand_characteristics_iter_next(OscatsAdministrand *adminis
   g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), 0);
   index = g_bit_array_iter_next(administrand->characteristics);
   return (index < 0 ? 0 : g_array_index(char_to_quark, GQuark, index) );
+}
+
+/**
+ * oscats_administrad_is_cont:
+ * @admininstrand: an #OscatsAdmininstrand
+ *
+ * Returns: %TRUE if @administrand is compatible with continuous models.
+ */
+gboolean oscats_administrand_is_cont(const OscatsAdministrand *administrand)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->is_cont(administrand);
+}
+
+/**
+ * oscats_administrad_is_discr:
+ * @admininstrand: an #OscatsAdmininstrand
+ *
+ * Returns: %TRUE if @administrand is compatible with discrete models.
+ */
+gboolean oscats_administrand_is_discr(const OscatsAdministrand *administrand)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->is_discr(administrand);
+}
+
+/**
+ * oscats_administrad_num_dims:
+ * @admininstrand: an #OscatsAdmininstrand
+ *
+ * Returns: the number of (test) dimensions for the continous model used by
+ * @administrand.
+ */
+guint oscats_administrand_num_dims(const OscatsAdministrand *administrand)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->num_dims(administrand);
+}
+
+/**
+ * oscats_administrad_num_attrs:
+ * @admininstrand: an #OscatsAdmininstrand
+ *
+ * Returns: the number of (test) attributes for the discrete model used by
+ * @administrand.
+ */
+guint oscats_administrand_num_attrs(const OscatsAdministrand *administrand)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->num_attrs(administrand);
 }

@@ -40,9 +40,28 @@ static void oscats_item_set_property(GObject *object, guint prop_id,
 static void oscats_item_get_property(GObject *object, guint prop_id,
                                       GValue *value, GParamSpec *pspec);
                    
+static gboolean is_cont (const OscatsAdministrand *item)
+{ return OSCATS_IS_CONT_MODEL(OSCATS_ITEM(item)->cont_model); }
+
+static gboolean is_discr (const OscatsAdministrand *item)
+{ return OSCATS_IS_DISCR_MODEL(OSCATS_ITEM(item)->discr_model); }
+
+static guint num_dims (const OscatsAdministrand *item)
+{
+  OscatsItem *self = OSCATS_ITEM(item);
+  return (self->cont_model ? self->cont_model->testDim : 0);
+}
+
+static guint num_attrs (const OscatsAdministrand *item)
+{
+  OscatsItem *self = OSCATS_ITEM(item);
+  return (self->discr_model ? self->discr_model->dimsFlags->num : 0);
+}
+
 static void oscats_item_class_init (OscatsItemClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  OscatsAdministrandClass *admin_class = OSCATS_ADMINISTRAND_CLASS(klass);
   GParamSpec *pspec;
 
   gobject_class->constructed = oscats_item_constructed;
@@ -50,6 +69,11 @@ static void oscats_item_class_init (OscatsItemClass *klass)
   gobject_class->set_property = oscats_item_set_property;
   gobject_class->get_property = oscats_item_get_property;
   
+  admin_class->is_cont = is_cont;
+  admin_class->is_discr = is_discr;
+  admin_class->num_dims = num_dims;
+  admin_class->num_attrs = num_attrs;
+
 /**
  * OscatsItem:contmodel:
  *
