@@ -204,6 +204,7 @@ OSCATS_FILES = oscats/Plumbing.java \
 	oscats/Integrate.java \
 	oscats/ContModel.java \
 	oscats/DiscrModel.java \
+	oscats/Administrand.java \
 	oscats/Item.java \
 	oscats/ItemBank.java \
 	oscats/ContModelL1p.java \
@@ -244,6 +245,7 @@ OSCATS_GENERATED_SOURCES = generated/oscats/GBitArray.c \
 	generated/oscats/OscatsContModelNominal.c \
 	generated/oscats/OscatsDiscrModelDina.c \
 	generated/oscats/OscatsDiscrModelNida.c \
+	generated/oscats/OscatsAdministrand.c \
 	generated/oscats/OscatsItem.c \
 	generated/oscats/OscatsItemBank.c \
 	generated/oscats/OscatsTest.c \

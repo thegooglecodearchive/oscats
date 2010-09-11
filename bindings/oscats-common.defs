@@ -28,6 +28,13 @@
   (gtype-id "G_TYPE_GSL_VECTOR")
 )
 
+(define-object Administrand
+  (in-module "Oscats")
+  (parent "GObject")
+  (c-name "OscatsAdministrand")
+  (gtype-id "OSCATS_TYPE_ADMINISTRAND")
+)
+
 (define-object AlgChooser
   (in-module "Oscats")
   (parent "GObject")
@@ -212,7 +219,7 @@
 
 (define-object Item
   (in-module "Oscats")
-  (parent "GObject")
+  (parent "OscatsAdministrand")
   (c-name "OscatsItem")
   (gtype-id "OSCATS_TYPE_ITEM")
 )
@@ -232,6 +239,93 @@
 )
 
 ;; Enumerations and flags ...
+
+
+;; From administrand.h
+
+(define-function oscats_administrand_get_type
+  (c-name "oscats_administrand_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function oscats_administrand_reset_characteristics
+  (c-name "oscats_administrand_reset_characteristics")
+  (return-type "none")
+  (parameters
+  )
+)
+
+(define-function oscats_administrand_register_characteristic
+  (c-name "oscats_administrand_register_characteristic")
+  (return-type "none")
+  (parameters
+    '("GQuark" "characteristic")
+  )
+)
+
+(define-function oscats_administrand_characteristic_from_string
+  (c-name "oscats_administrand_characteristic_from_string")
+  (return-type "GQuark")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function oscats_administrand_characteristic_as_string
+  (c-name "oscats_administrand_characteristic_as_string")
+  (return-type "const-gchar*")
+  (parameters
+    '("GQuark" "characteristic")
+  )
+)
+
+(define-method set_characteristic
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_set_characteristic")
+  (return-type "none")
+  (parameters
+    '("GQuark" "characteristic")
+  )
+)
+
+(define-method clear_characteristic
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_clear_characteristic")
+  (return-type "none")
+  (parameters
+    '("GQuark" "characteristic")
+  )
+)
+
+(define-method clear_characteristics
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_clear_characteristics")
+  (return-type "none")
+)
+
+(define-method has_characteristic
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_has_characteristic")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "characteristic")
+  )
+)
+
+(define-method characteristics_iter_reset
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_characteristics_iter_reset")
+  (return-type "none")
+)
+
+(define-method characteristics_iter_next
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_characteristics_iter_next")
+  (return-type "GQuark")
+)
+
 
 
 ;; From algorithm.h
@@ -1255,82 +1349,6 @@
   )
 )
 
-(define-function oscats_item_reset_characteristics
-  (c-name "oscats_item_reset_characteristics")
-  (return-type "none")
-  (parameters
-  )
-)
-
-(define-function oscats_item_register_characteristic
-  (c-name "oscats_item_register_characteristic")
-  (return-type "none")
-  (parameters
-    '("GQuark" "characteristic")
-  )
-)
-
-(define-function oscats_item_characteristic_from_string
-  (c-name "oscats_item_characteristic_from_string")
-  (return-type "GQuark")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-
-(define-function oscats_item_characteristic_as_string
-  (c-name "oscats_item_characteristic_as_string")
-  (return-type "const-gchar*")
-  (parameters
-    '("GQuark" "characteristic")
-  )
-)
-
-(define-method set_characteristic
-  (of-object "OscatsItem")
-  (c-name "oscats_item_set_characteristic")
-  (return-type "none")
-  (parameters
-    '("GQuark" "characteristic")
-  )
-)
-
-(define-method clear_characteristic
-  (of-object "OscatsItem")
-  (c-name "oscats_item_clear_characteristic")
-  (return-type "none")
-  (parameters
-    '("GQuark" "characteristic")
-  )
-)
-
-(define-method clear_characteristics
-  (of-object "OscatsItem")
-  (c-name "oscats_item_clear_characteristics")
-  (return-type "none")
-)
-
-(define-method has_characteristic
-  (of-object "OscatsItem")
-  (c-name "oscats_item_has_characteristic")
-  (return-type "gboolean")
-  (parameters
-    '("GQuark" "characteristic")
-  )
-)
-
-(define-method characteristics_iter_reset
-  (of-object "OscatsItem")
-  (c-name "oscats_item_characteristics_iter_reset")
-  (return-type "none")
-)
-
-(define-method characteristics_iter_next
-  (of-object "OscatsItem")
-  (c-name "oscats_item_characteristics_iter_next")
-  (return-type "GQuark")
-)
-
 
 
 ;; From itembank.h
@@ -1634,6 +1652,72 @@
 
 
 
+;; From dina.h
+
+(define-function oscats_discr_model_dina_get_type
+  (c-name "oscats_discr_model_dina_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l1p.h
+
+(define-function oscats_cont_model_l1p_get_type
+  (c-name "oscats_cont_model_l1p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l2p.h
+
+(define-function oscats_cont_model_l2p_get_type
+  (c-name "oscats_cont_model_l2p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l3p.h
+
+(define-function oscats_cont_model_l3p_get_type
+  (c-name "oscats_cont_model_l3p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From nida.h
+
+(define-function oscats_discr_model_nida_get_type
+  (c-name "oscats_discr_model_nida_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From nominal.h
+
+(define-function oscats_cont_model_nominal_get_type
+  (c-name "oscats_cont_model_nominal_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
 ;; From chooser.h
 
 (define-function oscats_alg_chooser_get_type
@@ -1895,72 +1979,6 @@
 
 (define-function oscats_alg_simulate_theta_get_type
   (c-name "oscats_alg_simulate_theta_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From dina.h
-
-(define-function oscats_discr_model_dina_get_type
-  (c-name "oscats_discr_model_dina_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l1p.h
-
-(define-function oscats_cont_model_l1p_get_type
-  (c-name "oscats_cont_model_l1p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l2p.h
-
-(define-function oscats_cont_model_l2p_get_type
-  (c-name "oscats_cont_model_l2p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l3p.h
-
-(define-function oscats_cont_model_l3p_get_type
-  (c-name "oscats_cont_model_l3p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From nida.h
-
-(define-function oscats_discr_model_nida_get_type
-  (c-name "oscats_discr_model_nida_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From nominal.h
-
-(define-function oscats_cont_model_nominal_get_type
-  (c-name "oscats_cont_model_nominal_get_type")
   (return-type "GType")
   (parameters
   )

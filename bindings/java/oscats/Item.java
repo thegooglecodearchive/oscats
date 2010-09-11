@@ -22,7 +22,7 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class Item extends Object
+public final class Item extends Administrand
 {
     protected Item(long pointer) { super(pointer); }
 
@@ -52,46 +52,6 @@ public final class Item extends Object
     
     public DiscrModel getDiscrModel() {
       return (DiscrModel)getPropertyObject("discrmodel");
-    }
-    
-    static public void resetCharacteristics() {
-      OscatsItem.resetCharacteristics();
-    }
-    
-    static public void registerCharacteristic (int characteristic) {
-      OscatsItem.registerCharacteristic(characteristic);
-    }
-    
-    static public int characteristicFromString(String name) {
-      return OscatsItem.characteristicFromString(name);
-    }
-    
-    static public String characteristicAsString(int characteristic) {
-      return OscatsItem.characteristicAsString(characteristic);
-    }
-    
-    public void setCharacteristic(int characteristic) {
-      OscatsItem.setCharacteristic(this, characteristic);
-    }
-    
-    public void clearCharacteristic(int characteristic) {
-      OscatsItem.clearCharacteristic(this, characteristic);
-    }
-    
-    public void clearCharacteristics() {
-      OscatsItem.clearCharacteristics(this);
-    }
-    
-    public boolean hasCharacteristic(int characteristic) {
-      return OscatsItem.hasCharacteristic(this, characteristic);
-    }
-    
-    public void characteristicsIterReset() {
-      OscatsItem.characteristicsIterReset(this);
-    }
-    
-    public int characteristicsIterNext() {
-      return OscatsItem.characteristicsIterNext(this);
     }
     
 }

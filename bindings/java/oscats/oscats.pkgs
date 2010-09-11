@@ -24,6 +24,7 @@ oscats.GGslVector
 oscats.OscatsIntegrate
 oscats.OscatsContModel
 oscats.OscatsDiscrModel
+oscats.OscatsAdministrand
 oscats.OscatsItem
 oscats.OscatsItemBank
 oscats.OscatsContModelL1p

@@ -7,6 +7,7 @@ oscats_rnd_	Random
 oscats_examinee_	Examinee
 oscats_covariates_	Covariates
 oscats_attributes_	Attributes
+oscats_administrand_	Administrand
 oscats_item_		Item
 oscats_item_bank_	ItemBank
 oscats_test_	Test

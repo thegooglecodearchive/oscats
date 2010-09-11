@@ -19,6 +19,7 @@
 #ifndef _LIBOSCATS_ITEM_H_
 #define _LIBOSCATS_ITEM_H_
 #include <glib.h>
+#include "administrand.h"
 #include "contmodel.h"
 #include "discrmodel.h"
 G_BEGIN_DECLS
@@ -34,34 +35,16 @@ typedef struct _OscatsItem OscatsItem;
 typedef struct _OscatsItemClass OscatsItemClass;
 
 struct _OscatsItem {
-  GObject parent_instance;
-  gchar *id;
+  OscatsAdministrand parent_instance;
   OscatsContModel *cont_model;
   OscatsDiscrModel *discr_model;
-  GBitArray *characteristics;
 };
 
 struct _OscatsItemClass {
-  GObjectClass parent_class;
-  GTree *items;
-  GHashTable *quark_to_char;
-  GArray *char_to_quark;
+  OscatsAdministrandClass parent_class;
 };
 
 GType oscats_item_get_type();
-
-void oscats_item_reset_characteristics();
-void oscats_item_register_characteristic(GQuark characteristic);
-GQuark oscats_item_characteristic_from_string(const gchar *name);
-const gchar * oscats_item_characteristic_as_string(GQuark characteristic);
-
-void oscats_item_set_characteristic(OscatsItem *item, GQuark characteristic);
-void oscats_item_clear_characteristic(OscatsItem *item, GQuark characteristic);
-void oscats_item_clear_characteristics(OscatsItem *item);
-gboolean oscats_item_has_characteristic(OscatsItem *item, GQuark characteristic);
-
-void oscats_item_characteristics_iter_reset(OscatsItem *item);
-GQuark oscats_item_characteristics_iter_next(OscatsItem *item);
 
 G_END_DECLS
 #endif

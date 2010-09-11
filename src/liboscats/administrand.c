@@ -1,0 +1,311 @@
+/* OSCATS: Open-Source Computerized Adaptive Testing System
+ * Abstract Administrand Class
+ * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ *
+ *  OSCATS is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  OSCATS is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with OSCATS.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * SECTION:administrand
+ * @title:OscatsAdministrand
+ * @short_description: Administrand Container Class
+ */
+
+#include "administrand.h"
+
+G_DEFINE_TYPE(OscatsAdministrand, oscats_administrand, G_TYPE_OBJECT);
+
+enum
+{
+  PROP_0,
+  PROP_ID,
+};
+
+static gint ptr_compare(gconstpointer a, gconstpointer b) {  return b-a;  }
+
+static void oscats_administrand_dispose (GObject *object);
+static void oscats_administrand_finalize (GObject *object);
+static void oscats_administrand_set_property(GObject *object, guint prop_id,
+                                      const GValue *value, GParamSpec *pspec);
+static void oscats_administrand_get_property(GObject *object, guint prop_id,
+                                      GValue *value, GParamSpec *pspec);
+                   
+static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GParamSpec *pspec;
+  GQuark q = 0;
+
+  gobject_class->dispose = oscats_administrand_dispose;
+  gobject_class->finalize = oscats_administrand_finalize;
+  gobject_class->set_property = oscats_administrand_set_property;
+  gobject_class->get_property = oscats_administrand_get_property;
+  
+  klass->administrands = g_tree_new(ptr_compare);
+  klass->quark_to_char = g_hash_table_new(g_direct_hash, g_direct_equal);
+  klass->char_to_quark = g_array_new(FALSE, FALSE, sizeof(GQuark));
+  g_hash_table_insert(klass->quark_to_char, 0, 0);
+  g_array_append_val(klass->char_to_quark, q);
+  
+/**
+ * OscatsAdministrand:id:
+ *
+ * A string identifier for the administrand.
+ */
+  pspec = g_param_spec_string("id", "ID", 
+                              "String identifier for the administrand",
+                              NULL,
+                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+                              G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                              G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_ID, pspec);
+
+}
+
+static void oscats_administrand_init (OscatsAdministrand *self)
+{
+  OscatsAdministrandClass *klass = OSCATS_ADMINISTRAND_GET_CLASS(self);
+  self->characteristics = g_bit_array_new(
+                              g_hash_table_size(klass->quark_to_char));
+  g_tree_insert(klass->administrands, self, NULL);
+}
+
+static void oscats_administrand_dispose (GObject *object)
+{
+  OscatsAdministrand *self = OSCATS_ADMINISTRAND(object);
+  G_OBJECT_CLASS(oscats_administrand_parent_class)->dispose(object);
+  if (self->characteristics) g_object_unref(self->characteristics);
+  self->characteristics = NULL;
+  g_tree_remove(OSCATS_ADMINISTRAND_GET_CLASS(self)->administrands, self);
+}
+
+static void oscats_administrand_finalize (GObject *object)
+{
+  OscatsAdministrand *self = OSCATS_ADMINISTRAND(object);
+  g_free(self->id);
+  G_OBJECT_CLASS(oscats_administrand_parent_class)->finalize(object);
+}
+
+static void oscats_administrand_set_property(GObject *object, guint prop_id,
+                                     const GValue *value, GParamSpec *pspec)
+{
+  OscatsAdministrand *self = OSCATS_ADMINISTRAND(object);
+  GString *id;
+  switch (prop_id)
+  {
+    case PROP_ID:			// construction only
+      self->id = g_value_dup_string(value);
+      if (!self->id)
+      {
+        id = g_string_sized_new(18);
+        g_string_printf(id, "[Administrand %p]", self);
+        self->id = id->str;
+        g_string_free(id, FALSE);
+      }
+      break;
+    
+    default:
+      // Unknown property
+      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+      break;
+  }
+}
+
+static void oscats_administrand_get_property(GObject *object, guint prop_id,
+                                      GValue *value, GParamSpec *pspec)
+{
+  OscatsAdministrand *self = OSCATS_ADMINISTRAND(object);
+  switch (prop_id)
+  {
+    case PROP_ID:
+      g_value_set_string(value, self->id);
+      break;
+    
+    default:
+      // Unknown property
+      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+      break;
+  }
+}
+
+static gboolean kill_characteristics(gpointer key, gpointer val, gpointer data)
+{
+  OscatsAdministrand *administrand = (OscatsAdministrand*)key;
+  g_bit_array_resize(administrand->characteristics, 1);
+  return FALSE;
+}
+
+static gboolean add_characteristic(gpointer key, gpointer val, gpointer data)
+{
+  OscatsAdministrand *administrand = (OscatsAdministrand*)key;
+  g_bit_array_extend(administrand->characteristics, 1);
+  return FALSE;
+}
+
+/**
+ * oscats_administrand_reset_characteristics:
+ *
+ * Removes all characteristics from the internal characteristics table.
+ * (Useful for more compact memory management if you shift from
+ * one large set of characteristics to another in the same program.)
+ */
+void oscats_administrand_reset_characteristics()
+{
+  OscatsAdministrandClass *klass = g_type_class_ref(OSCATS_TYPE_ADMINISTRAND);
+  g_hash_table_remove_all(klass->quark_to_char);
+  g_hash_table_insert(klass->quark_to_char, 0, 0);
+  g_array_set_size(klass->char_to_quark, 1);
+  g_tree_foreach(klass->administrands, kill_characteristics, NULL);
+  g_type_class_unref(klass);
+}
+
+/**
+ * oscats_administrand_register_characteristic:
+ * @characteristic: the #GQuark characteristic to register
+ *
+ * Adds @characteristic to the internal characteristics table.  It is more
+ * efficient to register all characteristics before creating administrands
+ * than to add new characteristics after administrands already exist.
+ */
+void oscats_administrand_register_characteristic(GQuark characteristic)
+{
+  OscatsAdministrandClass *klass = g_type_class_ref(OSCATS_TYPE_ADMINISTRAND);
+  int c = g_hash_table_size(klass->quark_to_char);
+  g_hash_table_insert(klass->quark_to_char,
+                      (gpointer)characteristic, (gpointer)c);
+  g_array_append_val(klass->char_to_quark, characteristic);
+  g_tree_foreach(klass->administrands, add_characteristic, NULL);
+  g_type_class_unref(klass);
+}
+
+/**
+ * oscats_administrand_characteristic_from_string:
+ * @name: the string name of the characteristic
+ *
+ * A wrapper of g_quark_from_string() for language bindings.
+ *
+ * Returns: the characteristic as a #GQuark
+ */
+GQuark oscats_administrand_characteristic_from_string(const gchar *name)
+{
+  return g_quark_from_string(name);
+}
+
+/**
+ * oscats_administrand_characteristic_as_string:
+ * @characteristic: a #GQuark characteristic
+ *
+ * A wrapper of g_quark_to_string() for language bindings.
+ *
+ * Returns: the string form of @characteristic
+ */
+const gchar * oscats_administrand_characteristic_as_string(GQuark characteristic)
+{
+  return g_quark_to_string(characteristic);
+}
+
+/**
+ * oscats_administrand_set_characteristic:
+ * @administrand: an #OscatsAdministrand
+ * @characteristic: a #GQuark characteristic
+ *
+ * Indicate that @administrand has @characteristic.
+ */
+void oscats_administrand_set_characteristic(OscatsAdministrand *administrand, GQuark characteristic)
+{
+  OscatsAdministrandClass *klass;
+  guint c;
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
+  klass = OSCATS_ADMINISTRAND_GET_CLASS(administrand);
+  c = (guint)g_hash_table_lookup(klass->quark_to_char, (gpointer)characteristic);
+  if (c == 0)
+  {
+    c = g_hash_table_size(klass->quark_to_char);
+    oscats_administrand_register_characteristic(characteristic);
+  }
+  g_bit_array_set_bit(administrand->characteristics, c);
+}
+
+/**
+ * oscats_administrand_clear_characteristic:
+ * @administrand: an #OscatsAdministrand
+ * @characteristic: a #GQuark characteristic
+ *
+ * Indicate that @administrand does not have @characteristic.
+ */
+void oscats_administrand_clear_characteristic(OscatsAdministrand *administrand, GQuark characteristic)
+{
+  OscatsAdministrandClass *klass;
+  guint c;
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
+  klass = OSCATS_ADMINISTRAND_GET_CLASS(administrand);
+  c = (guint)g_hash_table_lookup(klass->quark_to_char, (gpointer)characteristic);
+  if (c) g_bit_array_clear_bit(administrand->characteristics, c);
+}
+
+/**
+ * oscats_administrand_clear_characteristics:
+ * @administrand: an #OscatsAdministrand
+ *
+ * Clear all characteristics for @administrand.
+ */
+void oscats_administrand_clear_characteristics(OscatsAdministrand *administrand)
+{
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
+  g_bit_array_reset(administrand->characteristics, FALSE);
+}
+
+/**
+ * oscats_administrand_has_characteristic:
+ * @administrand: an #OscatsAdministrand
+ * @characteristic: a #GQuark characteristic
+ *
+ * Returns: %TRUE if @administrand has @characteristic
+ */
+gboolean oscats_administrand_has_characteristic(OscatsAdministrand *administrand, GQuark characteristic)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
+  return g_bit_array_get_bit(administrand->characteristics,
+    (guint)g_hash_table_lookup(OSCATS_ADMINISTRAND_GET_CLASS(administrand)->quark_to_char,
+                               (gpointer)characteristic));
+}
+
+/**
+ * oscats_administrand_characteristics_iter_reset
+ * @administrand: an #OscatsAdministrand
+ *
+ * Reset the characteristics iterator for @administrand.
+ */
+void oscats_administrand_characteristics_iter_reset(OscatsAdministrand *administrand)
+{
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
+  g_bit_array_iter_reset(administrand->characteristics);
+}
+
+/**
+ * oscats_administrand_characteristics_iter_next
+ * @administrand: an #OscatsAdministrand
+ *
+ * Returns: the next #GQuark characteristic that @administrand has, or 0 if @administrand
+ * has no more characteristics
+ */
+GQuark oscats_administrand_characteristics_iter_next(OscatsAdministrand *administrand)
+{
+  gint index;
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), 0);
+  index = g_bit_array_iter_next(administrand->characteristics);
+  return (index < 0 ? 0 :
+          g_array_index(OSCATS_ADMINISTRAND_GET_CLASS(administrand)->char_to_quark,
+                        GQuark, index) );
+}

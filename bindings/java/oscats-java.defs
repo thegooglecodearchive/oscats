@@ -217,17 +217,17 @@
   )
 )
 
-;; static Item methods
+;; static Administrand methods
 
 (define-function reset_characteristics
-  (of-object "OscatsItem")
-  (c-name "oscats_item_reset_characteristics")
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_reset_characteristics")
   (return-type "none")
 )
 
 (define-function register_characteristic
-  (of-object "OscatsItem")
-  (c-name "oscats_item_register_characteristic")
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_register_characteristic")
   (return-type "none")
   (parameters
     '("GQuark" "characteristic")
@@ -235,8 +235,8 @@
 )
 
 (define-function characteristic_from_string
-  (of-object "OscatsItem")
-  (c-name "oscats_item_characteristic_from_string")
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_characteristic_from_string")
   (return-type "GQuark")
   (parameters
     '("const-gchar*" "name")
@@ -244,8 +244,8 @@
 )
 
 (define-function characteristic_as_string
-  (of-object "OscatsItem")
-  (c-name "oscats_item_characteristic_as_string")
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_characteristic_as_string")
   (return-type "const-gchar*")
   (parameters
     '("GQuark" "characteristic")
