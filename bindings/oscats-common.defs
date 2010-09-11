@@ -226,7 +226,7 @@
 
 (define-object ItemBank
   (in-module "Oscats")
-  (parent "GObject")
+  (parent "OscatsAdministrand")
   (c-name "OscatsItemBank")
   (gtype-id "OSCATS_TYPE_ITEM_BANK")
 )
@@ -324,6 +324,36 @@
   (of-object "OscatsAdministrand")
   (c-name "oscats_administrand_characteristics_iter_next")
   (return-type "GQuark")
+)
+
+(define-method is_cont
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_is_cont")
+  (return-type "gboolean")
+)
+
+(define-method is_discr
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_is_discr")
+  (return-type "gboolean")
+)
+
+(define-method num_dims
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_num_dims")
+  (return-type "guint")
+)
+
+(define-method num_attrs
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_num_attrs")
+  (return-type "guint")
+)
+
+(define-method max_resp
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_max_resp")
+  (return-type "guint")
 )
 
 
@@ -1365,20 +1395,8 @@
   (c-name "oscats_item_bank_add_item")
   (return-type "none")
   (parameters
-    '("OscatsItem*" "item")
+    '("OscatsAdministrand*" "item")
   )
-)
-
-(define-method num_dims
-  (of-object "OscatsItemBank")
-  (c-name "oscats_item_bank_num_dims")
-  (return-type "guint")
-)
-
-(define-method num_attrs
-  (of-object "OscatsItemBank")
-  (c-name "oscats_item_bank_num_attrs")
-  (return-type "guint")
 )
 
 (define-method num_items
@@ -1387,31 +1405,19 @@
   (return-type "guint")
 )
 
-(define-method max_response
+(define-method is_pure
   (of-object "OscatsItemBank")
-  (c-name "oscats_item_bank_max_response")
-  (return-type "guint")
+  (c-name "oscats_item_bank_is_pure")
+  (return-type "gboolean")
 )
 
 (define-method get_item
   (of-object "OscatsItemBank")
   (c-name "oscats_item_bank_get_item")
-  (return-type "const-OscatsItem*")
+  (return-type "const-OscatsAdministrand*")
   (parameters
     '("guint" "i")
   )
-)
-
-(define-method is_cont
-  (of-object "OscatsItemBank")
-  (c-name "oscats_item_bank_is_cont")
-  (return-type "gboolean")
-)
-
-(define-method is_discr
-  (of-object "OscatsItemBank")
-  (c-name "oscats_item_bank_is_discr")
-  (return-type "gboolean")
 )
 
 
@@ -1647,72 +1653,6 @@
   (return-type "none")
   (parameters
     '("GBitArray*" "hint")
-  )
-)
-
-
-
-;; From dina.h
-
-(define-function oscats_discr_model_dina_get_type
-  (c-name "oscats_discr_model_dina_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l1p.h
-
-(define-function oscats_cont_model_l1p_get_type
-  (c-name "oscats_cont_model_l1p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l2p.h
-
-(define-function oscats_cont_model_l2p_get_type
-  (c-name "oscats_cont_model_l2p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l3p.h
-
-(define-function oscats_cont_model_l3p_get_type
-  (c-name "oscats_cont_model_l3p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From nida.h
-
-(define-function oscats_discr_model_nida_get_type
-  (c-name "oscats_discr_model_nida_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From nominal.h
-
-(define-function oscats_cont_model_nominal_get_type
-  (c-name "oscats_cont_model_nominal_get_type")
-  (return-type "GType")
-  (parameters
   )
 )
 
@@ -1979,6 +1919,72 @@
 
 (define-function oscats_alg_simulate_theta_get_type
   (c-name "oscats_alg_simulate_theta_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From dina.h
+
+(define-function oscats_discr_model_dina_get_type
+  (c-name "oscats_discr_model_dina_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l1p.h
+
+(define-function oscats_cont_model_l1p_get_type
+  (c-name "oscats_cont_model_l1p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l2p.h
+
+(define-function oscats_cont_model_l2p_get_type
+  (c-name "oscats_cont_model_l2p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l3p.h
+
+(define-function oscats_cont_model_l3p_get_type
+  (c-name "oscats_cont_model_l3p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From nida.h
+
+(define-function oscats_discr_model_nida_get_type
+  (c-name "oscats_discr_model_nida_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From nominal.h
+
+(define-function oscats_cont_model_nominal_get_type
+  (c-name "oscats_cont_model_nominal_get_type")
   (return-type "GType")
   (parameters
   )

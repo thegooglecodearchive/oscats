@@ -22,7 +22,7 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ItemBank extends Object
+public final class ItemBank extends Administrand
 {
     protected ItemBank(long pointer) { super(pointer); }
 
@@ -42,25 +42,17 @@ public final class ItemBank extends Object
       this(OscatsItemBank.new_with_params());
     }
     
-    public void addItem(Item item) {
+    public void addItem(Administrand item) {
       OscatsItemBank.addItem(this, item);
     }
     
-    public int numDims() { return OscatsItemBank.numDims(this); }
+    public int maxResponse() { return maxResp(); }
     
-    public int numAttrs() { return OscatsItemBank.numAttrs(this); }
-    
-    public int numItems() { return OscatsItemBank.numItems(this); }
-    
-    public int maxResponse() { return OscatsItemBank.maxResponse(this); }
-    
-    public Item getItem(int i) {
+    public Administrand getItem(int i) {
       return OscatsItemBank.getItem(this, i);
     }
     
-    public boolean isCont() { return OscatsItemBank.isCont(this); }
-    
-    public boolean isDiscr() { return OscatsItemBank.isDiscr(this); }
+    public boolean isPure() { return OscatsItemBank.isPure(this); }
 
 }
 

@@ -73,6 +73,26 @@ public class Administrand extends Object
     public int characteristicsIterNext() {
       return OscatsAdministrand.characteristicsIterNext(this);
     }
-    
+
+    public boolean isCont() {
+      return OscatsAdministrand.isCont(this);
+    }    
+
+    public boolean isDiscr() {
+      return OscatsAdministrand.isDiscr(this);
+    }    
+
+    public int numDims() {
+      return OscatsAdministrand.numDims(this);
+    }    
+
+    public int numAttrs() {
+      return OscatsAdministrand.numAttrs(this);
+    }    
+
+    public int maxResp() {
+      return OscatsAdministrand.maxResp(this);
+    }    
+
 }
 
