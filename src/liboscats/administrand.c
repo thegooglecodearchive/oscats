@@ -77,6 +77,7 @@ static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
   klass->is_discr = ret_false;
   klass->num_dims = ret_zero;
   klass->num_attrs = ret_zero;
+  klass->max_resp = ret_zero;
 
   initialize_static();
   
@@ -370,4 +371,16 @@ guint oscats_administrand_num_attrs(const OscatsAdministrand *administrand)
 {
   g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
   return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->num_attrs(administrand);
+}
+
+/**
+ * oscats_administrad_max_resp:
+ * @admininstrand: an #OscatsAdmininstrand
+ *
+ * Returns: the maximum response possible for @administrand
+ */
+guint oscats_administrand_max_resp(const OscatsAdministrand *administrand)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->max_resp(administrand);
 }

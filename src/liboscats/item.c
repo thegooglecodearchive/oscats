@@ -58,6 +58,13 @@ static guint num_attrs (const OscatsAdministrand *item)
   return (self->discr_model ? self->discr_model->dimsFlags->num : 0);
 }
 
+static guint max_resp (const OscatsAdministrand *item)
+{
+  OscatsItem *self = OSCATS_ITEM(item);
+  if (self->cont_model) return oscats_cont_model_get_max(self->cont_model);
+  return oscats_discr_model_get_max(self->discr_model);
+}
+
 static void oscats_item_class_init (OscatsItemClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -73,6 +80,7 @@ static void oscats_item_class_init (OscatsItemClass *klass)
   admin_class->is_discr = is_discr;
   admin_class->num_dims = num_dims;
   admin_class->num_attrs = num_attrs;
+  admin_class->max_resp = max_resp;
 
 /**
  * OscatsItem:contmodel:

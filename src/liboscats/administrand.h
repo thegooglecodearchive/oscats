@@ -44,6 +44,7 @@ struct _OscatsAdministrandClass {
   gboolean (*is_discr) (const OscatsAdministrand *item);
   guint (*num_dims) (const OscatsAdministrand *item);
   guint (*num_attrs) (const OscatsAdministrand *item);
+  guint (*max_resp) (const OscatsAdministrand *item);
 };
 
 GType oscats_administrand_get_type();
@@ -65,6 +66,7 @@ gboolean oscats_administrand_is_cont(const OscatsAdministrand *administrand);
 gboolean oscats_administrand_is_discr(const OscatsAdministrand *admininstrand);
 guint oscats_administrand_num_dims(const OscatsAdministrand *administrand);
 guint oscats_administrand_num_attrs(const OscatsAdministrand *administrand);
+guint oscats_administrand_max_resp(const OscatsAdministrand *administrand);
 
 G_END_DECLS
 #endif
