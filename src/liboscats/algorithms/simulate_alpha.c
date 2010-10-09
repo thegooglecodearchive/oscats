@@ -51,7 +51,7 @@ static void oscats_alg_simulate_alpha_class_init (OscatsAlgSimulateAlphaClass *k
   pspec = g_param_spec_boolean("auto-record", "Auto-record", 
                                "Record all simulated responses",
                                TRUE,
-                               G_PARAM_READWRITE |
+                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT |
                                G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                                G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_AUTO_RECORD, pspec);
