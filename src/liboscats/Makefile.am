@@ -7,7 +7,7 @@ LDFLAGS += -no-undefined
 endif
 
 lib_LTLIBRARIES = liboscats.la
-liboscats_la_SOURCES = bitarray.c gsl.c random.c contmodel.c 		\
+liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c contmodel.c    \
 			administrand.c item.c			 	\
 			itembank.c examinee.c marshal.c test.c		\
 			algorithm.c covariates.c attributes.c		\
@@ -34,7 +34,7 @@ liboscats_la_SOURCES = bitarray.c gsl.c random.c contmodel.c 		\
 liboscats_la_CFLAGS = @GLIB_CFLAGS@ @GSL_CFLAGS@ -Wall -Werror
 liboscats_la_LIBADD = @GLIB_LIBS@ @GSL_LIBS@
 liboscatsincludedir = $(includedir)/liboscats
-liboscatsinclude_HEADERS = oscats.h bitarray.h gsl.h random.h contmodel.h  \
+liboscatsinclude_HEADERS = oscats.h bitarray.h gsl.h random.h space.h contmodel.h  \
 			   administrand.h item.h			\
 			   itembank.h examinee.h marshal.h test.h  \
 			   algorithm.h algorithms.h models.h covariates.h  \
