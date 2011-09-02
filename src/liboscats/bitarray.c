@@ -82,8 +82,7 @@ GBitArray* g_bit_array_new(guint bit_length)
  * @bit_length: The non-negative number of bits
  *
  * Resizes the #GBitArray to the specified length.
- * The bit states are undefined after this operation,
- * and num_set is invalid.
+ * All bits are cleared after this operation.
  *
  * Returns: the resized #GBitArray
  */
@@ -94,9 +93,10 @@ GBitArray* g_bit_array_resize(GBitArray* array, guint bit_length)
   array->bit_len = bit_length;
   array->byte_len = bit_length / 8;
   if (bit_length & 0x7) array->byte_len++;
-  if (array->byte_len > 0) array->data = g_new(guint8, array->byte_len);
+  if (array->byte_len > 0) array->data = g_new0(guint8, array->byte_len);
   else array->data = NULL;
   array->byte_pos = array->byte_len+1;
+  array->num_set = 0;
   return array;
 }
 
@@ -106,7 +106,7 @@ GBitArray* g_bit_array_resize(GBitArray* array, guint bit_length)
  * @num: number of bits to add
  *
  * Extends @array by @num bits.  Unlike g_bit_array_resize(), maintains
- * the existing bits, and clears new bits.
+ * the existing bits.  New bits are cleared.
  *
  * Returns: the extended #GBitArray
  */
@@ -122,17 +122,16 @@ GBitArray* g_bit_array_extend(GBitArray* array, guint num)
     n = 8-(i & 0x7);			// Bits remaining in last byte
     if (n > num) n = num;
     array->bit_len += n;
-    for (; n; i++, n--)
-      g_bit_array_clear_bit(array, i);
     num -= n;
     if (num == 0) return array;
+    i += n;
   }
-  n = (i + num)/8;
+  n = (i + num)/8;			// New byte count
   if ((i + num) & 0x7) n++;
   data = g_new(guint8, n);
-  for (i=0; i < array->byte_len; i++)
+  for (i=0; i < array->byte_len; i++)	// Copy old bits
     data[i] = array->data[i];
-  for (; i < n; i++)
+  for (; i < n; i++)			// Clear new bits
     data[i] = 0;
   g_free(array->data);
   array->data = data;
