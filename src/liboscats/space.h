@@ -95,6 +95,7 @@ OscatsDim oscats_space_get_dim_by_name(OscatsSpace *space, const gchar *name);
 const gchar * oscats_space_dim_get_name(OscatsSpace *space, OscatsDim dim);
 OscatsNatValue oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim);
 gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatValue x);
+gboolean oscats_space_compatible(OscatsSpace *lhs, OscatsSpace *rhs);
 
 G_END_DECLS
 #endif

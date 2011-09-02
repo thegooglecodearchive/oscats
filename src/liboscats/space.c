@@ -533,3 +533,29 @@ gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatValue
       g_return_val_if_reached(FALSE);
   }
 }
+
+/**
+ * oscats_space_compatible:
+ * @lhs: an #OscatsSpace
+ * @rhs: an #OscatsSpace
+ *
+ * Tests whether two spaces have the same geometry---that is, the same
+ * number of each type of dimension.  For natural-valued dimensions, both
+ * spaces must also have the same range for each dimension.  Note: This does
+ * not compare dimension names.
+ *
+ * Returns: %TRUE if @lhs and @rhs have the same geometry
+ */
+gboolean oscats_space_compatible(OscatsSpace *lhs, OscatsSpace *rhs)
+{
+  guint i;
+  g_return_val_if_fail(OSCATS_IS_SPACE(lhs) && OSCATS_IS_SPACE(rhs), FALSE);
+  if (lhs == rhs) return TRUE;
+  if (lhs->num_cont != rhs->num_cont ||
+      lhs->num_bin != rhs->num_bin ||
+      lhs->num_nat != rhs->num_nat)
+    return FALSE;
+  for (i=0; i < lhs->num_nat; i++)
+    if (lhs->max[i] != rhs->max[i]) return FALSE;
+  return TRUE;
+}
