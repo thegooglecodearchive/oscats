@@ -54,11 +54,11 @@ typedef enum
 typedef guint16 OscatsDim;
 
 /**
- * OscatsNatValue:
+ * OscatsNatural:
  *
  * A natural value (0, 1, 2, ...).  This is simply an alias for #guint16.
  */
-typedef guint16 OscatsNatValue;
+typedef guint16 OscatsNatural;
 
 #define OSCATS_TYPE_SPACE		(oscats_space_get_type())
 #define OSCATS_SPACE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_SPACE, OscatsSpace))
@@ -93,8 +93,8 @@ gboolean oscats_space_has_dim_name(OscatsSpace *space, const gchar *name);
 OscatsDim oscats_space_get_dim(OscatsSpace *space, GQuark name);
 OscatsDim oscats_space_get_dim_by_name(OscatsSpace *space, const gchar *name);
 const gchar * oscats_space_dim_get_name(OscatsSpace *space, OscatsDim dim);
-OscatsNatValue oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim);
-gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatValue x);
+OscatsNatural oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim);
+gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural x);
 gboolean oscats_space_compatible(OscatsSpace *lhs, OscatsSpace *rhs);
 
 G_END_DECLS

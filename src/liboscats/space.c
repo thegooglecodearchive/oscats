@@ -492,7 +492,7 @@ const gchar * oscats_space_dim_get_name(OscatsSpace *space, OscatsDim dim)
  *
  * Returns: the maximum value for natural dimension @dim in @space
  */
-OscatsNatValue oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim)
+OscatsNatural oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim)
 {
   guint16 i = dim & OSCATS_DIM_MASK;
   g_return_val_if_fail(OSCATS_IS_SPACE(space), 0);
@@ -511,7 +511,7 @@ OscatsNatValue oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim)
  *
  * Returns: %TRUE if @x is within the range of @dim in @space
  */
-gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatValue x)
+gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural x)
 {
   guint16 i = dim & OSCATS_DIM_MASK;
   g_return_val_if_fail(OSCATS_IS_SPACE(space), FALSE);
