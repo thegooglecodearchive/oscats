@@ -507,9 +507,8 @@ OscatsNatural oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim)
  * @dim: an #OscatsDim indicating the dimension
  * @x: a potential value in @space
  *
- * The @dim must be a valid dimension for @space.
- *
- * Returns: %TRUE if @x is within the range of @dim in @space
+ * Returns: %TRUE if @dim is a valid dimension of @space and @x is within the
+ * range of @dim
  */
 gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural x)
 {
@@ -518,19 +517,16 @@ gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural 
   switch (dim & OSCATS_DIM_TYPE_MASK)
   {
     case OSCATS_DIM_CONT:
-      g_return_val_if_fail(i < space->num_cont, FALSE);
-      return TRUE;
+      return (i < space->num_cont);
     
     case OSCATS_DIM_BIN:
-      g_return_val_if_fail(i < space->num_bin, FALSE);
-      return (x == 0 || x == 1);
+      return (i < space->num_bin) && (x == 0 || x == 1);
     
     case OSCATS_DIM_NAT:
-      g_return_val_if_fail(i < space->num_nat, FALSE);
-      return x <= space->max[i];
+      return (i < space->num_nat) && (x <= space->max[i]);
     
-    default:  // Invalid dimension
-      g_return_val_if_reached(FALSE);
+    default:  // Invalid dimension, silently ignore
+      return FALSE;
   }
 }
 
