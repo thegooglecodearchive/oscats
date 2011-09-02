@@ -351,6 +351,26 @@ GBitArray* g_bit_array_reset(GBitArray* array, gboolean val)
 }
 
 /**
+ * g_bit_array_equal:
+ * @lhs: a #GBitArray
+ * @rhs: another #GBitArray
+ *
+ * If @lhs and @rhs are not the same length, returns %FALSE.
+ *
+ * Returns: %TRUE if @lhs and @rhs have the same value
+ */
+gboolean g_bit_array_equal(GBitArray *lhs, GBitArray *rhs)
+{
+  guint i;
+  g_return_val_if_fail(G_IS_BIT_ARRAY(lhs) && G_IS_BIT_ARRAY(rhs), FALSE);
+  if (lhs->bit_len != rhs->bit_len) return FALSE;
+  if (lhs->num_set != rhs->num_set) return FALSE;
+  for (i=0; i < lhs->byte_len; i++)
+    if (lhs->data[i] != lhs->data[i]) return FALSE;
+  return TRUE;
+}
+
+/**
  * g_bit_array_iter_reset:
  * @array: a #GBitArray
  *
