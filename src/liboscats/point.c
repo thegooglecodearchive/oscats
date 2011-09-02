@@ -161,7 +161,7 @@ OscatsPoint *oscats_point_new_from_space(OscatsSpace *space)
  *
  * Returns: %TRUE if @lhs and @rhs are in the same #OscatsSpace
  */
-gboolean oscats_point_same_space(OscatsPoint *lhs, OscatsPoint *rhs)
+gboolean oscats_point_same_space(const OscatsPoint *lhs, const OscatsPoint *rhs)
 {
   g_return_val_if_fail(OSCATS_IS_POINT(lhs) && OSCATS_IS_POINT(rhs), FALSE);
   return (lhs->space == rhs->space);
@@ -176,7 +176,7 @@ gboolean oscats_point_same_space(OscatsPoint *lhs, OscatsPoint *rhs)
  *
  * Returns: %TRUE if @lhs and @rhs come from geometrically compatible spaces
  */
-gboolean oscats_point_space_compatible(OscatsPoint *lhs, OscatsPoint *rhs)
+gboolean oscats_point_space_compatible(const OscatsPoint *lhs, const OscatsPoint *rhs)
 {
   g_return_val_if_fail(OSCATS_IS_POINT(lhs) && OSCATS_IS_POINT(rhs), FALSE);
   return oscats_space_compatible(lhs->space, rhs->space);
@@ -198,7 +198,7 @@ gboolean oscats_point_space_compatible(OscatsPoint *lhs, OscatsPoint *rhs)
  *
  * Returns: %TRUE if @lhs and @rhs have the same coordinates
  */
-gboolean oscats_point_equal(OscatsPoint *lhs, OscatsPoint *rhs, gdouble tol)
+gboolean oscats_point_equal(const OscatsPoint *lhs, const OscatsPoint *rhs, gdouble tol)
 {
   guint i, num;
   g_return_val_if_fail(oscats_point_space_compatible(lhs, rhs), FALSE);
@@ -220,7 +220,7 @@ gboolean oscats_point_equal(OscatsPoint *lhs, OscatsPoint *rhs, gdouble tol)
  *
  * Returns: the coordinate @dim of @point as a #gdouble.
  */
-gdouble oscats_point_get_double(OscatsPoint *point, OscatsDim dim)
+gdouble oscats_point_get_double(const OscatsPoint *point, OscatsDim dim)
 {
   g_return_val_if_fail(OSCATS_IS_POINT(point), 0);
   g_return_val_if_fail(oscats_space_validate(point->space, dim, 0), 0);
@@ -246,7 +246,7 @@ gdouble oscats_point_get_double(OscatsPoint *point, OscatsDim dim)
  *
  * Returns: the value of the continuous coordinate @dim for @point
  */
-gdouble oscats_point_get_cont(OscatsPoint *point, OscatsDim dim)
+gdouble oscats_point_get_cont(const OscatsPoint *point, OscatsDim dim)
 {
   g_return_val_if_fail(OSCATS_IS_POINT(point), 0);
   g_return_val_if_fail(oscats_space_validate(point->space, dim, 0), 0);
@@ -263,7 +263,7 @@ gdouble oscats_point_get_cont(OscatsPoint *point, OscatsDim dim)
  *
  * Returns: the value of the binary coordinate @dim for @point
  */
-gboolean oscats_point_get_bin(OscatsPoint *point, OscatsDim dim)
+gboolean oscats_point_get_bin(const OscatsPoint *point, OscatsDim dim)
 {
   g_return_val_if_fail(OSCATS_IS_POINT(point), 0);
   g_return_val_if_fail(oscats_space_validate(point->space, dim, 0), 0);
@@ -280,7 +280,7 @@ gboolean oscats_point_get_bin(OscatsPoint *point, OscatsDim dim)
  *
  * Returns: the value of the natural coordinate @dim for @point
  */
-OscatsNatural oscats_point_get_nat(OscatsPoint *point, OscatsDim dim)
+OscatsNatural oscats_point_get_nat(const OscatsPoint *point, OscatsDim dim)
 {
   g_return_val_if_fail(OSCATS_IS_POINT(point), 0);
   g_return_val_if_fail(oscats_space_validate(point->space, dim, 0), 0);

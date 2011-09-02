@@ -341,7 +341,7 @@ static void oscats_space_get_property(GObject *object, guint prop_id,
  *
  * Returns: the total number of dimensions
  */
-guint16 oscats_space_size(OscatsSpace *space)
+guint16 oscats_space_size(const OscatsSpace *space)
 {
   g_return_val_if_fail(OSCATS_IS_SPACE(space), 0);
   return space->num_cont + space->num_bin + space->num_nat;
@@ -397,7 +397,7 @@ void oscats_space_set_dim_name(OscatsSpace *space, OscatsDim dim, const gchar *n
  *
  * Returns %TRUE if @space has a dimension named @name
  */
-gboolean oscats_space_has_dim(OscatsSpace *space, GQuark name)
+gboolean oscats_space_has_dim(const OscatsSpace *space, GQuark name)
 {
   g_return_val_if_fail(OSCATS_IS_SPACE(space), FALSE);
   return g_hash_table_lookup(space->names, GUINT_TO_POINTER(name)) != NULL;
@@ -410,7 +410,7 @@ gboolean oscats_space_has_dim(OscatsSpace *space, GQuark name)
  *
  * Returns %TRUE if @space has a dimension named @name
  */
-gboolean oscats_space_has_dim_name(OscatsSpace *space, const gchar *name)
+gboolean oscats_space_has_dim_name(const OscatsSpace *space, const gchar *name)
 {
   GQuark q = g_quark_try_string(name);
   g_return_val_if_fail(OSCATS_IS_SPACE(space), FALSE);
@@ -427,7 +427,7 @@ gboolean oscats_space_has_dim_name(OscatsSpace *space, const gchar *name)
  *
  * Returns the #OscatsDim for the dimension named @name
  */
-OscatsDim oscats_space_get_dim(OscatsSpace *space, GQuark name)
+OscatsDim oscats_space_get_dim(const OscatsSpace *space, GQuark name)
 {
   g_return_val_if_fail(OSCATS_IS_SPACE(space), 0);
   return GPOINTER_TO_UINT(g_hash_table_lookup(space->names,
@@ -443,7 +443,7 @@ OscatsDim oscats_space_get_dim(OscatsSpace *space, GQuark name)
  *
  * Returns the #OscatsDim for the dimension named @name
  */
-OscatsDim oscats_space_get_dim_by_name(OscatsSpace *space, const gchar *name)
+OscatsDim oscats_space_get_dim_by_name(const OscatsSpace *space, const gchar *name)
 {
   GQuark q = g_quark_try_string(name);
   g_return_val_if_fail(OSCATS_IS_SPACE(space), 0);
@@ -460,7 +460,7 @@ OscatsDim oscats_space_get_dim_by_name(OscatsSpace *space, const gchar *name)
  *
  * Returns: (transfer none): the name for @dim in @space
  */
-const gchar * oscats_space_dim_get_name(OscatsSpace *space, OscatsDim dim)
+const gchar * oscats_space_dim_get_name(const OscatsSpace *space, OscatsDim dim)
 {
   guint16 i = dim & OSCATS_DIM_MASK;
   g_return_val_if_fail(OSCATS_IS_SPACE(space), NULL);
@@ -492,7 +492,7 @@ const gchar * oscats_space_dim_get_name(OscatsSpace *space, OscatsDim dim)
  *
  * Returns: the maximum value for natural dimension @dim in @space
  */
-OscatsNatural oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim)
+OscatsNatural oscats_space_dim_get_max(const OscatsSpace *space, OscatsDim dim)
 {
   guint16 i = dim & OSCATS_DIM_MASK;
   g_return_val_if_fail(OSCATS_IS_SPACE(space), 0);
@@ -510,7 +510,7 @@ OscatsNatural oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim)
  * Returns: %TRUE if @dim is a valid dimension of @space and @x is within the
  * range of @dim
  */
-gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural x)
+gboolean oscats_space_validate(const OscatsSpace *space, OscatsDim dim, OscatsNatural x)
 {
   guint16 i = dim & OSCATS_DIM_MASK;
   g_return_val_if_fail(OSCATS_IS_SPACE(space), FALSE);
@@ -542,7 +542,7 @@ gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural 
  *
  * Returns: %TRUE if @lhs and @rhs have the same geometry
  */
-gboolean oscats_space_compatible(OscatsSpace *lhs, OscatsSpace *rhs)
+gboolean oscats_space_compatible(const OscatsSpace *lhs, const OscatsSpace *rhs)
 {
   guint i;
   g_return_val_if_fail(OSCATS_IS_SPACE(lhs) && OSCATS_IS_SPACE(rhs), FALSE);

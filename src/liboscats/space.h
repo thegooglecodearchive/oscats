@@ -86,16 +86,16 @@ struct _OscatsSpaceClass {
 
 GType oscats_space_get_type();
 
-guint16 oscats_space_size(OscatsSpace *space);
+guint16 oscats_space_size(const OscatsSpace *space);
 void oscats_space_set_dim_name(OscatsSpace *space, OscatsDim dim, const gchar *name);
-gboolean oscats_space_has_dim(OscatsSpace *space, GQuark name);
-gboolean oscats_space_has_dim_name(OscatsSpace *space, const gchar *name);
-OscatsDim oscats_space_get_dim(OscatsSpace *space, GQuark name);
-OscatsDim oscats_space_get_dim_by_name(OscatsSpace *space, const gchar *name);
-const gchar * oscats_space_dim_get_name(OscatsSpace *space, OscatsDim dim);
-OscatsNatural oscats_space_dim_get_max(OscatsSpace *space, OscatsDim dim);
-gboolean oscats_space_validate(OscatsSpace *space, OscatsDim dim, OscatsNatural x);
-gboolean oscats_space_compatible(OscatsSpace *lhs, OscatsSpace *rhs);
+gboolean oscats_space_has_dim(const OscatsSpace *space, GQuark name);
+gboolean oscats_space_has_dim_name(const OscatsSpace *space, const gchar *name);
+OscatsDim oscats_space_get_dim(const OscatsSpace *space, GQuark name);
+OscatsDim oscats_space_get_dim_by_name(const OscatsSpace *space, const gchar *name);
+const gchar * oscats_space_dim_get_name(const OscatsSpace *space, OscatsDim dim);
+OscatsNatural oscats_space_dim_get_max(const OscatsSpace *space, OscatsDim dim);
+gboolean oscats_space_validate(const OscatsSpace *space, OscatsDim dim, OscatsNatural x);
+gboolean oscats_space_compatible(const OscatsSpace *lhs, const OscatsSpace *rhs);
 
 G_END_DECLS
 #endif

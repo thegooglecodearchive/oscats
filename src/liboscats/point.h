@@ -50,13 +50,13 @@ struct _OscatsPointClass {
 GType oscats_point_get_type();
 
 OscatsPoint *oscats_point_new_from_space(OscatsSpace *space);
-gboolean oscats_point_same_space(OscatsPoint *lhs, OscatsPoint *rhs);
-gboolean oscats_point_space_compatible(OscatsPoint *lhs, OscatsPoint *rhs);
-gboolean oscats_point_equal(OscatsPoint *lhs, OscatsPoint *rhs, gdouble tol);
-gdouble oscats_point_get_double(OscatsPoint *point, OscatsDim dim);
-gdouble oscats_point_get_cont(OscatsPoint *point, OscatsDim dim);
-gboolean oscats_point_get_bin(OscatsPoint *point, OscatsDim dim);
-OscatsNatural oscats_point_get_nat(OscatsPoint *point, OscatsDim dim);
+gboolean oscats_point_same_space(const OscatsPoint *lhs, const OscatsPoint *rhs);
+gboolean oscats_point_space_compatible(const OscatsPoint *lhs, const OscatsPoint *rhs);
+gboolean oscats_point_equal(const OscatsPoint *lhs, const OscatsPoint *rhs, gdouble tol);
+gdouble oscats_point_get_double(const OscatsPoint *point, OscatsDim dim);
+gdouble oscats_point_get_cont(const OscatsPoint *point, OscatsDim dim);
+gboolean oscats_point_get_bin(const OscatsPoint *point, OscatsDim dim);
+OscatsNatural oscats_point_get_nat(const OscatsPoint *point, OscatsDim dim);
 void oscats_point_set_cont(OscatsPoint *point, OscatsDim dim, gdouble value);
 void oscats_point_set_bin(OscatsPoint *point, OscatsDim dim, gboolean value);
 void oscats_point_set_nat(OscatsPoint *point, OscatsDim dim, OscatsNatural value);
