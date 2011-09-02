@@ -23,6 +23,7 @@
 #include <gsl.h>
 #include <random.h>
 #include <space.h>
+#include <point.h>
 #include <contmodel.h>
 #include <discrmodel.h>
 #include <item.h>
