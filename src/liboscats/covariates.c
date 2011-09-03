@@ -107,7 +107,7 @@ void oscats_covariates_set(OscatsCovariates *covariates,
 }
 
 /**
- * oscats_covariates_set_str:
+ * oscats_covariates_set_by_name:
  * @covariates: an #OscatsCovariates object
  * @name: the covariate name
  * @value: the covariate value
@@ -115,8 +115,8 @@ void oscats_covariates_set(OscatsCovariates *covariates,
  * Sets the covariate @name to @value.  The #GQuark version
  * oscats_covariates_set() is faster.
  */
-void oscats_covariates_set_str(OscatsCovariates *covariates,
-                               const gchar *name, gdouble value)
+void oscats_covariates_set_by_name(OscatsCovariates *covariates,
+                                   const gchar *name, gdouble value)
 {
   oscats_covariates_set(covariates, g_quark_from_string(name), value);
 }
@@ -137,7 +137,7 @@ gdouble oscats_covariates_get(const OscatsCovariates *covariates, GQuark name)
 }
 
 /**
- * oscats_covariates_get_str:
+ * oscats_covariates_get_by_name:
  * @covariates: an #OscatsCovariates object
  * @name: the covariate name
  *
@@ -145,8 +145,8 @@ gdouble oscats_covariates_get(const OscatsCovariates *covariates, GQuark name)
  *
  * Returns: the value of covariate @name, or 0.
  */
-gdouble oscats_covariates_get_str(const OscatsCovariates *covariates,
-                                  const gchar *name)
+gdouble oscats_covariates_get_by_name(const OscatsCovariates *covariates,
+                                      const gchar *name)
 {
   return oscats_covariates_get(covariates, g_quark_from_string(name));
 }

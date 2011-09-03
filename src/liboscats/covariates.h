@@ -50,11 +50,11 @@ const gchar * oscats_covariates_as_string(GQuark name);
 
 void oscats_covariates_set(OscatsCovariates *covariates,
                            GQuark name, gdouble value);
-void oscats_covariates_set_str(OscatsCovariates *covariates,
-                               const gchar *name, gdouble value);
+void oscats_covariates_set_by_name(OscatsCovariates *covariates,
+                                   const gchar *name, gdouble value);
 gdouble oscats_covariates_get(const OscatsCovariates *covariates, GQuark name);
-gdouble oscats_covariates_get_str(const OscatsCovariates *covariates,
-                                  const gchar *name);
+gdouble oscats_covariates_get_by_name(const OscatsCovariates *covariates,
+                                      const gchar *name);
 
 G_END_DECLS
 #endif
