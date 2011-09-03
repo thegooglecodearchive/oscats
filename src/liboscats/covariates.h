@@ -48,6 +48,9 @@ GType oscats_covariates_get_type();
 GQuark oscats_covariates_from_string(const gchar *name);
 const gchar * oscats_covariates_as_string(GQuark name);
 
+guint oscats_covariates_num(const OscatsCovariates *covariates);
+GQuark *oscats_covariates_list(const OscatsCovariates *covariates);
+
 void oscats_covariates_set(OscatsCovariates *covariates,
                            GQuark name, gdouble value);
 void oscats_covariates_set_by_name(OscatsCovariates *covariates,

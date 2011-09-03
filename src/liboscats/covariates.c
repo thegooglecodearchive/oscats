@@ -82,6 +82,44 @@ const gchar * oscats_covariates_as_string(GQuark name)
 }
 
 /**
+ * oscats_covariates_num:
+ * @covariates: an #OscatsCovariates
+ *
+ * Returns: the number of covariates in @covariates
+ */
+guint oscats_covariates_num(const OscatsCovariates *covariates)
+{
+  g_return_val_if_fail(OSCATS_IS_COVARIATES(covariates), 0);
+  return g_tree_nnodes(covariates->names);
+}
+
+typedef struct { GQuark *names; guint i; } namesCollector;
+static gboolean collectNames(gpointer name, gpointer pos, gpointer data)
+{
+  namesCollector *collect = (namesCollector*)data;
+  collect->names[collect->i++] = GPOINTER_TO_UINT(name);
+  return FALSE;
+}
+
+/**
+ * oscats_covariates_list:
+ * @covariates: an #OscatsCovariates
+ *
+ * Returns: (transfer full): a list of the covariate #GQuark names
+ */
+GQuark *oscats_covariates_list(const OscatsCovariates *covariates)
+{
+  namesCollector collector = { NULL, 0 };
+  guint num = oscats_covariates_num(covariates);
+  if (num > 0)
+  {
+    collector.names = g_new(GQuark, num);
+    g_tree_foreach(covariates->names, collectNames, &collector);
+  }  
+  return collector.names;
+}
+
+/**
  * oscats_covariates_set:
  * @covariates: an #OscatsCovariates object
  * @name: the covariate name (as a #GQuark)
