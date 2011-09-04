@@ -287,6 +287,14 @@ static void oscats_model_constructed(GObject *object)
     }
   }
 
+  // If model has single dimension type, set up dimension shortcuts
+  if (model->dimType != 0 && model->Ndims > 0)
+  {
+    model->shortDims = g_new(guint, model->Ndims);
+    for (i=0; i < model->Ndims; i++)
+      model->shortDims[i] = (model->dims[i] & OSCATS_DIM_MASK);
+  }
+
   // Note: Np, params, and names should be set in the overloaded constructed().
   // Chain up first to check dims and assign dimType.
 
@@ -553,7 +561,7 @@ gdouble oscats_model_distance(const OscatsModel *model,
  * @model: an #OscatsModel
  * @resp: the examinee response value 
  * @theta: the value of the latent variables
- * @covariates: the value of covariates
+ * @covariates: (allow-none): the value of covariates
  * @grad: (inout) (allow-none): a #GGslVector for returning the gradient
  * @hes: (inout) (allow-none): a #GGslMatrix for returning the Hessian
  * 
@@ -586,7 +594,7 @@ void oscats_model_logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
  * @model: an #OscatsModel
  * @resp: the examinee response value 
  * @theta: the point in latent space
- * @covariates: the values of covariates
+ * @covariates: (allow-none): the values of covariates
  * @grad: (inout) (allow-none): a #GGslVector for returning the gradient
  * @hes: (inout) (allow-none): a #GGslMatrix for returning the Hessian
  * 
