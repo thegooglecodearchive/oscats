@@ -50,6 +50,7 @@ struct _OscatsModel {
   OscatsDim *dims, dimType;
   gdouble *params;
   GQuark *names, *covariates;	// parameter and covariate names
+  guint *shortDims;		// shortcut for model implementations
 };
 
 /**

@@ -307,6 +307,7 @@ static void oscats_model_finalize (GObject *object)
   g_free(self->params);
   g_free(self->names);
   g_free(self->covariates);
+  g_free(self->shortDims);
   G_OBJECT_CLASS(oscats_model_parent_class)->finalize(object);
 }
 
