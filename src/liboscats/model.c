@@ -394,6 +394,8 @@ static void oscats_model_get_property(GObject *object, guint prop_id,
       break;
     
     case PROP_PARAM_NAMES:
+      // self->names should be set by implementing constructed() method
+      g_return_if_fail(self->names != NULL);
       array = g_value_array_new(self->Np);
       g_value_init(&v, G_TYPE_STRING);
       for (i=0; i < self->Np; i++)
@@ -622,6 +624,7 @@ void oscats_model_logLik_dparam(const OscatsModel *model, OscatsResponse resp,
 const gchar* oscats_model_get_param_name(const OscatsModel *model, guint index)
 {
   g_return_val_if_fail(OSCATS_IS_MODEL(model) && index < model->Np, NULL);
+  g_return_val_if_fail(model->names != NULL, NULL);
   return g_quark_to_string(model->names[index]);
 }
 
@@ -651,6 +654,7 @@ gboolean oscats_model_has_param(const OscatsModel *model, GQuark name)
 {
   guint i;
   g_return_val_if_fail(OSCATS_IS_MODEL(model), FALSE);
+  g_return_val_if_fail(model->names != NULL, FALSE);
   for (i=0; i < model->Np; i++)
     if (name == model->names[i]) return TRUE;
   return FALSE;
@@ -666,6 +670,7 @@ gboolean oscats_model_has_param(const OscatsModel *model, GQuark name)
 gdouble oscats_model_get_param_by_index(const OscatsModel *model, guint index)
 {
   g_return_val_if_fail(OSCATS_IS_MODEL(model) && index < model->Np, 0);
+  g_return_val_if_fail(model->params != NULL, 0);
   return model->params[index];
 }
 
@@ -680,6 +685,7 @@ gdouble oscats_model_get_param(const OscatsModel *model, GQuark name)
 {
   guint i;
   g_return_val_if_fail(OSCATS_IS_MODEL(model), 0);
+  g_return_val_if_fail(model->names != NULL && model->params != NULL, 0);
   for (i=0; i < model->Np; i++)
     if (name == model->names[i]) return model->params[i];
   g_critical("Unknown parameter %s", g_quark_to_string(name));
@@ -713,6 +719,7 @@ void oscats_model_set_param_by_index(OscatsModel *model, guint index,
                                      gdouble value)
 {
   g_return_if_fail(OSCATS_IS_MODEL(model) && index < model->Np);
+  g_return_if_fail(model->params != NULL);
   model->params[index] = value;
 }
 
@@ -728,6 +735,7 @@ void oscats_model_set_param(OscatsModel *model, GQuark name, gdouble value)
 {
   guint i;
   g_return_if_fail(OSCATS_IS_MODEL(model));
+  g_return_if_fail(model->names != NULL && model->params != NULL);
   for (i=0; i < model->Np; i++)
     if (model->names[i] == name)
     {
