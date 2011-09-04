@@ -290,6 +290,7 @@ static void oscats_model_constructed(GObject *object)
   // If model has single dimension type, set up dimension shortcuts
   if (model->dimType != 0 && model->Ndims > 0)
   {
+    guint i;
     model->shortDims = g_new(guint, model->Ndims);
     for (i=0; i < model->Ndims; i++)
       model->shortDims[i] = (model->dims[i] & OSCATS_DIM_MASK);
