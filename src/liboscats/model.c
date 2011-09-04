@@ -181,13 +181,13 @@ static void oscats_model_class_init (OscatsModelClass *klass)
   espec = g_param_spec_string("paramName", "parameter name",
                             "the name of a model parameter",
                             NULL,
-                            G_PARAM_READWRITE |
+                            G_PARAM_READABLE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
   pspec = g_param_spec_value_array("paramNames", "parameter names", 
                             "the names of the model parameters",
                             espec,
-                            G_PARAM_READWRITE |
+                            G_PARAM_READABLE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_PARAM_NAMES, pspec);
@@ -339,16 +339,6 @@ static void oscats_model_set_property(GObject *object, guint prop_id,
       if (num > 0) self->dims = g_new(OscatsDim, num);
       for (i=0; i < num; i++)
         self->dims[i] = g_value_get_uint(array->values+i);
-      break;
-    
-    case PROP_PARAM_NAMES:
-      array = g_value_get_boxed(value);
-      g_return_if_fail(array->n_values != self->Np);
-      // self->names should be set by model-implementation constructed()
-      g_return_if_fail(self->names != NULL);
-      for (i=0; i < self->Np; i++)
-        self->names[i] =
-          g_quark_from_string(g_value_get_string(array->values+i));
       break;
     
     case PROP_COVARIATES:		// construction only
