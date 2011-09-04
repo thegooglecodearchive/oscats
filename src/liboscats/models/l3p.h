@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Three-Parameter Logistic IRT Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,21 +19,21 @@
 #ifndef _LIBOSCATS_MODEL_L3P_H_
 #define _LIBOSCATS_MODEL_L3P_H_
 #include <glib.h>
-#include <contmodel.h>
+#include <model.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_CONT_MODEL_L3P		(oscats_cont_model_l3p_get_type())
-#define OSCATS_CONT_MODEL_L3P(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CONT_MODEL_L3P, OscatsContModelL3p))
-#define OSCATS_IS_CONT_MODEL_L3P(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CONT_MODEL_L3P))
-#define OSCATS_CONT_MODEL_L3P_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CONT_MODEL_L3P, OscatsContModelL3pClass))
-#define OSCATS_IS_CONT_MODEL_L3P_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CONT_MODEL_L3P))
-#define OSCATS_CONT_MODEL_L3P_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CONT_MODEL_L3P, OscatsContModelL3pClass))
+#define OSCATS_TYPE_MODEL_L3P		(oscats_model_l3p_get_type())
+#define OSCATS_MODEL_L3P(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_MODEL_L3P, OscatsModelL3p))
+#define OSCATS_IS_MODEL_L3P(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_MODEL_L3P))
+#define OSCATS_MODEL_L3P_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_MODEL_L3P, OscatsModelL3pClass))
+#define OSCATS_IS_MODEL_L3P_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_MODEL_L3P))
+#define OSCATS_MODEL_L3P_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_MODEL_L3P, OscatsModelL3pClass))
 
-typedef struct _OscatsContModelL3p OscatsContModelL3p;
-typedef struct _OscatsContModelL3pClass OscatsContModelL3pClass;
+typedef struct _OscatsModelL3p OscatsModelL3p;
+typedef struct _OscatsModelL3pClass OscatsModelL3pClass;
 
 /**
- * OscatsContModelL3p:
+ * OscatsModelL3p:
  *
  * The Three-Paramter Logistic IRT model:
  * P(X=1|theta) = c + (1-c)/1+exp[-(sum_i a_i theta_i -b + sum_j d_j covariate_j)],
@@ -42,7 +42,7 @@ typedef struct _OscatsContModelL3pClass OscatsContModelL3pClass;
  * usual IRT parameterization c + (1-c)/1+exp[-a(theta-b)].
  * Distance is defined as: abs(sum_i a_i theta_i - b + sum_j d_j covariate_j).
  *
- * Parameter names: Diff, Guess, Discr.i
+ * Parameter names: Diff, Guess, Discr.DimName
  *
  * References:
  * <bibliolist>
@@ -63,15 +63,15 @@ typedef struct _OscatsContModelL3pClass OscatsContModelL3pClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsContModelL3p {
-  OscatsContModel parent_instance;
+struct _OscatsModelL3p {
+  OscatsModel parent_instance;
 };
 
-struct _OscatsContModelL3pClass {
-  OscatsContModelClass parent_class;
+struct _OscatsModelL3pClass {
+  OscatsModelClass parent_class;
 };
 
-GType oscats_cont_model_l3p_get_type();
+GType oscats_model_l3p_get_type();
 
 G_END_DECLS
 #endif

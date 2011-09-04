@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Deterministic Inputs Noisy And Gate (DINA) Classification Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,27 +19,30 @@
 #ifndef _LIBOSCATS_MODEL_DINA_H_
 #define _LIBOSCATS_MODEL_DINA_H_
 #include <glib.h>
-#include <discrmodel.h>
+#include <model.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_DISCR_MODEL_DINA		(oscats_discr_model_dina_get_type())
-#define OSCATS_DISCR_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_DISCR_MODEL_DINA, OscatsDiscrModelDina))
-#define OSCATS_IS_DISCR_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_DISCR_MODEL_DINA))
-#define OSCATS_DISCR_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_DISCR_MODEL_DINA, OscatsDiscrModelDinaClass))
-#define OSCATS_IS_DISCR_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_DISCR_MODEL_DINA))
-#define OSCATS_DISCR_MODEL_DINA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_DISCR_MODEL_DINA, OscatsDiscrModelDinaClass))
+#define OSCATS_TYPE_MODEL_DINA		(oscats_model_dina_get_type())
+#define OSCATS_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_MODEL_DINA, OscatsModelDina))
+#define OSCATS_IS_MODEL_DINA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_MODEL_DINA))
+#define OSCATS_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_MODEL_DINA, OscatsModelDinaClass))
+#define OSCATS_IS_MODEL_DINA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_MODEL_DINA))
+#define OSCATS_MODEL_DINA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_MODEL_DINA, OscatsModelDinaClass))
 
-typedef struct _OscatsDiscrModelDina OscatsDiscrModelDina;
-typedef struct _OscatsDiscrModelDinaClass OscatsDiscrModelDinaClass;
+typedef struct _OscatsModelDina OscatsModelDina;
+typedef struct _OscatsModelDinaClass OscatsModelDinaClass;
 
 /**
- * OscatsDiscrModelDina:
+ * OscatsModelDina:
  *
  * Deterministic Inputs Noisy And Gate (DINA) Classification model:
  * P(X=1|alpha) = (1-s)^(prod_i alpha_i) g^(1-prod_i alpha_i)
  * where s is the slipping parameter and g is the guessing parameter.
  *
  * Parameter names: Guess, Slip.
+ *
+ * Note: This model does not support covariates, oscats_model_distance(), or
+ * oscats_model_logLik_dtheta().
  *
  * References:
  * <bibliolist>
@@ -83,15 +86,15 @@ typedef struct _OscatsDiscrModelDinaClass OscatsDiscrModelDinaClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsDiscrModelDina {
-  OscatsDiscrModel parent_instance;
+struct _OscatsModelDina {
+  OscatsModel parent_instance;
 };
 
-struct _OscatsDiscrModelDinaClass {
-  OscatsDiscrModelClass parent_class;
+struct _OscatsModelDinaClass {
+  OscatsModelClass parent_class;
 };
 
-GType oscats_discr_model_dina_get_type();
+GType oscats_model_dina_get_type();
 
 G_END_DECLS
 #endif

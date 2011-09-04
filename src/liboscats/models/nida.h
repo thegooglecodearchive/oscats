@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Noisy Inputs Deterministic And Gate (NIDA) Classification Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,27 +19,30 @@
 #ifndef _LIBOSCATS_MODEL_NIDA_H_
 #define _LIBOSCATS_MODEL_NIDA_H_
 #include <glib.h>
-#include <discrmodel.h>
+#include <model.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_DISCR_MODEL_NIDA		(oscats_discr_model_nida_get_type())
-#define OSCATS_DISCR_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_DISCR_MODEL_NIDA, OscatsDiscrModelNida))
-#define OSCATS_IS_DISCR_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_DISCR_MODEL_NIDA))
-#define OSCATS_DISCR_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_DISCR_MODEL_NIDA, OscatsDiscrModelNidaClass))
-#define OSCATS_IS_DISCR_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_DISCR_MODEL_NIDA))
-#define OSCATS_DISCR_MODEL_NIDA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_DISCR_MODEL_NIDA, OscatsDiscrModelNidaClass))
+#define OSCATS_TYPE_MODEL_NIDA		(oscats_model_nida_get_type())
+#define OSCATS_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_MODEL_NIDA, OscatsModelNida))
+#define OSCATS_IS_MODEL_NIDA(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_MODEL_NIDA))
+#define OSCATS_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_MODEL_NIDA, OscatsModelNidaClass))
+#define OSCATS_IS_MODEL_NIDA_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_MODEL_NIDA))
+#define OSCATS_MODEL_NIDA_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_MODEL_NIDA, OscatsModelNidaClass))
 
-typedef struct _OscatsDiscrModelNida OscatsDiscrModelNida;
-typedef struct _OscatsDiscrModelNidaClass OscatsDiscrModelNidaClass;
+typedef struct _OscatsModelNida OscatsModelNida;
+typedef struct _OscatsModelNidaClass OscatsModelNidaClass;
 
 /**
- * OscatsDiscrModelNida:
+ * OscatsModelNida:
  *
  * Noisy Inputs Deterministic And Gate (NIDA) Classification model:
  * P(X=1|alpha) = prod_i (1-s_i)^(alpha_i) g_i^(1-prod_i alpha_i)
  * where s_i and g_i are the slipping guessing parameters for each attribute.
  *
- * Parameter names: Guess.i, Slip.i.
+ * Parameter names: Guess.DimName, Slip.DimName.
+ *
+ * Note: This model does not support covariates, oscats_model_distance(), or
+ * oscats_model_logLik_dtheta().
  *
  * References:
  * <bibliolist>
@@ -64,15 +67,15 @@ typedef struct _OscatsDiscrModelNidaClass OscatsDiscrModelNidaClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsDiscrModelNida {
-  OscatsDiscrModel parent_instance;
+struct _OscatsModelNida {
+  OscatsModel parent_instance;
 };
 
-struct _OscatsDiscrModelNidaClass {
-  OscatsDiscrModelClass parent_class;
+struct _OscatsModelNidaClass {
+  OscatsModelClass parent_class;
 };
 
-GType oscats_discr_model_nida_get_type();
+GType oscats_model_nida_get_type();
 
 G_END_DECLS
 #endif

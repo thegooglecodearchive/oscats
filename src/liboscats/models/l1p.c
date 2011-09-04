@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * One-Parameter Logistic IRT Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  * SECTION:l1p
- * @title:OscatsContModelL1p
+ * @title:OscatsModelL1p
  * @short_description: One-Parameter Logistic (1PL) Model
  */
 
@@ -26,7 +26,7 @@
 #include <gsl/gsl_vector.h>
 #include "models/l1p.h"
 
-G_DEFINE_TYPE(OscatsContModelL1p, oscats_cont_model_l1p, OSCATS_TYPE_CONT_MODEL);
+G_DEFINE_TYPE(OscatsModelL1p, oscats_model_l1p, OSCATS_TYPE_MODEL);
 
 enum
 {
@@ -35,22 +35,20 @@ enum
 };
 
 static void model_constructed (GObject *object);
-static guint8 get_max (const OscatsContModel *model);
-static gdouble P(const OscatsContModel *model, guint resp, const GGslVector *theta, const OscatsCovariates *covariates);
-static gdouble distance(const OscatsContModel *model, const GGslVector *theta, const OscatsCovariates *covariates);
-static void logLik_dtheta(const OscatsContModel *model,
-                          guint resp, const GGslVector *theta,
-                          const OscatsCovariates *covariates,
-                          GGslVector *grad, GGslMatrix *hes, gboolean I);
-static void logLik_dparam(const OscatsContModel *model,
-                          guint resp, const GGslVector *theta,
-                          const OscatsCovariates *covariates,
+static OscatsResponse get_max (const OscatsModel *model);
+static gdouble P(const OscatsModel *model, OscatsResponse resp, const OscatsPoint *theta, const OscatsCovariates *covariates);
+static gdouble distance(const OscatsModel *model, const OscatsPoint *theta, const OscatsCovariates *covariates);
+static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
+                          const OscatsPoint *theta, const OscatsCovariates *covariates,
+                          GGslVector *grad, GGslMatrix *hes);
+static void logLik_dparam(const OscatsModel *model, OscatsResponse resp,
+                          const OscatsPoint *theta, const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes);
 
-static void oscats_cont_model_l1p_class_init (OscatsContModelL1pClass *klass)
+static void oscats_model_l1p_class_init (OscatsModelL1pClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  OscatsContModelClass *model_class = OSCATS_CONT_MODEL_CLASS(klass);
+  OscatsModelClass *model_class = OSCATS_MODEL_CLASS(klass);
 
   gobject_class->constructed = model_constructed;
 
@@ -62,57 +60,55 @@ static void oscats_cont_model_l1p_class_init (OscatsContModelL1pClass *klass)
   
 }
 
-static void oscats_cont_model_l1p_init (OscatsContModelL1p *self)
+static void oscats_model_l1p_init (OscatsModelL1p *self)
 {
 }
 
 static void model_constructed(GObject *object)
 {
-  OscatsContModel *model = OSCATS_CONT_MODEL(object);
-  G_OBJECT_CLASS(oscats_cont_model_l1p_parent_class)->constructed(object);
+  OscatsModel *model = OSCATS_MODEL(object);
+  G_OBJECT_CLASS(oscats_model_l1p_parent_class)->constructed(object);
 
+  // Set up parameters
   model->Np = NUM_PARAMS + model->Ncov;
   model->params = g_new0(gdouble, model->Np);
 
+  // Set up parameter names
   model->names = g_new(GQuark, model->Np);
   model->names[PARAM_B] = g_quark_from_string("Diff");
   
-  if (model->Ncov > 0)
+  // Check subspace type
+  if (model->dimType != OSCATS_DIM_CONT)
   {
-    gchar cov[20];
-    guint i;
-    model->covariates = model->names + NUM_PARAMS;
-    for (i=0; i < model->Ncov; i++)
-    {
-      sprintf(cov, "Cov.%d", i+1);
-      model->covariates[i] = g_quark_from_string(cov);
-    }
+    model->Ndims = 0;
+    g_critical("OscatsModelL1p requires a continuous latent space.");
   }
 
 }
 
-static guint8 get_max (const OscatsContModel *model)
+static OscatsResponse get_max (const OscatsModel *model)
 {
   return 1;
 }
 
-static gdouble P(const OscatsContModel *model, guint resp,
-                 const GGslVector *theta, const OscatsCovariates *covariates)
+static gdouble P(const OscatsModel *model, OscatsResponse resp,
+                 const OscatsPoint *theta, const OscatsCovariates *covariates)
 {
+  guint *dims = model->shortDims;
   guint i;
   gdouble z = 0;
-  g_return_val_if_fail(resp == 0 || resp == 1, 0);
+  g_return_val_if_fail(resp <= 1, 0);
   switch (model->Ndims)
   {
     case 2:
-      z = -gsl_vector_get(theta->v, model->dim2);
+      z = -theta->cont[dims[1]];
     case 1:
-      z -= gsl_vector_get(theta->v, model->dim1);
+      z -= theta->cont[dims[0]];
       break;
     
     default:
       for (i=0; i < model->Ndims; i++)
-        z -= gsl_vector_get(theta->v, model->dims[i]);
+        z -= theta->cont[dims[i]];
   }
   for (i=0; i < model->Ncov; i++)
     z -= oscats_covariates_get(covariates, model->covariates[i]) *
@@ -121,22 +117,23 @@ static gdouble P(const OscatsContModel *model, guint resp,
   return 1/(1+exp(resp ? z : -z));
 }
 
-static gdouble distance(const OscatsContModel *model, const GGslVector *theta,
+static gdouble distance(const OscatsModel *model, const OscatsPoint *theta,
                         const OscatsCovariates *covariates)
 {
+  guint *dims = model->shortDims;
   guint i;
   gdouble z = 0;
   switch (model->Ndims)
   {
     case 2:
-      z = gsl_vector_get(theta->v, model->dim2);
+      z = theta->cont[dims[1]];
     case 1:
-      z += gsl_vector_get(theta->v, model->dim1);
+      z += theta->cont[dims[0]];
       break;
     
     default:
       for (i=0; i < model->Ndims; i++)
-        z += gsl_vector_get(theta->v, model->dims[i]);
+        z += theta->cont[dims[i]];
   }
   for (i=0; i < model->Ncov; i++)
     z += oscats_covariates_get(covariates, model->covariates[i]) *
@@ -150,50 +147,50 @@ static gdouble distance(const OscatsContModel *model, const GGslVector *theta,
  * d[log(P), theta_i, theta_j] = -PQ
  * d[log(Q), theta_i, theta_j] = -PQ
  */
-static void logLik_dtheta(const OscatsContModel *model,
-                          guint resp, const GGslVector *theta,
-                          const OscatsCovariates *covariates,
-                          GGslVector *grad, GGslMatrix *hes, gboolean Inf)
+static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
+                          const OscatsPoint *theta, const OscatsCovariates *covariates,
+                          GGslVector *grad, GGslMatrix *hes)
 {
   gsl_vector *grad_v = (grad ? grad->v : NULL);
   gsl_matrix *hes_v = (hes ? hes->v : NULL);
+  guint dim1, dim2;
   guint i, j, I, J;
   guint hes_stride = (hes ? hes_v->tda : 0);
   gdouble p, grad_val, hes_val;
-  g_return_if_fail(resp == 0 || resp == 1);
+  g_return_if_fail(resp <= 1);
   p = P(model, 1, theta, covariates);
   if (resp) grad_val = (1-p);
   else      grad_val = -p;
   hes_val = -p*(1-p);
-  if (Inf)
-    hes_val *= -(resp ? p : 1-p);
+  dim1 = model->shortDims[0];
   switch (model->Ndims)
   {
     case 2:
-      if (grad) grad_v->data[model->dim2 * grad_v->stride] += grad_val;
+      dim2 = model->shortDims[1];
+      if (grad) grad_v->data[dim2 * grad_v->stride] += grad_val;
       if (hes)
       {
-        hes_v->data[model->dim2 * hes_stride + model->dim2] += hes_val;
-        hes_v->data[model->dim1 * hes_stride + model->dim2] += hes_val;
-        hes_v->data[model->dim2 * hes_stride + model->dim1] += hes_val;
+        hes_v->data[dim2 * hes_stride + dim2] += hes_val;
+        hes_v->data[dim1 * hes_stride + dim2] += hes_val;
+        hes_v->data[dim2 * hes_stride + dim1] += hes_val;
       }
     case 1:
-      if (grad) grad_v->data[model->dim1 * grad_v->stride] += grad_val;
+      if (grad) grad_v->data[dim1 * grad_v->stride] += grad_val;
       if (hes)
-        hes_v->data[model->dim1 * hes_stride + model->dim1] += hes_val;
+        hes_v->data[dim1 * hes_stride + dim1] += hes_val;
       break;
     
     default:
       for (i=0; i < model->Ndims; i++)
       {
-        I = model->dims[i];
+        I = model->shortDims[i];
         if (grad) grad_v->data[I*grad_v->stride] += grad_val;
         if (hes)
         {
           hes_v->data[I*hes_stride + I] += hes_val;
           for (j=i+1; j < model->Ndims; j++)
           {
-            J = model->dims[j];
+            J = model->shortDims[j];
             hes_v->data[I*hes_stride + J] += hes_val;
             hes_v->data[J*hes_stride + I] += hes_val;
           }
@@ -207,19 +204,18 @@ static void logLik_dtheta(const OscatsContModel *model,
  * d[log(P), b^2] = -PQ
  * d[log(Q), b^2] = -PQ
  */
-static void logLik_dparam(const OscatsContModel *model,
-                          guint resp, const GGslVector *theta,
-                          const OscatsCovariates *covariates,
+static void logLik_dparam(const OscatsModel *model, OscatsResponse resp,
+                          const OscatsPoint *theta, const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes)
 {
   gdouble p, grad_val, hes_val;
-  g_return_if_fail(resp == 0 || resp == 1);
+  g_return_if_fail(resp <= 1);
   p = P(model, 1, theta, covariates);
   if (resp) grad_val = p-1;
   else      grad_val = p;
   hes_val = -p*(1-p);
-  if (grad) grad->v->data[0] += grad_val;
-  if (hes) hes->v->data[0] += hes_val;
+  if (grad) grad->v->data[PARAM_B] += grad_val;
+  if (hes) hes->v->data[PARAM_B] += hes_val;
   if (model->Ncov > 0)
   {
     gdouble val, val2;
@@ -230,7 +226,7 @@ static void logLik_dparam(const OscatsContModel *model,
     grad_val = -grad_val;
     for (i=NUM_PARAMS; i < model->Np; i++)
     {
-      val = oscats_covariates_get(covariates, model->names[i]);
+      val = oscats_covariates_get(covariates, model->covariates[i-NUM_PARAMS]);
       if (grad_v) grad_v->data[i*grad_v->stride] += val * grad_val;
       if (hes_v)
       {
@@ -239,7 +235,7 @@ static void logLik_dparam(const OscatsContModel *model,
         hes_v->data[PARAM_B*hes_stride + i] += -val * hes_val;
         for (j=i+1; j < model->Np; j++)
         {
-          val2 = oscats_covariates_get(covariates, model->names[j]);
+          val2 = oscats_covariates_get(covariates, model->covariates[j-NUM_PARAMS]);
           hes_v->data[i*hes_stride + j] += val * val2 * hes_val;
           hes_v->data[j*hes_stride + i] += val * val2 * hes_val;
         }

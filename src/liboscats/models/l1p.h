@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * One-Parameter Logistic IRT Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,21 +19,21 @@
 #ifndef _LIBOSCATS_MODEL_L1P_H_
 #define _LIBOSCATS_MODEL_L1P_H_
 #include <glib.h>
-#include <contmodel.h>
+#include <model.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_CONT_MODEL_L1P		(oscats_cont_model_l1p_get_type())
-#define OSCATS_CONT_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CONT_MODEL_L1P, OscatsContModelL1p))
-#define OSCATS_IS_CONT_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CONT_MODEL_L1P))
-#define OSCATS_CONT_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CONT_MODEL_L1P, OscatsContModelL1pClass))
-#define OSCATS_IS_CONT_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CONT_MODEL_L1P))
-#define OSCATS_CONT_MODEL_L1P_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CONT_MODEL_L1P, OscatsContModelL1pClass))
+#define OSCATS_TYPE_MODEL_L1P		(oscats_model_l1p_get_type())
+#define OSCATS_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_MODEL_L1P, OscatsModelL1p))
+#define OSCATS_IS_MODEL_L1P(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_MODEL_L1P))
+#define OSCATS_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_MODEL_L1P, OscatsModelL1pClass))
+#define OSCATS_IS_MODEL_L1P_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_MODEL_L1P))
+#define OSCATS_MODEL_L1P_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_MODEL_L1P, OscatsModelL1pClass))
 
-typedef struct _OscatsContModelL1p OscatsContModelL1p;
-typedef struct _OscatsContModelL1pClass OscatsContModelL1pClass;
+typedef struct _OscatsModelL1p OscatsModelL1p;
+typedef struct _OscatsModelL1pClass OscatsModelL1pClass;
 
 /**
- * OscatsContModelL1p:
+ * OscatsModelL1p:
  *
  * The One-Paramter Logistic (Rasch) IRT model:
  * P(X=1|theta) = 1/1+exp[-(sum_i theta_i -b + sum_j d_j covariate_j)],
@@ -57,15 +57,15 @@ typedef struct _OscatsContModelL1pClass OscatsContModelL1pClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsContModelL1p {
-  OscatsContModel parent_instance;
+struct _OscatsModelL1p {
+  OscatsModel parent_instance;
 };
 
-struct _OscatsContModelL1pClass {
-  OscatsContModelClass parent_class;
+struct _OscatsModelL1pClass {
+  OscatsModelClass parent_class;
 };
 
-GType oscats_cont_model_l1p_get_type();
+GType oscats_model_l1p_get_type();
 
 G_END_DECLS
 #endif

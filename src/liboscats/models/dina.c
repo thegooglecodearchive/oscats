@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Deterministic Inputs Noisy And Gate (DINA) Classification Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  * SECTION:dina
- * @title:OscatsDiscrModelDina
+ * @title:OscatsModelDina
  * @short_description: Deterministic Inputs Noisy And Gate (DINA) Model
  */
 
@@ -26,7 +26,7 @@
 #include <gsl/gsl_vector.h>
 #include "models/dina.h"
 
-G_DEFINE_TYPE(OscatsDiscrModelDina, oscats_discr_model_dina, OSCATS_TYPE_DISCR_MODEL);
+G_DEFINE_TYPE(OscatsModelDina, oscats_model_dina, OSCATS_TYPE_MODEL);
 
 enum
 {
@@ -36,16 +36,17 @@ enum
 };
 
 static void model_constructed (GObject *object);
-static guint8 get_max (const OscatsDiscrModel *model);
-static gdouble P(const OscatsDiscrModel *model, guint resp, const OscatsAttributes *attr);
-static void logLik_dparam(const OscatsDiscrModel *model,
-                          guint resp, const OscatsAttributes *attr,
+static OscatsResponse get_max (const OscatsModel *model);
+static gdouble P(const OscatsModel *model, OscatsResponse resp,
+                 const OscatsPoint *theta, const OscatsCovariates *covariates);
+static void logLik_dparam(const OscatsModel *model, OscatsResponse resp,
+                          const OscatsPoint *theta, const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes);
 
-static void oscats_discr_model_dina_class_init (OscatsDiscrModelDinaClass *klass)
+static void oscats_model_dina_class_init (OscatsModelDinaClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  OscatsDiscrModelClass *model_class = OSCATS_DISCR_MODEL_CLASS(klass);
+  OscatsModelClass *model_class = OSCATS_MODEL_CLASS(klass);
 
   gobject_class->constructed = model_constructed;
 
@@ -55,38 +56,48 @@ static void oscats_discr_model_dina_class_init (OscatsDiscrModelDinaClass *klass
   
 }
 
-static void oscats_discr_model_dina_init (OscatsDiscrModelDina *self)
+static void oscats_model_dina_init (OscatsModelDina *self)
 {
 }
 
 static void model_constructed(GObject *object)
 {
-  OscatsDiscrModel *model = OSCATS_DISCR_MODEL(object);
-  G_OBJECT_CLASS(oscats_discr_model_dina_parent_class)->constructed(object);
+  OscatsModel *model = OSCATS_MODEL(object);
+  G_OBJECT_CLASS(oscats_model_dina_parent_class)->constructed(object);
 
+  // Set up parameters
   model->Np = NUM_PARAMS;
   model->params = g_new0(gdouble, model->Np);
 
+  // Set up parameter names
   model->names = g_new(GQuark, model->Np);
   model->names[PARAM_GUESS] = g_quark_from_string("Guess");
   model->names[PARAM_SLIP] = g_quark_from_string("Slip");
   
+  // Check subspace type
+  if (model->dimType != OSCATS_DIM_BIN)
+  {
+    model->Ndims = 0;
+    g_critical("OscatsModelDina requires a binary latent space.");
+  }
+
 }
 
-static guint8 get_max (const OscatsDiscrModel *model)
+static OscatsResponse get_max (const OscatsModel *model)
 {
   return 1;
 }
 
-static gdouble P(const OscatsDiscrModel *model, guint resp,
-                 const OscatsAttributes *attr)
+static gdouble P(const OscatsModel *model, OscatsResponse resp,
+                 const OscatsPoint *theta, const OscatsCovariates *covariates)
 {
   gboolean pass = TRUE;
   gdouble p;
+  guint *dims = model->shortDims;
   guint i;
-  g_return_val_if_fail(resp == 0 || resp == 1, 0);
+  g_return_val_if_fail(resp <= 1, 0);
   for (i=0; i < model->Ndims && pass; i++)
-    if (!oscats_attributes_get(attr, model->dims[i])) pass = FALSE;
+    if (!g_bit_array_get_bit(theta->bin, dims[i])) pass = FALSE;
   p = (pass ? 1-model->params[PARAM_SLIP] : model->params[PARAM_GUESS]);
   return (resp ? p : 1-p);
 }
@@ -98,16 +109,17 @@ static gdouble P(const OscatsDiscrModel *model, guint resp,
  *   s, s          -1/(s-1)^2    -1/s^2         0              0
  *   g, s          0             0              0              0
  */
-static void logLik_dparam(const OscatsDiscrModel *model,
-                          guint resp, const OscatsAttributes *attr,
+static void logLik_dparam(const OscatsModel *model, OscatsResponse resp,
+                          const OscatsPoint *theta, const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes)
 {
   gboolean pass = TRUE;
   gdouble tmp;
+  guint *dims = model->shortDims;
   guint i;
-  g_return_if_fail(resp == 0 || resp == 1);
+  g_return_if_fail(resp <= 1);
   for (i=0; i < model->Ndims && pass; i++)
-    if (!oscats_attributes_get(attr, i)) pass = FALSE;
+    if (!g_bit_array_get_bit(theta->bin, dims[i])) pass = FALSE;
   if (pass)
   {
     if (resp)

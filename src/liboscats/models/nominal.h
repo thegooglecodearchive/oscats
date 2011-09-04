@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Nominal Response IRT Model
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,21 +19,21 @@
 #ifndef _LIBOSCATS_MODEL_NOMINAL_H_
 #define _LIBOSCATS_MODEL_NOMINAL_H_
 #include <glib.h>
-#include <contmodel.h>
+#include <model.h>
 G_BEGIN_DECLS
 
-#define OSCATS_TYPE_CONT_MODEL_NOMINAL		(oscats_cont_model_nominal_get_type())
-#define OSCATS_CONT_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_CONT_MODEL_NOMINAL, OscatsContModelNominal))
-#define OSCATS_IS_CONT_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_CONT_MODEL_NOMINAL))
-#define OSCATS_CONT_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_CONT_MODEL_NOMINAL, OscatsContModelNominalClass))
-#define OSCATS_IS_CONT_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_CONT_MODEL_NOMINAL))
-#define OSCATS_CONT_MODEL_NOMINAL_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_CONT_MODEL_NOMINAL, OscatsContModelNominalClass))
+#define OSCATS_TYPE_MODEL_NOMINAL		(oscats_model_nominal_get_type())
+#define OSCATS_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), OSCATS_TYPE_MODEL_NOMINAL, OscatsModelNominal))
+#define OSCATS_IS_MODEL_NOMINAL(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), OSCATS_TYPE_MODEL_NOMINAL))
+#define OSCATS_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), OSCATS_TYPE_MODEL_NOMINAL, OscatsModelNominalClass))
+#define OSCATS_IS_MODEL_NOMINAL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), OSCATS_TYPE_MODEL_NOMINAL))
+#define OSCATS_MODEL_NOMINAL_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), OSCATS_TYPE_MODEL_NOMINAL, OscatsModelNominalClass))
 
-typedef struct _OscatsContModelNominal OscatsContModelNominal;
-typedef struct _OscatsContModelNominalClass OscatsContModelNominalClass;
+typedef struct _OscatsModelNominal OscatsModelNominal;
+typedef struct _OscatsModelNominalClass OscatsModelNominalClass;
 
 /**
- * OscatsContModelNominal:
+ * OscatsModelNominal:
  *
  * The Nominal Response IRT model:
  * P(X=k|theta) = f_k(theta)/[1+sum_j f_j(theta)],
@@ -45,7 +45,7 @@ typedef struct _OscatsContModelNominalClass OscatsContModelNominalClass;
  * Note that all options share the same parameters for the covariates.
  * Distance is defined as: min_j abs(f_j(theta)).
  *
- * Parameter names: Diff.j, Discr.j.i
+ * Parameter names: Diff.j, Discr.j.DimName
  *
  * References:
  * <bibliolist>
@@ -73,16 +73,16 @@ typedef struct _OscatsContModelNominalClass OscatsContModelNominalClass;
  *  </bibliomixed>
  * </bibliolist>
  */
-struct _OscatsContModelNominal {
-  OscatsContModel parent_instance;
+struct _OscatsModelNominal {
+  OscatsModel parent_instance;
   guint Ncat;		// number of non-zero categories
 };
 
-struct _OscatsContModelNominalClass {
-  OscatsContModelClass parent_class;
+struct _OscatsModelNominalClass {
+  OscatsModelClass parent_class;
 };
 
-GType oscats_cont_model_nominal_get_type();
+GType oscats_model_nominal_get_type();
 
 G_END_DECLS
 #endif
