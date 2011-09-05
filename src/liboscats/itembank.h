@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Item Bank Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef _LIBOSCATS_ITEMBANK_H_
 #define _LIBOSCATS_ITEMBANK_H_
 #include <glib.h>
-#include "administrand.h"
+#include <administrand.h>
 G_BEGIN_DECLS
 
 #define OSCATS_TYPE_ITEM_BANK		(oscats_item_bank_get_type())
@@ -34,10 +34,7 @@ typedef struct _OscatsItemBankClass OscatsItemBankClass;
 
 struct _OscatsItemBank {
   OscatsAdministrand parent_instance;
-  gchar *id;
   GPtrArray *items;
-  /*< private >*/
-  guint Ndims, Nattrs;
 };
 
 struct _OscatsItemBankClass {
@@ -47,15 +44,9 @@ struct _OscatsItemBankClass {
 GType oscats_item_bank_get_type();
 
 void oscats_item_bank_add_item(OscatsItemBank *bank, OscatsAdministrand *item);
+void oscats_item_bank_remove_item(OscatsItemBank *bank, OscatsAdministrand *item);
 guint oscats_item_bank_num_items(const OscatsItemBank *bank);
-gboolean oscats_item_bank_is_pure(const OscatsItemBank *bank);
 const OscatsAdministrand * oscats_item_bank_get_item(const OscatsItemBank *bank, guint i);
-
-#define oscats_item_bank_is_cont(bank) oscats_administrand_is_cont(OSCATS_ADMINISTRAND(bank))
-#define oscats_item_bank_is_discr(bank) oscats_administrand_is_discr(OSCATS_ADMINISTRAND(bank))
-#define oscats_item_bank_num_dims(bank) oscats_administrand_num_dims(OSCATS_ADMINISTRAND(bank))
-#define oscats_item_bank_num_attrs(bank) oscats_administrand_num_attrs(OSCATS_ADMINISTRAND(bank))
-#define oscats_item_bank_max_response(bank) oscats_administrand_max_resp(OSCATS_ADMINISTRAND(bank))
 
 G_END_DECLS
 #endif

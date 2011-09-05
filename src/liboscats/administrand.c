@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Abstract Administrand Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,12 +24,13 @@
 
 #include "administrand.h"
 
-G_DEFINE_TYPE(OscatsAdministrand, oscats_administrand, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE(OscatsAdministrand, oscats_administrand, G_TYPE_OBJECT);
 
 enum
 {
   PROP_0,
   PROP_ID,
+  PROP_FROZEN,
 };
 
 static gboolean static_initialized = FALSE;
@@ -60,24 +61,41 @@ static inline void initialize_static()
   }
 }
                    
-static gboolean ret_false(const OscatsAdministrand *item) { return FALSE; }
-static guint ret_zero(const OscatsAdministrand *item) { return 0; }
+static gboolean ret_false() { return FALSE; }
+static GQuark ret_zero() { return 0; }
+static gpointer ret_null() { return NULL; }
+static void null_op() { }
+
+typedef void (*freeze_func) (OscatsAdministrand *item);
+typedef gboolean (*check_type_func) (const OscatsAdministrand *item, GType type);
+typedef gboolean (*check_model_func) (const OscatsAdministrand *item, GQuark model, GType type);
+typedef gboolean (*check_dim_type_func) (const OscatsAdministrand *item, GQuark model, OscatsDim type);
+typedef gboolean (*check_space_func) (const OscatsAdministrand *item, GQuark model, const OscatsSpace *space);
+typedef void (*set_default_model_func) (OscatsAdministrand *item, GQuark name);
+typedef GQuark (*get_default_model_func) (const OscatsAdministrand *item);
+typedef void (*set_model_func) (OscatsAdministrand *item, GQuark name, OscatsModel *model);
+typedef OscatsModel * (*get_model_func) (const OscatsAdministrand *item, GQuark name);
 
 static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GParamSpec *pspec;
-
+  
   gobject_class->dispose = oscats_administrand_dispose;
   gobject_class->finalize = oscats_administrand_finalize;
   gobject_class->set_property = oscats_administrand_set_property;
   gobject_class->get_property = oscats_administrand_get_property;
   
-  klass->is_cont = ret_false;
-  klass->is_discr = ret_false;
-  klass->num_dims = ret_zero;
-  klass->num_attrs = ret_zero;
-  klass->max_resp = ret_zero;
+  klass->freeze = (freeze_func)NULL;
+  klass->unfreeze = (freeze_func)null_op;
+  klass->check_type = (check_type_func)ret_false;
+  klass->check_model = (check_model_func)ret_false;
+  klass->check_dim_type = (check_dim_type_func)ret_false;
+  klass->check_space = (check_space_func)ret_false;
+  klass->set_default_model = (set_default_model_func)null_op;
+  klass->get_default_model = (get_default_model_func)ret_zero;
+  klass->set_model = (set_model_func)NULL;
+  klass->get_model = (get_model_func)ret_null;
 
   initialize_static();
   
@@ -93,6 +111,21 @@ static void oscats_administrand_class_init (OscatsAdministrandClass *klass)
                               G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                               G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_ID, pspec);
+
+/**
+ * OscatsAdministrand:frozen:
+ *
+ * Indicates whether changes to the administrand's models are permitted.
+ * Once an administrand is added (directly or indirectly) to a test,
+ * changes to its list of models are no longer permitted.
+ */
+  pspec = g_param_spec_boolean("frozen", "models frozen", 
+                              "Are changes to administrand's models forbidden?",
+                              FALSE,
+                              G_PARAM_READABLE |
+                              G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                              G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_FROZEN, pspec);
 
 }
 
@@ -130,7 +163,7 @@ static void oscats_administrand_set_property(GObject *object, guint prop_id,
       if (!self->id)
       {
         id = g_string_sized_new(18);
-        g_string_printf(id, "[Administrand %p]", self);
+        g_string_printf(id, "[%s %p]", G_OBJECT_TYPE_NAME(self), self);
         self->id = id->str;
         g_string_free(id, FALSE);
       }
@@ -153,6 +186,10 @@ static void oscats_administrand_get_property(GObject *object, guint prop_id,
       g_value_set_string(value, self->id);
       break;
     
+    case PROP_FROZEN:
+      g_value_set_boolean(value, self->freeze_count > 0);
+      break;
+    
     default:
       // Unknown property
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -172,6 +209,47 @@ static gboolean add_characteristic(gpointer key, gpointer val, gpointer data)
   OscatsAdministrand *administrand = (OscatsAdministrand*)key;
   g_bit_array_extend(administrand->characteristics, 1);
   return FALSE;
+}
+
+/**
+ * oscats_administrand_freeze:
+ * @item: an #OscatsAdministrand
+ *
+ * When an administrand is added to a test (directly or indirectly), changes
+ * to its list of models (including which model is set as the default) are
+ * no longer permitted.  When an #OscatsItembank is added to an #OscatsTest,
+ * the test calls oscats_administrand_freeze(), and all implementations of
+ * #OscatsAdministrand <emphasis>must</emphasis> provide
+ * #OscatsAdministrandClass.freeze to call oscats_administrand_freeze()
+ * on all sub-administrands.
+ */
+void oscats_administrand_freeze(OscatsAdministrand *item)
+{
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(item));
+  item->freeze_count++;
+  if (OSCATS_ADMINISTRAND_GET_CLASS(item)->freeze)
+    OSCATS_ADMINISTRAND_GET_CLASS(item)->freeze(item);
+  else
+    g_critical("%s should provide oscats_administrand_freeze()!", G_OBJECT_TYPE_NAME(item));
+}
+
+/**
+ * oscats_administrand_unfreeze:
+ * @item: an #OscatsAdministrand
+ *
+ * When an #OscatsTest is disposed, it calls oscats_administrand_unfreeze()
+ * to indicate that its administrands are no longer required not to allow
+ * changes to their models.  If an administrand is added to multiple tests,
+ * all of the tests must be disposed before changes are again permitted.
+ * Implementations of #OscatsAdministrand with sub-administrands
+ * <emphasis>should</emphasis> provide #OscatsAdministrandClass.unfreeze to
+ * call oscats_administrand_unfreeze() on all sub-administrands.
+ */
+void oscats_administrand_unfreeze(OscatsAdministrand *item)
+{
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(item));
+  if (item->freeze_count > 0) item->freeze_count--;
+  OSCATS_ADMINISTRAND_GET_CLASS(item)->unfreeze(item);
 }
 
 /**
@@ -240,7 +318,8 @@ const gchar * oscats_administrand_characteristic_as_string(GQuark characteristic
  * @administrand: an #OscatsAdministrand
  * @characteristic: a #GQuark characteristic
  *
- * Indicate that @administrand has @characteristic.
+ * Indicate that @administrand has @characteristic.  (This will register
+ * the characteristic if it has not been already.)
  */
 void oscats_administrand_set_characteristic(OscatsAdministrand *administrand, GQuark characteristic)
 {
@@ -324,63 +403,152 @@ GQuark oscats_administrand_characteristics_iter_next(OscatsAdministrand *adminis
 }
 
 /**
- * oscats_administrad_is_cont:
- * @admininstrand: an #OscatsAdmininstrand
+ * oscats_administrand_check_type:
+ * @item: an #OscatsAdministrand
+ * @type: a sub-class of #OscatsAdministrand
  *
- * Returns: %TRUE if @administrand is compatible with continuous models.
+ * Returns: %TRUE if all sub-administrands in @item are inherited from @type
  */
-gboolean oscats_administrand_is_cont(const OscatsAdministrand *administrand)
+gboolean oscats_administrand_check_type (const OscatsAdministrand *item, GType type)
 {
-  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
-  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->is_cont(administrand);
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), FALSE);
+  g_return_val_if_fail(g_type_is_a(type, OSCATS_TYPE_ADMINISTRAND), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->check_type(item, type);
 }
 
 /**
- * oscats_administrad_is_discr:
- * @admininstrand: an #OscatsAdmininstrand
+ * oscats_administrand_check_model:
+ * @item: an #OscatsAdministrand
+ * @model: a #GQuark identifier for a model name
+ * @type: a sub-class of #OscatsModel
  *
- * Returns: %TRUE if @administrand is compatible with discrete models.
+ * Checks whether the administrand (or all sub-administrands) have a model
+ * @model and if @model inherits from @type.  Use @model = 0 to check the
+ * default model.
+ *
+ * Returns: %TRUE if @item has @model and @model inherits from @type
  */
-gboolean oscats_administrand_is_discr(const OscatsAdministrand *administrand)
+gboolean oscats_administrand_check_model (const OscatsAdministrand *item, GQuark model, GType type)
 {
-  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
-  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->is_discr(administrand);
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), FALSE);
+  g_return_val_if_fail(g_type_is_a(type, OSCATS_TYPE_MODEL), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->check_model(item, model, type);
 }
 
 /**
- * oscats_administrad_num_dims:
- * @admininstrand: an #OscatsAdmininstrand
+ * oscats_administrand_check_dim_type:
+ * @item: an #OscatsAdministrand
+ * @model: a #GQuark identifier for a model name
+ * @type: a dimension type (see #OscatsSpace)
  *
- * Returns: the number of (test) dimensions for the continous model used by
- * @administrand.
+ * Checks whether the administrand (or all sub-administrands) have a model
+ * @model and if the subspace for @model is of @type.  Use @model = 0 to
+ * check the default model.
+ *
+ * Returns: %TRUE if @item has @model and the subspace of @model is @type
  */
-guint oscats_administrand_num_dims(const OscatsAdministrand *administrand)
+gboolean oscats_administrand_check_dim_type (const OscatsAdministrand *item, GQuark model, OscatsDim type)
 {
-  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
-  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->num_dims(administrand);
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->check_dim_type(item, model, type);
 }
 
 /**
- * oscats_administrad_num_attrs:
- * @admininstrand: an #OscatsAdmininstrand
+ * oscats_administrand_check_space:
+ * @item: an #OscatsAdministrand
+ * @model: a #GQuark identifier for a model name
+ * @space: an #OscatsSpace
  *
- * Returns: the number of (test) attributes for the discrete model used by
- * @administrand.
+ * Checks whether the administrand (or all sub-administrands) have a model
+ * @model and if the space for @model is compatible with @space.  Use @model
+ * = 0 to check the default model.
+ *
+ * Returns: %TRUE if @item has @model and the space of @model is compatible
+ * with @space
  */
-guint oscats_administrand_num_attrs(const OscatsAdministrand *administrand)
+gboolean oscats_administrand_check_space (const OscatsAdministrand *item, GQuark model, const OscatsSpace *space)
 {
-  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
-  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->num_attrs(administrand);
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), FALSE);
+  g_return_val_if_fail(OSCATS_IS_SPACE(space), FALSE);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->check_space(item, model, space);
 }
 
 /**
- * oscats_administrad_max_resp:
- * @admininstrand: an #OscatsAdmininstrand
+ * oscats_administrand_set_default_model:
+ * @item: an #OscatsAdministrand
+ * @name: the name of a model (as a #GQuark)
  *
- * Returns: the maximum response possible for @administrand
+ * Set the model @name as the default for @item.  Note, an administrand's
+ * models may not be changed if it is frozen.  See
+ * #OscatsAdministrand:frozen and oscats_administrand_freeze().
  */
-guint oscats_administrand_max_resp(const OscatsAdministrand *administrand)
+void oscats_administrand_set_default_model (OscatsAdministrand *item, GQuark name)
 {
-  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
-  return OSCATS_ADMINISTRAND_GET_CLASS(administrand)->max_resp(administrand);
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(item));
+  g_return_if_fail(item->freeze_count > 0);
+  OSCATS_ADMINISTRAND_GET_CLASS(item)->set_default_model(item, name);
+}
+
+/**
+ * oscats_administrand_get_default_model:
+ * @item: an #OscatsAdministrand
+ *
+ * Get which model name is set as the default for this administrand. 
+ * Generally, an administrand's default model will be "default" by default,
+ * but this may be implementation-specific.
+ *
+ * This function returns the key for the default model.  To actually
+ * retrieve the #OscatsModel itself, use oscats_administrand_get_model().
+ */
+GQuark oscats_administrand_get_default_model (const OscatsAdministrand *item)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), 0);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->get_default_model(item);
+}
+
+/**
+ * oscats_administrand_set_model:
+ * @item: an #OscatsAdministrand
+ * @name: the name of the model (as a #GQuark)
+ * @model: (transfer full): the #OscatsModel to set
+ *
+ * Set the model @model as @name for @item.  If @item already has a model
+ * @name, it is replaced with @model.  Note, @item takes ownership of @model.
+ *
+ * The @name may be 0 to indicate the default model.
+ *
+ * Note, an administrand's models may not be changed if it is frozen.  See
+ * #OscatsAdministrand:frozen and oscats_administrand_freeze().
+ *
+ * Generally, model access is fastest for the first models added, so models
+ * should be set in order of decreasing expected access frequency. 
+ * Accessing the default model (by supplying the #GQuark 0) is fastest,
+ * though.
+ */
+void oscats_administrand_set_model (OscatsAdministrand *item, GQuark name, OscatsModel *model)
+{
+  g_return_if_fail(OSCATS_IS_ADMINISTRAND(item));
+  g_return_if_fail(OSCATS_IS_MODEL(model));
+  g_return_if_fail(item->freeze_count > 0);
+  if (OSCATS_ADMINISTRAND_GET_CLASS(item)->set_model)
+    OSCATS_ADMINISTRAND_GET_CLASS(item)->set_model(item, name, model);
+  else
+    g_critical("%s does not implement oscats_administrand_set_model()!", G_OBJECT_TYPE_NAME(item));
+}
+
+/**
+ * oscats_administrand_get_model:
+ * @item: an #OscatsAdministrand
+ * @name: the name of the model (as a #GQuark)
+ *
+ * Get the model @model as @name for @item.  The @name may be 0 to indicate
+ * the default model.
+ *
+ * Returns: (transfer none): the model @name for @item, or %NULL if @item
+ * does not have a model @name
+ */
+OscatsModel * oscats_administrand_get_model (const OscatsAdministrand *item, GQuark name)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), NULL);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->get_model(item, name);
 }

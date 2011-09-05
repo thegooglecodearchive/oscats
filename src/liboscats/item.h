@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Item Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,9 +19,7 @@
 #ifndef _LIBOSCATS_ITEM_H_
 #define _LIBOSCATS_ITEM_H_
 #include <glib.h>
-#include "administrand.h"
-#include "contmodel.h"
-#include "discrmodel.h"
+#include <administrand.h>
 G_BEGIN_DECLS
 
 #define OSCATS_TYPE_ITEM		(oscats_item_get_type())
@@ -36,8 +34,9 @@ typedef struct _OscatsItemClass OscatsItemClass;
 
 struct _OscatsItem {
   OscatsAdministrand parent_instance;
-  OscatsContModel *cont_model;
-  OscatsDiscrModel *discr_model;
+  GQuark defaultKey;
+  OscatsModel *defaultmodel;
+  GData *models;
 };
 
 struct _OscatsItemClass {
@@ -45,6 +44,8 @@ struct _OscatsItemClass {
 };
 
 GType oscats_item_get_type();
+
+OscatsItem * oscats_item_new(GQuark name, OscatsModel *model);
 
 G_END_DECLS
 #endif

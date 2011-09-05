@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Item Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,165 +20,138 @@
  * SECTION:item
  * @title:OscatsItem
  * @short_description: Item Container Class
+ *
+ * Implements all #OscatsAdministrand methods.
  */
 
 #include "item.h"
 
 G_DEFINE_TYPE(OscatsItem, oscats_item, OSCATS_TYPE_ADMINISTRAND);
 
-enum
-{
-  PROP_0,
-  PROP_CONT_MODEL,
-  PROP_DISCR_MODEL,
-};
+#define GET_MODEL(I, K) ((K) ? g_datalist_id_get_data(&((I)->models), (K)) : (I)->defaultmodel)
 
-static void oscats_item_constructed (GObject *object);
+static GQuark defaultKey;
+
 static void oscats_item_dispose (GObject *object);
-static void oscats_item_set_property(GObject *object, guint prop_id,
-                                      const GValue *value, GParamSpec *pspec);
-static void oscats_item_get_property(GObject *object, guint prop_id,
-                                      GValue *value, GParamSpec *pspec);
+
+static void freeze (OscatsAdministrand *item) { }
+static gboolean check_type (const OscatsAdministrand *item, GType type);
+static gboolean check_model (const OscatsAdministrand *item, GQuark model, GType type);
+static gboolean check_dim_type (const OscatsAdministrand *item, GQuark model, OscatsDim type);
+static gboolean check_space (const OscatsAdministrand *item, GQuark model, const OscatsSpace *space);
+static void set_default_model (OscatsAdministrand *item, GQuark name);
+static GQuark get_default_model (const OscatsAdministrand *item);
+static void set_model (OscatsAdministrand *item, GQuark name, OscatsModel *model);
+static OscatsModel * get_model (const OscatsAdministrand *item, GQuark name);
                    
-static gboolean is_cont (const OscatsAdministrand *item)
-{ return OSCATS_IS_CONT_MODEL(OSCATS_ITEM(item)->cont_model); }
-
-static gboolean is_discr (const OscatsAdministrand *item)
-{ return OSCATS_IS_DISCR_MODEL(OSCATS_ITEM(item)->discr_model); }
-
-static guint num_dims (const OscatsAdministrand *item)
-{
-  OscatsItem *self = OSCATS_ITEM(item);
-  return (self->cont_model ? self->cont_model->testDim : 0);
-}
-
-static guint num_attrs (const OscatsAdministrand *item)
-{
-  OscatsItem *self = OSCATS_ITEM(item);
-  return (self->discr_model ? self->discr_model->dimsFlags->num : 0);
-}
-
-static guint max_resp (const OscatsAdministrand *item)
-{
-  OscatsItem *self = OSCATS_ITEM(item);
-  if (self->cont_model) return oscats_cont_model_get_max(self->cont_model);
-  return oscats_discr_model_get_max(self->discr_model);
-}
-
 static void oscats_item_class_init (OscatsItemClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   OscatsAdministrandClass *admin_class = OSCATS_ADMINISTRAND_CLASS(klass);
-  GParamSpec *pspec;
 
-  gobject_class->constructed = oscats_item_constructed;
   gobject_class->dispose = oscats_item_dispose;
-  gobject_class->set_property = oscats_item_set_property;
-  gobject_class->get_property = oscats_item_get_property;
   
-  admin_class->is_cont = is_cont;
-  admin_class->is_discr = is_discr;
-  admin_class->num_dims = num_dims;
-  admin_class->num_attrs = num_attrs;
-  admin_class->max_resp = max_resp;
+  admin_class->freeze = freeze;
+  admin_class->check_type = check_type;
+  admin_class->check_model = check_model;
+  admin_class->check_dim_type = check_dim_type;
+  admin_class->check_space = check_space;
+  admin_class->set_default_model = set_default_model;
+  admin_class->get_default_model = get_default_model;
+  admin_class->set_model = set_model;
+  admin_class->get_model = get_model;
 
-/**
- * OscatsItem:contmodel:
- *
- * The Continuous IRT model used for the item.  Either a continuous or
- * discrete model must be specified (or both).
- */
-  pspec = g_param_spec_object("contmodel", "Continuous Model", 
-                            "Continuous IRT model used for the item",
-                            OSCATS_TYPE_CONT_MODEL,
-                            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
-                            G_PARAM_STATIC_BLURB);
-  g_object_class_install_property(gobject_class, PROP_CONT_MODEL, pspec);
-
-/**
- * OscatsItem:discrmodel:
- *
- * The discrete IRT (classification) model used for the item.  Either a
- * continuous or discrete model must be specified (or both).
- */
-  pspec = g_param_spec_object("discrmodel", "Discrete Model", 
-                            "Discrete IRT (Classification) model used for the item",
-                            OSCATS_TYPE_DISCR_MODEL,
-                            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
-                            G_PARAM_STATIC_BLURB);
-  g_object_class_install_property(gobject_class, PROP_DISCR_MODEL, pspec);
-
+  defaultKey = g_quark_from_string("default");
 }
 
 static void oscats_item_init (OscatsItem *self)
 {
-}
-
-static void oscats_item_constructed(GObject *object)
-{
-  OscatsItem *item = OSCATS_ITEM(object);
-//  G_OBJECT_CLASS(oscats_item_parent_class)->constructed(object);
-
-  if (!item->cont_model && !item->discr_model)
-    g_critical("A Continous or Discrete Model must be specified!");
-  
-  if ((item->cont_model && item->discr_model) &&
-      (oscats_cont_model_get_max(item->cont_model) !=
-       oscats_discr_model_get_max(item->discr_model)))
-    g_critical("Continous and Discrete Models do not have compatible response categories!");
-
+  self->defaultKey = defaultKey;
+  g_datalist_init(&(self->models));
 }
 
 static void oscats_item_dispose (GObject *object)
 {
   OscatsItem *self = OSCATS_ITEM(object);
   G_OBJECT_CLASS(oscats_item_parent_class)->dispose(object);
-  if (self->cont_model) g_object_unref(self->cont_model);
-  if (self->discr_model) g_object_unref(self->discr_model);
-  self->cont_model = NULL;
-  self->discr_model = NULL;
+  g_datalist_clear(&(self->models));
+  self->defaultmodel = NULL;
 }
 
-static void oscats_item_set_property(GObject *object, guint prop_id,
-                                     const GValue *value, GParamSpec *pspec)
+static gboolean check_type (const OscatsAdministrand *item, GType type)
 {
-  OscatsItem *self = OSCATS_ITEM(object);
-  switch (prop_id)
-  {
-    case PROP_CONT_MODEL:		// construction only
-      self->cont_model = g_value_dup_object(value);
-      break;
-
-    case PROP_DISCR_MODEL:		// construction only
-      self->discr_model = g_value_dup_object(value);
-      break;
-    
-    default:
-      // Unknown property
-      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-      break;
-  }
+  return g_type_is_a(G_OBJECT_TYPE(item), type);
 }
 
-static void oscats_item_get_property(GObject *object, guint prop_id,
-                                      GValue *value, GParamSpec *pspec)
+static gboolean check_model (const OscatsAdministrand *self, GQuark model, GType type)
 {
-  OscatsItem *self = OSCATS_ITEM(object);
-  switch (prop_id)
-  {
-    case PROP_CONT_MODEL:
-      g_value_set_object(value, self->cont_model);
-      break;
+  OscatsItem *item = OSCATS_ITEM(self);
+  OscatsModel *m = GET_MODEL(item, model);
+  if (m) return g_type_is_a(G_OBJECT_TYPE(m), type);
+  else return FALSE;
+}
 
-    case PROP_DISCR_MODEL:
-      g_value_set_object(value, self->discr_model);
-      break;
-    
-    default:
-      // Unknown property
-      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-      break;
-  }
+static gboolean check_dim_type (const OscatsAdministrand *self, GQuark model, OscatsDim type)
+{
+  OscatsItem *item = OSCATS_ITEM(self);
+  OscatsModel *m = GET_MODEL(item, model);
+  if (m) return (m->dimType == type);
+  else return FALSE;
+}
+
+static gboolean check_space (const OscatsAdministrand *self, GQuark model, const OscatsSpace *space)
+{
+  OscatsItem *item = OSCATS_ITEM(self);
+  OscatsModel *m = GET_MODEL(item, model);
+  if (m) return oscats_space_compatible(m->space, space);
+  else return FALSE;
+}
+
+static void set_default_model (OscatsAdministrand *self, GQuark name)
+{
+  OscatsItem *item = OSCATS_ITEM(self);
+  if (name == 0) name = defaultKey;
+  item->defaultKey = name;
+  item->defaultmodel = GET_MODEL(item, name);
+}
+
+static GQuark get_default_model (const OscatsAdministrand *self)
+{
+  return OSCATS_ITEM(self)->defaultKey;
+}
+
+static void set_model (OscatsAdministrand *self, GQuark name, OscatsModel *model)
+{
+  OscatsItem *item = OSCATS_ITEM(self);
+  if (name == 0) name = item->defaultKey;
+  // Item takes ownership of model
+  g_datalist_id_set_data_full(&(item->models), name, model, g_object_unref);
+  if (name == item->defaultKey) item->defaultmodel = model;
+}
+
+static OscatsModel * get_model (const OscatsAdministrand *self, GQuark name)
+{
+  return GET_MODEL(OSCATS_ITEM(self), name);
+}
+
+/**
+ * oscats_item_new:
+ * @name: name for default model (as a #GQuark)
+ * @model: (transfer full): an #OscatsModel to set as the default model
+ *
+ * Creates a new #OscatsItem using the supplied @model as the default model. 
+ * The default model key is set to @name, or if @name == 0, "default" is
+ * used.  Note: the new #OscatsItem takes ownership of @model.
+ *
+ * Returns: (transfer full): the new #OscatsItem
+ */
+OscatsItem * oscats_item_new(GQuark name, OscatsModel *model)
+{
+  OscatsItem *item;
+  g_return_val_if_fail(OSCATS_IS_MODEL(model), NULL);
+  item = g_object_newv(OSCATS_TYPE_ITEM, 0, NULL);
+  if (!item) return NULL;
+  if (name) item->defaultKey = name;
+  set_model((OscatsAdministrand*)item, name, model);
+  return item;
 }
