@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Examinee Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,24 @@
  * SECTION:examinee
  * @title:OscatsExaminee
  * @short_description: Examinee Class
+ *
+ * An #OscatsExaminee represents a single examinee taking a single test.
+ * That is, a given #OscatsEaminee may be administered only one test at a
+ * time.
+ *
+ * The examinee may be associated with several points in latent space. 
+ * (Generally, all points will be from the same latent space, but complex
+ * simulations may involve a collection of algorithms that operate in
+ * several different spaces simulatneously.) Each point in latent space is
+ * associated with a name or key.
+ *
+ * Each examinee has two special keys: one used as the default for
+ * simulation and one used as the default for estimation/item selection.  If
+ * these keys are not specified explicitly, they are taken as "simDefault"
+ * and "estDefault", respectively.  Simulation, estimation, and item
+ * selection algorithms are not required to use the default keys.  Refer to
+ * the documentation for particular algorithms for details on which keys are
+ * used.
  */
 
 #include "examinee.h"
@@ -33,6 +51,10 @@ enum
   PROP_COVARIATES,
 };
 
+GQuark simKey, estKey;
+
+#define GET_THETA(E, K) (g_datalist_id_get_data(&((E)->theta), (K)))
+
 static void oscats_examinee_dispose (GObject *object);
 static void oscats_examinee_finalize (GObject *object);
 static void oscats_examinee_set_property(GObject *object, guint prop_id,
@@ -44,6 +66,9 @@ static void oscats_examinee_class_init (OscatsExamineeClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GParamSpec *pspec;
+
+  simKey = g_quark_from_string("simDefault");
+  estKey = g_quark_from_string("estDefault");
 
   gobject_class->dispose = oscats_examinee_dispose;
   gobject_class->finalize = oscats_examinee_finalize;
@@ -71,42 +96,32 @@ static void oscats_examinee_class_init (OscatsExamineeClass *klass)
   pspec = g_param_spec_object("covariates", "Covariates", 
                             "Covariates for the examinee",
                             OSCATS_TYPE_COVARIATES,
-                            G_PARAM_READABLE |
+                            G_PARAM_READWRITE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_COVARIATES, pspec);
 
 }
 
-static void safe_unref(gpointer obj)
-{
-  if (obj) g_object_unref(obj);
-}
-
 static void oscats_examinee_init (OscatsExaminee *self)
 {
+  self->simKey = simKey;
+  self->estKey = estKey;
+  g_datalist_init(&(self->theta));
 }
 
 static void oscats_examinee_dispose (GObject *object)
 {
   OscatsExaminee *self = OSCATS_EXAMINEE(object);
   G_OBJECT_CLASS(oscats_examinee_parent_class)->dispose(object);
-  if (self->items) g_ptr_array_unref(self->items);
-  if (self->resp) g_byte_array_unref(self->resp);
-  if (self->true_theta) g_object_unref(self->true_theta);
-  if (self->theta_hat) g_object_unref(self->theta_hat);
-  if (self->theta_err) g_object_unref(self->theta_err);
-  if (self->true_alpha) g_object_unref(self->true_alpha);
-  if (self->alpha_hat) g_object_unref(self->alpha_hat);
+  g_datalist_clear(&(self->theta));
   if (self->covariates) g_object_unref(self->covariates);
+  if (self->items) g_ptr_array_unref(self->items);
+  if (self->resp) g_array_unref(self->resp);
+  self->simTheta = self->estTheta = NULL;
+  self->covariates = NULL;
   self->items = NULL;
   self->resp = NULL;
-  self->true_theta = NULL;
-  self->theta_hat = NULL;
-  self->theta_err = NULL;
-  self->true_alpha = NULL;
-  self->alpha_hat = NULL;
-  self->covariates = NULL;
 }
 
 static void oscats_examinee_finalize (GObject *object)
@@ -134,6 +149,11 @@ static void oscats_examinee_set_property(GObject *object, guint prop_id,
       }
       break;
     
+    case PROP_COVARIATES:
+      if (self->covariates) g_object_unref(self->covariates);
+      self->covariates = g_value_dup_object(value);
+      break;
+    
     default:
       // Unknown property
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -153,7 +173,7 @@ static void oscats_examinee_get_property(GObject *object, guint prop_id,
     
     case PROP_COVARIATES:
       if (!self->covariates)
-        self->covariates = g_object_new(OSCATS_TYPE_COVARIATES, NULL);
+        self->covariates = g_object_newv(OSCATS_TYPE_COVARIATES, 0, NULL);
       g_value_set_object(value, self->covariates);
       break;
     
@@ -165,165 +185,200 @@ static void oscats_examinee_get_property(GObject *object, guint prop_id,
 }
 
 /**
- * oscats_examinee_set_true_theta:
+ * oscats_examinee_set_sim_key:
  * @e: an #OscatsExaminee
- * @t: a #GGslVector for the true (simulated) latent IRT ability
+ * @name: the #GQuark name of the point for simulation
  *
- * Sets the true latent IRT ability for the simulated examinee.
- * The vector @t is copied.  The internal dimension is adjusted
- * to match @t.
+ * @name may be 0 to refer to "simDefault".
  */
-void oscats_examinee_set_true_theta(OscatsExaminee *e, const GGslVector *t)
-{
-  g_return_if_fail(OSCATS_IS_EXAMINEE(e) && G_GSL_IS_VECTOR(t) && t->v);
-  if (!e->true_theta)
-    e->true_theta = g_gsl_vector_new(t->v->size);
-  else if (e->true_theta->v->size != t->v->size)
-    g_gsl_vector_resize(e->true_theta, t->v->size);
-  g_gsl_vector_copy(e->true_theta, t);
-}
-
-/**
- * oscats_examinee_get_true_theta:
- * @e: an #OscatsExaminee
- *
- * Returns %NULL if true latent IRT ability has never been set.
- * Does not increase reference count.
- *
- * Returns: a pointer to the simulated examinee's true latent IRT ability
- */
-GGslVector * oscats_examinee_get_true_theta(OscatsExaminee *e)
-{
-  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->true_theta;
-}
-
-/**
- * oscats_examinee_set_theta_hat:
- * @e: an #OscatsExaminee
- * @t: a #GGslVector for the estimated latent IRT ability
- *
- * Sets the estimated latent IRT ability for the examinee.
- * The vector @t is copied.  The internal dimension is adjusted
- * to match @t.
- */
-void oscats_examinee_set_theta_hat(OscatsExaminee *e, const GGslVector *t)
-{
-  g_return_if_fail(OSCATS_IS_EXAMINEE(e) && G_GSL_IS_VECTOR(t) && t->v);
-  if (!e->theta_hat)
-    e->theta_hat = g_gsl_vector_new(t->v->size);
-  else if (e->theta_hat->v->size != t->v->size)
-    g_gsl_vector_resize(e->theta_hat, t->v->size);
-  g_gsl_vector_copy(e->theta_hat, t);
-}
-
-/**
- * oscats_examinee_get_theta_hat:
- * @e: an #OscatsExaminee
- *
- * Does not increase reference count.
- * Returns %NULL if estimated latent IRT ability has never been set.
- *
- * Returns: a pointer to the examinee's estimated latent IRT ability
- */
-GGslVector * oscats_examinee_get_theta_hat(OscatsExaminee *e)
-{
-  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->theta_hat;
-}
-
-/**
- * oscats_examinee_init_theta_err:
- * @e: an #OscatsExaminee
- * @dim: the test dimension
- *
- * Initializes a matrix for the covariance of the estimated latent IRT ability.
- */
-void oscats_examinee_init_theta_err(OscatsExaminee *e, guint dim)
-{
-  g_return_if_fail(OSCATS_IS_EXAMINEE(e) && dim > 0);
-  e->theta_err = g_gsl_matrix_new(dim, dim);
-}
-
-/**
- * oscats_examinee_get_theta_err:
- * @e: an #OscatsExaminee
- *
- * Returns the covariance matrix of the examinee's estimated latent IRT
- * ability.  Does not increase reference count.  Returns %NULL if covariance
- * matrix for the estimated latent IRT ability has never been set.
- *
- * Returns: a pointer to the covariance matrix
- */
-GGslMatrix * oscats_examinee_get_theta_err(OscatsExaminee *e)
-{
-  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->theta_err;
-}
-
-/**
- * oscats_examinee_set_true_alpha:
- * @e: an #OscatsExaminee
- * @attr: an #OscatsAttributes for the true (simulated) latent attributes
- *
- * Sets the true latent attributes for the simulated examinee.
- * The vector @status is copied.  The internal dimension is adjusted
- * to match @status.
- */
-void oscats_examinee_set_true_alpha(OscatsExaminee *e,
-                                    const OscatsAttributes *attr)
+void oscats_examinee_set_sim_key(OscatsExaminee *e, GQuark name)
 {
   g_return_if_fail(OSCATS_IS_EXAMINEE(e));
-  if (!e->true_alpha)
-    e->true_alpha = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
-  oscats_attributes_copy(e->true_alpha, attr);
+  e->simKey = (name ? name : simKey);
+  e->simTheta = GET_THETA(e, e->simKey);
 }
 
 /**
- * oscats_examinee_get_true_alpha:
+ * oscats_examinee_get_sim_key:
  * @e: an #OscatsExaminee
  *
- * Returns %NULL if true latent attributes have never been set.
- * Does not increase reference count.
- *
- * Returns: a pointer to the simulated examinee's true latent classification
+ * Returns: the key for the #OscatsPoint used by default for simulation
  */
-OscatsAttributes * oscats_examinee_get_true_alpha(OscatsExaminee *e)
+GQuark oscats_examinee_get_sim_key(const OscatsExaminee *e)
 {
-  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->true_alpha;
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), 0);
+  return e->simKey;
 }
 
 /**
- * oscats_examinee_set_alpha_hat:
+ * oscats_examinee_set_est_key:
  * @e: an #OscatsExaminee
- * @attr: an #OscatsAttributes for the estimated latent classification
+ * @name: the #GQuark name of the point for estimation/item selection
  *
- * Sets the estimated latent attributes for the examinee.  The vector
- * @status is copied.  The internal dimension is adjusted to match @status.
+ * @name may be 0 to refer to "estDefault".
  */
-void oscats_examinee_set_alpha_hat(OscatsExaminee *e, 
-                                   const OscatsAttributes *attr)
+void oscats_examinee_set_est_key(OscatsExaminee *e, GQuark name)
 {
   g_return_if_fail(OSCATS_IS_EXAMINEE(e));
-  if (!e->alpha_hat)
-    e->alpha_hat = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
-  oscats_attributes_copy(e->alpha_hat, attr);
+  e->estKey = (name ? name : estKey);
+  e->estTheta = GET_THETA(e, e->estKey);
 }
 
 /**
- * oscats_examinee_get_alpha_hat:
+ * oscats_examinee_get_est_key:
  * @e: an #OscatsExaminee
  *
- * Returns %NULL if estimated latent attributes have never been set.
- * Does not increase reference count.
- *
- * Returns: a pointer to the examinee's estimated latent classification
+ * Returns: the key for the #OscatsPoint used by default for estimation
+ * and item selection
  */
-OscatsAttributes * oscats_examinee_get_alpha_hat(OscatsExaminee *e)
+GQuark oscats_examinee_get_est_key(const OscatsExaminee *e)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), 0);
+  return e->estKey;
+}
+
+/**
+ * oscats_examinee_set_sim_theta:
+ * @e: an #OscatsExaminee
+ * @theta: (transfer full): an #OscatsPoint to use for simulation
+ *
+ * Sets @theta as the point referred to by the simulation key for @e.
+ * Note that @e takes ownership of @theta.
+ */
+void oscats_examinee_set_sim_theta(OscatsExaminee *e, OscatsPoint *theta)
+{
+  g_return_if_fail(OSCATS_IS_EXAMINEE(e));
+  oscats_examinee_set_theta(e, e->simKey, theta);
+}
+
+/**
+ * oscats_examinee_get_sim_theta:
+ * @e: an #OscatsExaminee
+ *
+ * Returns: (transfer none): the #OscatsPoint indicated to be used by
+ * default for simulation, or %NULL if no point has been assigned
+ */
+OscatsPoint * oscats_examinee_get_sim_theta(const OscatsExaminee *e)
 {
   g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
-  return e->alpha_hat;
+  return e->simTheta;
+}
+
+/**
+ * oscats_examinee_set_est_theta:
+ * @e: an #OscatsExaminee
+ * @theta: (transfer full): an #OscatsPoint to be used for estimation
+ *
+ * Set @theta as the point referred to by the estimation key for @e.
+ * Note that @e takes ownership of @theta.
+ */
+void oscats_examinee_set_est_theta(OscatsExaminee *e, OscatsPoint *theta)
+{
+  g_return_if_fail(OSCATS_IS_EXAMINEE(e));
+  oscats_examinee_set_theta(e, e->estKey, theta);
+}
+
+/**
+ * oscats_examinee_get_est_theta:
+ * @e: an #OscatsExaminee
+ *
+ * Returns: (transfer none): the #OscatsPoint indicated to be used by
+ * default for estimation and item selection, or %NULL if no point has been
+ * assigned
+ */
+OscatsPoint * oscats_examinee_get_est_theta(const OscatsExaminee *e)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
+  return e->estTheta;
+}
+
+/**
+ * oscats_set_theta:
+ * @e: an #OscatsExaminee
+ * @name: the #GQuark name of the point to set
+ * @theta: (transfer full): the #OscatsPoint to set
+ *
+ * Sets @point as the latent variable named @name for @e.  Any previous
+ * point set as @name is replaced.  Note, @name may <emphasis>not</emphasis>
+ * be 0.  Note that @e takes ownership of @theta.
+ */
+void oscats_examinee_set_theta(OscatsExaminee *e, GQuark name, OscatsPoint *theta)
+{
+  g_return_if_fail(OSCATS_IS_EXAMINEE(e) && OSCATS_IS_POINT(theta));
+  g_return_if_fail(name != 0);
+  // Examinee takes ownership of theta
+  g_datalist_id_set_data_full(&(e->theta), name, theta, g_object_unref);
+  if (name == e->simKey) e->simTheta = theta;
+  else if (name == e->estKey) e->estTheta = theta;
+}
+
+/**
+ * oscats_examinee_get_theta:
+ * @e: an #OscatsExaminee
+ * @name: the key for the #OscatsPoint to fetch
+ *
+ * Note, @name may <emphasis>not</emphasis> be 0.
+ *
+ * Returns: (transfer none): the #OscatsPoint for @e named @name
+ */
+OscatsPoint * oscats_examinee_get_theta(OscatsExaminee *e, GQuark name)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
+  return GET_THETA(e, name);
+}
+
+/**
+ * oscats_examinee_init_sim_theta:
+ * @e: an #OscatsExaminee
+ * @space: (transfer none): the latent space from which to generate the #OscatsPoint
+ *
+ * Generate a new #OscatsPoint from @space for @e to use in simulation.
+ * The point is stored under the current simulation key.
+ *
+ * Returns: (transfer none): the new #OscatsPoint
+ */
+OscatsPoint * oscats_examinee_init_sim_theta(OscatsExaminee *e, OscatsSpace *space)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
+  return oscats_examinee_init_theta(e, e->simKey, space);
+}
+
+/**
+ * oscats_examinee_init_est_theta:
+ * @e: an #OscatsExaminee
+ * @space: (transfer none): the latent space from which to generate the #OscatsPoint
+ *
+ * Generate a new #OscatsPoint from @space for @e to use in estimation and
+ * item selection.  The point is stored under the current estimation key.
+ *
+ * Returns: (transfer none): the new #OscatsPoint
+ */
+OscatsPoint * oscats_examinee_init_est_theta(OscatsExaminee *e, OscatsSpace *space)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
+  return oscats_examinee_init_theta(e, e->estKey, space);
+}
+
+/**
+ * oscats_examinee_init_est_theta:
+ * @e: an #OscatsExaminee
+ * @name: the #GQuark name for the new #OscatsPoint
+ * @space: (transfer none): the latent space from which to generate the #OscatsPoint
+ *
+ * Generate a new #OscatsPoint from @space for @e under the key @name.
+ * Any previous #OscatsPoint under @name in @e is replaced.
+ * Note: @name may <emphasis>not</emphasis> be 0.
+ *
+ * Returns: (transfer none): the new #OscatsPoint
+ */
+OscatsPoint * oscats_examinee_init_theta(OscatsExaminee *e, GQuark name, OscatsSpace *space)
+{
+  OscatsPoint *theta;
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e) && OSCATS_IS_SPACE(space), NULL);
+  g_return_val_if_fail(name != 0, NULL);
+  theta = oscats_point_new_from_space(space);
+  oscats_examinee_set_theta(e, name, theta);
+  return theta;
 }
 
 /**
@@ -343,29 +398,30 @@ void oscats_examinee_prep(OscatsExaminee *e, guint length_hint)
   else
   {
     e->items = g_ptr_array_sized_new(length_hint);
-    g_ptr_array_set_free_func(e->items, safe_unref);
+    g_ptr_array_set_free_func(e->items, g_object_unref);
   }
   if (e->resp)
-    g_byte_array_set_size(e->resp, 0);
+    g_array_set_size(e->resp, 0);
   else
-    e->resp = g_byte_array_sized_new(length_hint);
+    e->resp = g_array_sized_new(FALSE, FALSE, sizeof(OscatsResponse),
+                                length_hint);
 }
 
 /**
  * oscats_examinee_add_item:
  * @e: an #OscatsExaminee
- * @item: the #OscatsItem this examinee has taken
+ * @item: (transfer none): the #OscatsItem this examinee has taken
  * @resp: the examinee's response to the item
  *
  * Adds the (@item, @resp) pair to the list of items this examinee has been
  * administered.  The reference count for @item is increased.
  */
-void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, guint8 resp)
+void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, OscatsResponse resp)
 {
   g_return_if_fail(OSCATS_IS_EXAMINEE(e) && OSCATS_IS_ITEM(item));
   g_ptr_array_add(e->items, item);
   g_object_ref(item);
-  g_byte_array_append(e->resp, &resp, 1);
+  g_array_append_val(e->resp, resp);
 }
 
 /**
@@ -377,7 +433,6 @@ void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, guint8 resp)
 guint oscats_examinee_num_items(const OscatsExaminee *e)
 {
   g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), 0);
-  if (!e->items) return 0;
-  return e->items->len;
+  return (e->items ? e->items->len : 0);
 }
 

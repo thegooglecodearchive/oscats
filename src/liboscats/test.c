@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Test Administration Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ enum
 {
   PROP_0,
   PROP_ID,
-  PROP_N_DIMS,
   PROP_BANK,
   PROP_LENGTH_HINT,
   PROP_ITERMAX_SELECT,
@@ -76,22 +75,6 @@ static void oscats_test_class_init (OscatsTestClass *klass)
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_ID, pspec);
-
-/**
- * OscatsTest:Ndims:
- *
- * The number of dimensions for continuous models in the item bank used for
- * this test.  Initial values for examinee's latent IRT ability must
- * have this dimension.  A value of 0 indicates that the item bank
- * does not use continuous models.
- */
-  pspec = g_param_spec_uint("Ndims", "Num Dims", 
-                            "Number of dimensions for continuous IRT models",
-                            0, G_MAXUINT, 0,
-                            G_PARAM_READABLE |
-                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
-                            G_PARAM_STATIC_BLURB);
-  g_object_class_install_property(gobject_class, PROP_N_DIMS, pspec);
 
 /**
  * OscatsTest:itembank:
@@ -323,7 +306,11 @@ static void oscats_test_dispose (GObject *object)
 {
   OscatsTest *self = OSCATS_TEST(object);
   G_OBJECT_CLASS(oscats_test_parent_class)->dispose(object);
-  if (self->itembank) g_object_unref(self->itembank);
+  if (self->itembank)
+  {
+    oscats_administrand_unfreeze(OSCATS_ADMINISTRAND(self->itembank));
+    g_object_unref(self->itembank);
+  }
   if (self->hint) g_object_unref(self->hint);
   self->itembank = NULL;
   self->hint = NULL;
@@ -349,6 +336,7 @@ static void oscats_test_set_property(GObject *object, guint prop_id,
     
     case PROP_BANK:			// construction only
       self->itembank = g_value_dup_object(value);
+      oscats_administrand_freeze(OSCATS_ADMINISTRAND(self->itembank));
       break;
     
     case PROP_LENGTH_HINT:
@@ -380,10 +368,6 @@ static void oscats_test_get_property(GObject *object, guint prop_id,
       g_value_set_string(value, self->id);
       break;
       
-    case PROP_N_DIMS:
-      g_value_set_uint(value, oscats_item_bank_num_dims(self->itembank));
-      break;
-    
     case PROP_BANK:
       g_value_set_object(value, self->itembank);
       break;
@@ -448,11 +432,6 @@ void oscats_test_administer(OscatsTest *test, OscatsExaminee *e)
   g_return_if_fail(OSCATS_IS_TEST(test) && OSCATS_IS_EXAMINEE(e));
   num_items = oscats_item_bank_num_items(test->itembank);
   g_return_if_fail(num_items > 0);
-  if (oscats_item_bank_is_cont(test->itembank))
-    g_return_if_fail(G_GSL_IS_VECTOR(e->theta_hat) && e->theta_hat->v &&
-                     e->theta_hat->v->size ==
-                       oscats_item_bank_num_dims(test->itembank));
-// FIXME: check for initial classification estimate if necessary
   klass = OSCATS_TEST_GET_CLASS(test);
   eligible = g_bit_array_new(num_items);
   if (!test->hint)

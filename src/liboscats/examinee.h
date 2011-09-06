@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Examinee Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 #ifndef _LIBOSCATS_EXAMINEE_H_
 #define _LIBOSCATS_EXAMINEE_H_
-#include <glib.h>
-#include "item.h"
-#include "covariates.h"
+#include <glib-object.h>
+#include <item.h>
+#include <covariates.h>
+#include <point.h>
 G_BEGIN_DECLS
 
 #define OSCATS_TYPE_EXAMINEE		(oscats_examinee_get_type())
@@ -36,12 +37,12 @@ typedef struct _OscatsExamineeClass OscatsExamineeClass;
 struct _OscatsExaminee {
   GObject parent_instance;
   gchar *id;
-  GGslVector *true_theta, *theta_hat;
-  GGslMatrix *theta_err;
-  OscatsAttributes *true_alpha, *alpha_hat;
+  GQuark simKey, estKey;
+  OscatsPoint *simTheta, *estTheta;
+  GData *theta;
   OscatsCovariates *covariates;
   GPtrArray *items;
-  GByteArray *resp;
+  GArray *resp;
 };
 
 struct _OscatsExamineeClass {
@@ -50,22 +51,22 @@ struct _OscatsExamineeClass {
 
 GType oscats_examinee_get_type();
 
-void oscats_examinee_set_true_theta(OscatsExaminee *e, const GGslVector *t);
-GGslVector * oscats_examinee_get_true_theta(OscatsExaminee *e);
-void oscats_examinee_set_theta_hat(OscatsExaminee *e, const GGslVector *t);
-GGslVector * oscats_examinee_get_theta_hat(OscatsExaminee *e);
-void oscats_examinee_init_theta_err(OscatsExaminee *e, guint dim);
-GGslMatrix * oscats_examinee_get_theta_err(OscatsExaminee *e);
-
-void oscats_examinee_set_true_alpha(OscatsExaminee *e,
-                                    const OscatsAttributes *attr);
-OscatsAttributes * oscats_examinee_get_true_alpha(OscatsExaminee *e);
-void oscats_examinee_set_alpha_hat(OscatsExaminee *e,
-                                   const OscatsAttributes *attr);
-OscatsAttributes * oscats_examinee_get_alpha_hat(OscatsExaminee *e);
+void oscats_examinee_set_sim_key(OscatsExaminee *e, GQuark name);
+GQuark oscats_examinee_get_sim_key(const OscatsExaminee *e);
+void oscats_examinee_set_est_key(OscatsExaminee *e, GQuark name);
+GQuark oscats_examinee_get_est_key(const OscatsExaminee *e);
+void oscats_examinee_set_sim_theta(OscatsExaminee *e, OscatsPoint *theta);
+OscatsPoint * oscats_examinee_get_sim_theta(const OscatsExaminee *e);
+void oscats_examinee_set_est_theta(OscatsExaminee *e, OscatsPoint *theta);
+OscatsPoint * oscats_examinee_get_est_theta(const OscatsExaminee *e);
+void oscats_examinee_set_theta(OscatsExaminee *e, GQuark name, OscatsPoint *theta);
+OscatsPoint * oscats_examinee_get_theta(OscatsExaminee *e, GQuark name);
+OscatsPoint * oscats_examinee_init_sim_theta(OscatsExaminee *e, OscatsSpace *space);
+OscatsPoint * oscats_examinee_init_est_theta(OscatsExaminee *e, OscatsSpace *space);
+OscatsPoint * oscats_examinee_init_theta(OscatsExaminee *e, GQuark name, OscatsSpace *space);
 
 void oscats_examinee_prep(OscatsExaminee *e, guint length_hint);
-void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, guint8 resp);
+void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, OscatsResponse resp);
 guint oscats_examinee_num_items(const OscatsExaminee *e);
 
 G_END_DECLS
