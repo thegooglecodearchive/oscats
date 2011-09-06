@@ -309,7 +309,7 @@ void oscats_examinee_set_theta(OscatsExaminee *e, GQuark name, OscatsPoint *thet
   // Examinee takes ownership of theta
   g_datalist_id_set_data_full(&(e->theta), name, theta, g_object_unref);
   if (name == e->simKey) e->simTheta = theta;
-  else if (name == e->estKey) e->estTheta = theta;
+  if (name == e->estKey) e->estTheta = theta;
 }
 
 /**
