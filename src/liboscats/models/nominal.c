@@ -50,7 +50,7 @@ static gdouble P(const OscatsModel *model, OscatsResponse resp, const OscatsPoin
 static gdouble distance(const OscatsModel *model, const OscatsPoint *theta, const OscatsCovariates *covariates);
 static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
-                          GGslVector *grad, GGslMatrix *hes);
+                          GGslVector *grad, GGslMatrix *hes, gboolean Inf);
 static void logLik_dparam(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes);
@@ -269,17 +269,25 @@ static gdouble distance(const OscatsModel *model, const OscatsPoint *theta,
  */
 static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
-                          GGslVector *grad, GGslMatrix *hes)
+                          GGslVector *grad, GGslMatrix *hes, gboolean Inf)
 {
   gsl_vector *grad_v = (grad ? grad->v : NULL);
   gsl_matrix *hes_v = (hes ? hes->v : NULL);
   guint i, j, I, J, x, y, Ncat = ((OscatsModelNominal*)model)->Ncat;
   guint hes_stride = (hes ? hes_v->tda : 0);
-  gdouble p[Ncat], grad_val;
+  gdouble p[Ncat], grad_val, inf_factor = 1;
   g_return_if_fail(resp <= Ncat);
 
   for (i=0; i < Ncat; i++)
     p[i] = P(model, i+1, theta, covariates);
+  if (Inf)
+  {
+    if (resp == 0)  // inf_factor = -[1 - sum_i p_i]
+      for(inf_factor = -1, i=0; i < Ncat; i++)
+        inf_factor += p[i];
+    else
+      inf_factor = -p[resp-1];
+  }
 
   switch (model->Ndims)
   {
@@ -297,9 +305,9 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
           gdouble tmp;
           hes_v->data[I*hes_stride+I] -=
             model->params[(PARAM_A_FIRST+1)*Ncat+x] * p[x] *
-            (model->params[(PARAM_A_FIRST+1)*Ncat+x] - grad_val);
+            (model->params[(PARAM_A_FIRST+1)*Ncat+x] - grad_val) * inf_factor;
           tmp = model->params[(PARAM_A_FIRST)*Ncat+x] * p[x] *
-                (model->params[(PARAM_A_FIRST+1)*Ncat+x] - grad_val);
+                (model->params[(PARAM_A_FIRST+1)*Ncat+x] - grad_val) * inf_factor;
           hes_v->data[I*hes_stride+J] -= tmp;
           hes_v->data[J*hes_stride+I] -= tmp;
         }
@@ -314,7 +322,7 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
         for (x=0; x < Ncat; x++)
           hes_v->data[J*hes_stride+J] -=
             model->params[PARAM_A_FIRST*Ncat+x] * p[x] *
-            (model->params[PARAM_A_FIRST*Ncat+x] - grad_val);
+            (model->params[PARAM_A_FIRST*Ncat+x] - grad_val) * inf_factor;
       break;
     
     default:
@@ -331,11 +339,11 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
           {
             hes_v->data[J*hes_stride+J] -=
               model->params[(PARAM_A_FIRST+j)*Ncat+x] * p[x] *
-              (model->params[(PARAM_A_FIRST+j)*Ncat+x] - grad_val);
+              (model->params[(PARAM_A_FIRST+j)*Ncat+x] - grad_val) * inf_factor;
             for (i=j+1; i < model->Ndims; i++)
             {
               gdouble tmp = model->params[(PARAM_A_FIRST+i)*Ncat+x] * p[x] *
-                        (model->params[(PARAM_A_FIRST+j)*Ncat+x] - grad_val);
+                (model->params[(PARAM_A_FIRST+j)*Ncat+x] - grad_val) * inf_factor;
               I = model->shortDims[i];
               hes_v->data[J*hes_stride+I] -= tmp;
               hes_v->data[I*hes_stride+J] -= tmp;

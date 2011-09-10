@@ -65,7 +65,7 @@ static gdouble null_distance (const OscatsModel *model,
 }
 static void null_logLik_theta (const OscatsModel *model, OscatsResponse resp,
                          const OscatsPoint *theta, const OscatsCovariates *covariates,
-                         GGslVector *grad, GGslMatrix *hes)
+                         GGslVector *grad, GGslMatrix *hes, gboolean inf)
 {
   g_critical("%s does not support logLik_dtheta", G_OBJECT_TYPE_NAME(model));
 }
@@ -577,7 +577,7 @@ void oscats_model_logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
   if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v);
   if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v);
   OSCATS_MODEL_GET_CLASS(model)->logLik_dtheta(model, resp, theta,
-                                               covariates, grad, hes);
+                                               covariates, grad, hes, FALSE);
 }
 
 /**
@@ -612,6 +612,34 @@ void oscats_model_logLik_dparam(const OscatsModel *model, OscatsResponse resp,
   if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v);
   OSCATS_MODEL_GET_CLASS(model)->logLik_dparam(model, resp, theta,
                                                covariates, grad, hes);
+}
+
+/**
+ * oscats_model_fisher_inf:
+ * @model: an #OscatsModel
+ * @theta: the #OscatsPoint latent point
+ * @covariates: (allow-none): the value of covariates
+ * @I: a #GGslMatrix for returning the Fisher Information
+ * 
+ * Calculates the Fisher Information at @theta, given @covariates:
+ * I = E_{X|theta}[-d^2/dtheta dtheta' log(P(X))].
+ * The information is <emphasis>added</emphasis> to @I.
+ * The matrix must have dimension @model->space->num_cont.
+ */
+void oscats_model_fisher_inf(const OscatsModel *model, const OscatsPoint *theta,
+                             const OscatsCovariates *covariates, GGslMatrix *I)
+{
+  OscatsModelClass *klass;
+  guint k, max;
+  g_return_if_fail(OSCATS_IS_MODEL(model) && OSCATS_IS_POINT(theta));
+  g_return_if_fail(oscats_space_compatible(theta->space, model->space));
+  g_return_if_fail(G_GSL_IS_MATRIX(I) && I->v &&
+                   I->v->size1 == I->v->size2 && 
+                   I->v->size2 == model->space->num_cont);
+  klass = OSCATS_MODEL_GET_CLASS(model);
+  max = klass->get_max(model);
+  for (k=0; k <= max; k++)
+    klass->logLik_dtheta(model, k, theta, covariates, NULL, I, TRUE);
 }
 
 /**

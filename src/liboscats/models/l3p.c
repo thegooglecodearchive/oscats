@@ -41,7 +41,7 @@ static gdouble P(const OscatsModel *model, OscatsResponse resp, const OscatsPoin
 static gdouble distance(const OscatsModel *model, const OscatsPoint *theta, const OscatsCovariates *covariates);
 static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
-                          GGslVector *grad, GGslMatrix *hes);
+                          GGslVector *grad, GGslMatrix *hes, gboolean Inf);
 static void logLik_dparam(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
                           GGslVector *grad, GGslMatrix *hes);
@@ -174,7 +174,7 @@ static gdouble distance(const OscatsModel *model, const OscatsPoint *theta,
  */
 static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
-                          GGslVector *grad, GGslMatrix *hes)
+                          GGslVector *grad, GGslMatrix *hes, gboolean Inf)
 {
   gsl_vector *grad_v = (grad ? grad->v : NULL);
   gsl_matrix *hes_v = (hes ? hes->v : NULL);
@@ -194,6 +194,7 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
                       (c * (1-p_star)*(1-p_star) - p_star * p_star) / (p*p);
   else      hes_val = -(1-c)*(1-c) * p_star *
                       (1-p_star)*(1-p_star)*(1-p_star) / ((1-p)*(1-p));
+  if (Inf) hes_val *= -(resp ? p : 1-p);
 
   dim1 = model->shortDims[0];
   switch (model->Ndims)
