@@ -78,17 +78,19 @@ static void oscats_point_dispose (GObject *object)
   OscatsPoint *self = OSCATS_POINT(object);
   G_OBJECT_CLASS(oscats_point_parent_class)->dispose(object);
   if (self->space) g_object_unref(self->space);
+  if (self->cont && !self->link) g_free(self->cont);
   if (self->bin) g_object_unref(self->bin);
+  if (self->link) g_object_unref(self->link);
   self->space = NULL;
+  self->cont = NULL;
   self->bin = NULL;
+  self->link = NULL;
 }
 
 static void oscats_point_finalize (GObject *object)
 {
   OscatsPoint *self = OSCATS_POINT(object);
-  if (self->cont) g_free(self->cont);
   if (self->nat) g_free(self->nat);
-  self->cont = NULL;
   self->nat = NULL;
   G_OBJECT_CLASS(oscats_point_parent_class)->finalize(object);
 }
@@ -335,4 +337,38 @@ void oscats_point_set_nat(OscatsPoint *point, OscatsDim dim, OscatsNatural value
   g_return_if_fail(oscats_space_validate(point->space, dim, value));
   g_return_if_fail((dim & OSCATS_DIM_TYPE_MASK) == OSCATS_DIM_NAT);
   point->nat[dim & OSCATS_DIM_MASK] = value;
+}
+
+/**
+ * oscats_point_cont_as_vector:
+ * @point: an #OscatsPoint with at least one continuous dimension
+ *
+ * Create a link between the continuous dimensions of  @point and a
+ * #GGslVector so that when either is changed, the other is updated
+ * (they share the same memory segment).
+ *
+ * Returns: (transfer none): a #GGslVector linked with the continuous
+ * dimensions of @point
+ */
+GGslVector * oscats_point_cont_as_vector(OscatsPoint *point)
+{
+  gdouble *data;
+  guint i, num;
+  
+  g_return_val_if_fail(OSCATS_IS_POINT(point), NULL);
+  if (point->link) return point->link;
+
+  g_return_val_if_fail(OSCATS_IS_SPACE(point->space), NULL);
+  num = point->space->num_cont;
+  g_return_val_if_fail(num > 0 && point->cont, NULL);
+
+  data = point->cont;
+  point->link = g_gsl_vector_new(num);
+  point->cont = point->link->v->data;
+  if (data)
+  {
+    for (i=0; i < num; i++) point->cont[i] = data[i];
+    g_free(data);
+  }
+  return point->link;
 }

@@ -21,6 +21,7 @@
 #include <glib-object.h>
 #include "bitarray.h"
 #include "space.h"
+#include "gsl.h"
 G_BEGIN_DECLS
 
 #define OSCATS_EPS 2.220446e-16
@@ -41,6 +42,7 @@ struct _OscatsPoint {
   gdouble *cont;
   GBitArray *bin;
   OscatsNatural *nat;
+  GGslVector *link;
 };
 
 struct _OscatsPointClass {
@@ -60,6 +62,7 @@ OscatsNatural oscats_point_get_nat(const OscatsPoint *point, OscatsDim dim);
 void oscats_point_set_cont(OscatsPoint *point, OscatsDim dim, gdouble value);
 void oscats_point_set_bin(OscatsPoint *point, OscatsDim dim, gboolean value);
 void oscats_point_set_nat(OscatsPoint *point, OscatsDim dim, OscatsNatural value);
+GGslVector * oscats_point_cont_as_vector(OscatsPoint *point);
 
 G_END_DECLS
 #endif
