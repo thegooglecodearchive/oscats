@@ -62,6 +62,7 @@ GBitArray* g_bit_array_set_bit_val(GBitArray* array, guint pos, gboolean val);
 GBitArray* g_bit_array_set_range(GBitArray* array, guint start, guint stop, gboolean val);
 GBitArray* g_bit_array_reset(GBitArray* array, gboolean val);
 gboolean g_bit_array_equal(GBitArray *lhs, GBitArray *rhs);
+gint g_bit_array_serial_compare(const GBitArray *a, const GBitArray *b);
 
 void g_bit_array_iter_reset(GBitArray* array);
 gint g_bit_array_iter_next(GBitArray* array);

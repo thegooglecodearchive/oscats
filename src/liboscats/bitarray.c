@@ -370,6 +370,28 @@ gboolean g_bit_array_equal(GBitArray *lhs, GBitArray *rhs)
 }
 
 /**
+ * g_bit_array_serial_compare:
+ * @a: a #GBitArray object
+ * @b: a #GBitArray object
+ *
+ * Compares a serialization of @a and @b.  The serialization interprets
+ * the bit array as a base-2 integer.
+ *
+ * Returns: 0 if @a == @b, -1 if @a < @b, and 1 if @a > @b.
+ */
+gint g_bit_array_serial_compare(const GBitArray *a, const GBitArray *b)
+{
+  gint i;
+  g_return_val_if_fail(G_IS_BIT_ARRAY(a) && G_IS_BIT_ARRAY(b), 0);
+  g_return_val_if_fail(a->bit_len == b->bit_len, 0);
+  // Last byte is most significant
+  for (i=a->byte_len-1; i >= 0 && a->data[i] == b->data[i]; i--) ;
+  if (i < 0) return 0;
+  if (a->data[i] < b->data[i]) return -1;
+  else return 1;
+}
+
+/**
  * g_bit_array_iter_reset:
  * @array: a #GBitArray
  *
