@@ -305,3 +305,23 @@ gdouble oscats_integrate_space(OscatsIntegrate *integrator, gpointer data)
   integrator->F.function = integrate_space;
   return integrate_space(0, integrator);
 }
+
+/**
+ * oscats_integrate_link_point:
+ * @integrator: an #OscatsIntegrate object with function already set
+ * @point: an #OscatsPoint to link
+ *
+ * Links the internal integration variable used by @integrator with the
+ * continuous dimensions of @point so that when the integration variable is
+ * changed, @point is moved as well.  The continuous dimension of @point must
+ * be the same as the integration dimensions.
+ */
+void oscats_integrate_link_point(OscatsIntegrate *integrator, OscatsPoint *point)
+{
+  g_return_if_fail(OSCATS_IS_INTEGRATE(integrator));
+  g_return_if_fail(OSCATS_IS_POINT(point) && OSCATS_IS_SPACE(point->space));
+  g_return_if_fail(integrator->dims == point->space->num_cont);
+  if (integrator->x) g_object_unref(integrator->x);
+  integrator->x = oscats_point_cont_as_vector(point);
+  g_object_ref(integrator->x);
+}

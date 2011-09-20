@@ -21,6 +21,7 @@
 #include <glib.h>
 #include <gsl/gsl_integration.h>
 #include "gsl.h"
+#include <point.h>
 G_BEGIN_DECLS
 
 #define OSCATS_TYPE_INTEGRATE		(oscats_integrate_get_type())
@@ -64,6 +65,7 @@ gdouble oscats_integrate_cube(OscatsIntegrate *integrator, GGslVector *mu, gdoub
 gdouble oscats_integrate_box(OscatsIntegrate *integrator, GGslVector *min, GGslVector *max, gpointer data);
 gdouble oscats_integrate_ellipse(OscatsIntegrate *integrator, GGslVector *mu, GGslMatrix *Sigma, gdouble c, gpointer data);
 gdouble oscats_integrate_space(OscatsIntegrate *integrator, gpointer data);
+void oscats_integrate_link_point(OscatsIntegrate *integrator, OscatsPoint *point);
 
 G_END_DECLS
 #endif
