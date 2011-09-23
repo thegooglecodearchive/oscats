@@ -10,8 +10,7 @@ lib_LTLIBRARIES = liboscats.la
 liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c point.c        \
 			model.c administrand.c item.c			\
 			itembank.c examinee.c marshal.c test.c		\
-			algorithm.c covariates.c attributes.c		\
-			contmodel.c discrmodel.c integrate.c		\
+			algorithm.c covariates.c integrate.c		\
 			models/l1p.c					\
 			models/l2p.c					\
 			models/l3p.c					\
@@ -34,8 +33,8 @@ liboscatsincludedir = $(includedir)/liboscats
 liboscatsinclude_HEADERS = oscats.h bitarray.h gsl.h random.h space.h point.h  \
 			   model.h administrand.h item.h		\
 			   itembank.h examinee.h marshal.h test.h       \
-			   algorithm.h algorithms.h models.h covariates.h  \
-			   attributes.h contmodel.h discrmodel.h integrate.h
+			   algorithm.h algorithms.h models.h		\
+			   covariates.h integrate.h
 liboscatsmodelsincludedir = $(liboscatsincludedir)/models
 liboscatsmodelsinclude_HEADERS = models/l1p.h				\
 			models/l2p.h					\
