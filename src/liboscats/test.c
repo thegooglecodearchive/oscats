@@ -142,8 +142,7 @@ static void oscats_test_class_init (OscatsTestClass *klass)
  * internal data structures should connect to the #OscatsTest::initialize
  * signal.  If the examinee's initial ability/class estimate is not set
  * before oscats_test_administer() is called, it should be set by a handler
- * attached to #OscatsTest::initialize.  Similarly, the covariance matrix
- * for estimates should be initialized, if its calculation is desired.
+ * attached to #OscatsTest::initialize.
  */
   klass->initialize = g_signal_new("initialize",
                                    OSCATS_TYPE_TEST, G_SIGNAL_ACTION, 0,
