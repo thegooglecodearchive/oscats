@@ -3,16 +3,13 @@
 #include  <algorithms/pick_rand.h>
 #include  <algorithms/closest_diff.h>
 #include  <algorithms/max_fisher.h>
-#include  <algorithms/max_kl_cont.h>
-#include  <algorithms/max_kl_discr.h>
+#include  <algorithms/max_kl.h>
 
 // Administration
-#include  <algorithms/simulate_theta.h>
-#include  <algorithms/simulate_alpha.h>
+#include  <algorithms/simulate.h>
 
 // Estimation
-#include  <algorithms/estimate_theta.h>
-#include  <algorithms/estimate_alpha.h>
+#include  <algorithms/estimate.h>
 
 // Stoping Criterion
 #include  <algorithms/fixed_length.h>

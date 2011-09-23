@@ -22,14 +22,11 @@ liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c point.c        \
 			algorithms/chooser.c				\
 			algorithms/closest_diff.c			\
 			algorithms/max_fisher.c				\
-			algorithms/max_kl_cont.c				\
-			algorithms/max_kl_discr.c			\
-			algorithms/simulate_theta.c			\
-			algorithms/simulate_alpha.c			\
+			algorithms/max_kl.c				\
+			algorithms/simulate.c				\
 			algorithms/exposure_counter.c			\
 			algorithms/class_rates.c			\
-			algorithms/estimate_theta.c			\
-			algorithms/estimate_alpha.c			\
+			algorithms/estimate.c				\
 			algorithms/fixed_length.c
 liboscats_la_CFLAGS = @GLIB_CFLAGS@ @GSL_CFLAGS@ -Wall -Werror
 liboscats_la_LIBADD = @GLIB_LIBS@ @GSL_LIBS@
@@ -51,12 +48,9 @@ liboscatsalginclude_HEADERS = algorithms/pick_rand.h                    \
 			algorithms/chooser.h				\
 			algorithms/closest_diff.h			\
 			algorithms/max_fisher.h				\
-			algorithms/max_kl_cont.h			\
-			algorithms/max_kl_discr.h			\
-			algorithms/simulate_theta.h			\
-			algorithms/simulate_alpha.h			\
+			algorithms/max_kl.h				\
+			algorithms/simulate.h				\
 			algorithms/exposure_counter.h			\
 			algorithms/class_rates.h			\
-			algorithms/estimate_theta.h			\
-			algorithms/estimate_alpha.h			\
+			algorithms/estimate.h				\
 			algorithms/fixed_length.h

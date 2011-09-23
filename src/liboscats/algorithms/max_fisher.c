@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * CAT Algorithm: Select Item based on Fisher Information
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
 
 #include "random.h"
 #include "algorithms/max_fisher.h"
-#include "contmodel.h"
+#include "model.h"
 
 enum {
   PROP_0,
   PROP_NUM,
   PROP_TYPE,
+  PROP_MODEL_KEY,
+  PROP_THETA_KEY,
 };
 
 G_DEFINE_TYPE(OscatsAlgMaxFisher, oscats_alg_max_fisher, OSCATS_TYPE_ALGORITHM);
@@ -34,6 +36,32 @@ static void oscats_alg_max_fisher_set_property(GObject *object,
 static void oscats_alg_max_fisher_get_property(GObject *object,
               guint prop_id, GValue *value, GParamSpec *pspec);
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test);
+
+static void clear_workspace(OscatsAlgMaxFisher *self)
+{
+  if (self->base_num > 0)
+    g_warning("OscatsAlgMaxFisher: Latent space dimension changed! Selection may be incorrect.");
+  self->base_num = 0;
+  if (self->base) g_object_unref(self->base);
+  if (self->work) g_object_unref(self->work);
+  if (self->inv) g_object_unref(self->inv);
+  if (self->perm) g_object_unref(self->perm);
+  self->base = self->work = self->inv = NULL;
+  self->perm = NULL;
+  self->dim = 0;
+}
+
+static void alloc_workspace(OscatsAlgMaxFisher *self, guint num)
+{
+  self->work = g_gsl_matrix_new(num, num);
+  if (num > 1)
+  {
+    self->base = g_gsl_matrix_new(num, num);
+    self->inv = g_gsl_matrix_new(num, num);
+    self->perm = g_gsl_permutation_new(num);
+  }
+  self->dim = num;
+}
 
 static void oscats_alg_max_fisher_class_init (OscatsAlgMaxFisherClass *klass)
 {
@@ -74,6 +102,34 @@ static void oscats_alg_max_fisher_class_init (OscatsAlgMaxFisherClass *klass)
                                G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                                G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_TYPE, pspec);
+
+/**
+ * OscatsAlgMaxFisher:modelKey:
+ *
+ * The key indicating which model to use for selection.  A value of 0
+ * indicates the item's default model.
+ */
+  pspec = g_param_spec_ulong("modelKey", "model key", 
+                            "Which model to use for selection",
+                            0, G_MAXULONG, 0,
+                            G_PARAM_READWRITE |
+                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                            G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_MODEL_KEY, pspec);
+
+/**
+ * OscatsAlgMaxFisher:thetaKey:
+ *
+ * The key indicating which latent variable to use for selection.  A value
+ * of 0 indicates the examinee's default estimation theta.
+ */
+  pspec = g_param_spec_ulong("estKey", "estimation key", 
+                            "Which latent variable to use for selection",
+                            0, G_MAXULONG, 0,
+                            G_PARAM_READWRITE |
+                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                            G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_THETA_KEY, pspec);
 
 }
 
@@ -150,15 +206,23 @@ static gdouble criterion(const OscatsItem *item,
                          const OscatsExaminee *e,
                          gpointer data)
 {
-  guint k;
   OscatsAlgMaxFisher *alg_data = (OscatsAlgMaxFisher*)data;
+  OscatsModel *model = oscats_administrand_get_model(OSCATS_ADMINISTRAND(item), alg_data->modelKey);
+  guint k, dim;
+  g_return_val_if_fail(model != NULL && OSCATS_IS_SPACE(model->space), 0);
+  dim = model->space->num_cont;
+  if (alg_data->dim != dim)
+  {
+    clear_workspace(alg_data);
+    alloc_workspace(alg_data, dim);
+  }
   if (alg_data->base)
     g_gsl_matrix_copy(alg_data->work, alg_data->base);
   else
     g_gsl_matrix_set_all(alg_data->work, 0);
-  oscats_cont_model_fisher_inf(item->cont_model, e->theta_hat, e->covariates,
-                              alg_data->work);
-  if (item->cont_model->testDim == 1)
+  oscats_model_fisher_info(model, alg_data->theta, e->covariates,
+                           alg_data->work);
+  if (dim == 1)
     return -alg_data->work->v->data[0];
     // max I_j(theta) <==> min -I_j(theta)
   if (alg_data->A_opt)
@@ -166,7 +230,7 @@ static gdouble criterion(const OscatsItem *item,
     gdouble ret = 0, *data = alg_data->inv->v->data;
     guint stride = alg_data->inv->v->tda;
     g_gsl_matrix_invert(alg_data->work, alg_data->inv, alg_data->perm);
-    for (k=0; k < item->cont_model->testDim; k++)
+    for (k=0; k < dim; k++)
       ret += data[k*stride+k];
     return ret;
     // min tr{[sum I_j(theta)]^-1}
@@ -179,11 +243,15 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
                     GBitArray *eligible, gpointer alg_data)
 {
   OscatsAlgMaxFisher *self = OSCATS_ALG_MAX_FISHER(alg_data);
+  self->theta = ( self->thetaKey ?
+                    oscats_examinee_get_theta(e, self->thetaKey) :
+                    oscats_examinee_get_est_theta(e) );
   
   if (self->base)
     for (; self->base_num < e->items->len; self->base_num++)
-      oscats_cont_model_fisher_inf(g_ptr_array_index(e->items, self->base_num),
-                                  e->theta_hat, e->covariates, self->base);
+      oscats_model_fisher_info(
+        oscats_administrand_get_model(g_ptr_array_index(e->items, self->base_num), self->modelKey),
+        self->theta, e->covariates, self->base);
 
   return oscats_alg_chooser_choose(self->chooser, e, eligible, alg_data);
 }
@@ -198,16 +266,6 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgMaxFisher *self = OSCATS_ALG_MAX_FISHER(alg_data);
-  guint num = oscats_item_bank_num_dims(test->itembank);
-  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
-
-  self->work = g_gsl_matrix_new(num, num);
-  if (num > 1)
-  {
-    self->base = g_gsl_matrix_new(num, num);
-    self->inv = g_gsl_matrix_new(num, num);
-    self->perm = g_gsl_permutation_new(num);
-  }
 
   self->chooser->bank = test->itembank;
   self->chooser->criterion = criterion;
@@ -219,3 +277,19 @@ static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
   g_object_ref(alg_data);
 }
                    
+/**
+ * oscats_alg_max_fisher_resize:
+ * @alg_data: the #OscatsAlgMaxFisher data
+ * @num: the number of continuous dimensions of the test's latent space
+ *
+ * Set the size of the continuous portion of the test's latent space.  This
+ * function only needs to be called if the test switches to a set of models
+ * from a different latent space (which is <emphasis>not</emphasis> usual).
+ */
+void oscats_alg_max_fisher_resize(OscatsAlgMaxFisher *alg_data, guint num)
+{
+  g_return_if_fail(OSCATS_IS_ALG_MAX_FISHER(alg_data));
+  alg_data->base_num = 0;
+  clear_workspace(alg_data);
+  alloc_workspace(alg_data, num);
+}

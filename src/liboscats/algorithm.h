@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Abstract CAT Algorithm Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -47,6 +47,59 @@ OscatsAlgorithm * oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTes
 
 // Protected
 void oscats_algorithm_closure_finalize (gpointer alg_data, GClosure *closure);
+
+
+/* Programming checks with error reporting */
+#ifdef G_DISABLE_CHECKS
+#define oscats_err_ret_if_fail(expr, err, msg) G_STMT_START{ (void)0; }G_STMT_END
+#define oscats_err_ret_val_if_fail(expr, val, err, msg) G_STMT_START{ (void)0; }G_STMT_END
+#else /* !G_DISABLE_CHECKS */
+#ifdef __GNUC__
+#define oscats_err_ret_if_fail(expr, err, msg)  G_STMT_START{		\
+     if G_LIKELY(expr) { } else       					\
+       {								\
+         *(err) = g_error_new_literal(G_LOG_DOMAIN, 0xeeee, msg);	\
+	 g_return_if_fail_warning (G_LOG_DOMAIN,			\
+		                   __PRETTY_FUNCTION__,		        \
+		                   #expr);				\
+	 return;							\
+       };				}G_STMT_END
+#define oscats_err_ret_val_if_fail(expr, val, err, msg)  G_STMT_START{	\
+     if G_LIKELY(expr) { } else						\
+       {								\
+         *(err) = g_error_new_literal(G_LOG_DOMAIN, 0xeeee, msg);	\
+	 g_return_if_fail_warning (G_LOG_DOMAIN,			\
+		                   __PRETTY_FUNCTION__,		        \
+		                   #expr);				\
+	 return (val);							\
+       };				}G_STMT_END
+#else /* !__GNUC__ */
+#define oscats_err_ret_if_fail(expr, err, msg)  G_STMT_START{		\
+     if (expr) { } else						\
+       {							\
+         *(err) = g_error_new_literal(G_LOG_DOMAIN, 0xeeee, msg);	\
+	 g_log (G_LOG_DOMAIN,					\
+		G_LOG_LEVEL_CRITICAL,				\
+		"file %s: line %d: assertion `%s' failed",	\
+		__FILE__,					\
+		__LINE__,					\
+		#expr);						\
+	 return;						\
+       };				}G_STMT_END
+#define oscats_err_ret_val_if_fail(expr, val, err, msg)  G_STMT_START{	\
+     if (expr) { } else						\
+       {							\
+         *(err) = g_error_new_literal(G_LOG_DOMAIN, 0xeeee, msg);	\
+	 g_log (G_LOG_DOMAIN,					\
+		G_LOG_LEVEL_CRITICAL,				\
+		"file %s: line %d: assertion `%s' failed",	\
+		__FILE__,					\
+		__LINE__,					\
+		#expr);						\
+	 return (val);						\
+       };				}G_STMT_END
+#endif /* !__GNUC__ */
+#endif /* !G_DISABLE_CHECKS */
 
 G_END_DECLS
 #endif

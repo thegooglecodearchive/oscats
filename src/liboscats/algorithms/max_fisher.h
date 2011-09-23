@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * CAT Algorithm: Select Item based on Fisher Information
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -97,7 +97,9 @@ struct _OscatsAlgMaxFisher {
   gboolean A_opt;
   /*< private >*/
   OscatsAlgChooser *chooser;
-  guint base_num;
+  guint base_num, dim;
+  GQuark modelKey, thetaKey;
+  OscatsPoint *theta;			// temporary value for criterion
   GGslMatrix *base, *work, *inv;
   GGslPermutation *perm;
 };
@@ -107,6 +109,7 @@ struct _OscatsAlgMaxFisherClass {
 };
 
 GType oscats_alg_max_fisher_get_type();
+void oscats_alg_max_fisher_resize(OscatsAlgMaxFisher *alg_data, guint num);
 
 G_END_DECLS
 #endif

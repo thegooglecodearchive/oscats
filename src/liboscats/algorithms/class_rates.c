@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * CAT Algorithm: Track classification rates
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ enum
 {
   PROP_0,
   PROP_BY_PATTERN,
+  PROP_SIM_KEY,
+  PROP_EST_KEY,
 };
 
 G_DEFINE_TYPE(OscatsAlgClassRates, oscats_alg_class_rates, OSCATS_TYPE_ALGORITHM);
@@ -50,7 +52,7 @@ static void oscats_alg_class_rates_class_init (OscatsAlgClassRatesClass *klass)
 /**
  * OscatsAlgClassRates:by-pattern:
  *
- * A string identifier for the examinee.
+ * Track misclassification rate for each classification pattern observed.
  */
   pspec = g_param_spec_boolean("by-pattern", "Rates by pattern", 
                                "Track misclassification rates by pattern",
@@ -59,6 +61,34 @@ static void oscats_alg_class_rates_class_init (OscatsAlgClassRatesClass *klass)
                                G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                                G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_BY_PATTERN, pspec);
+
+/**
+ * OscatsAlgClassRates:simKey:
+ *
+ * Which latent point to consider the "correct" or "true" value.  Use 0 to
+ * indicate the examinee's simulation default.
+ */
+  pspec = g_param_spec_ulong("simKey", "Reference Key", 
+                               "Key for 'true' latent variable",
+                               0, G_MAXULONG, 0,
+                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+                               G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                               G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_SIM_KEY, pspec);
+
+/**
+ * OscatsAlgClassRates:estKey:
+ *
+ * Which latent point holds the estimated classification.  Use 0 to indicate
+ * the examinee's estimation default.
+ */
+  pspec = g_param_spec_ulong("estKey", "Estimation Key", 
+                               "Key for estimated latent variable",
+                               0, G_MAXULONG, 0,
+                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+                               G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                               G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_EST_KEY, pspec);
 
 }
 
@@ -90,8 +120,17 @@ static void oscats_alg_class_rates_set_property(GObject *object,
   {
     case PROP_BY_PATTERN:			// construction only
       if(g_value_get_boolean(value))
-        self->rate_by_pattern = g_tree_new_full((GCompareDataFunc)oscats_attributes_compare,
-                                                NULL, g_object_unref, g_free);
+        self->rate_by_pattern =
+          g_tree_new_full((GCompareDataFunc)g_bit_array_serial_compare,
+                          NULL, g_object_unref, g_free);
+      break;
+    
+    case PROP_SIM_KEY:			// construction only
+      self->simKey = g_value_get_ulong(value);
+      break;
+    
+    case PROP_EST_KEY:			// construction only
+      self->estKey = g_value_get_ulong(value);
       break;
     
     default:
@@ -111,6 +150,14 @@ static void oscats_alg_class_rates_get_property(GObject *object,
       g_value_set_boolean(value, self->rate_by_pattern != NULL);
       break;
     
+    case PROP_SIM_KEY:
+      g_value_set_ulong(value, self->simKey);
+      break;
+    
+    case PROP_EST_KEY:
+      g_value_set_ulong(value, self->estKey);
+      break;
+    
     default:
       // Unknown property
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -121,12 +168,27 @@ static void oscats_alg_class_rates_get_property(GObject *object,
 static void finalize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
 {
   OscatsAlgClassRates *self = OSCATS_ALG_CLASS_RATES(alg_data);
+  OscatsPoint *alpha_true, *alpha_hat;
   guint i, num = 0;	// num wrong
+
+  alpha_true = (self->simKey ? oscats_examinee_get_theta(e, self->simKey)
+                             : oscats_examinee_get_sim_theta(e) );
+  alpha_hat  = (self->estKey ? oscats_examinee_get_theta(e, self->estKey)
+                             : oscats_examinee_get_est_theta(e) );
+  g_return_if_fail(oscats_point_space_compatible(alpha_true, alpha_hat));
+
+  if (G_UNLIKELY(self->correct_attribute == NULL))
+  {
+    self->num_attrs = alpha_true->space->num_bin;
+    self->correct_attribute = g_new0(guint, self->num_attrs);
+    self->misclassify_hist = g_new0(guint, self->num_attrs+1);
+  }
+  else g_return_if_fail(self->num_attrs == alpha_true->space->num_bin);
 
   self->num_examinees++;
   for (i=0; i < self->num_attrs; i++)
-    if (oscats_attributes_get(e->true_alpha, i) !=
-        oscats_attributes_get(e->alpha_hat, i))
+    if (g_bit_array_get_bit(alpha_true->bin, i) !=
+        g_bit_array_get_bit(alpha_hat->bin, i) )
       num++;
     else
       self->correct_attribute[i]++;
@@ -135,16 +197,16 @@ static void finalize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
   
   if (self->rate_by_pattern)
   {
-    guint *data = g_tree_lookup(self->rate_by_pattern, e->true_alpha);
+    guint *data = g_tree_lookup(self->rate_by_pattern, alpha_true->bin);
     if (!data)
     {
-      OscatsAttributes *attr = g_object_new(OSCATS_TYPE_ATTRIBUTES, NULL);
-      oscats_attributes_copy(attr, e->true_alpha);
+      GBitArray *attr = g_bit_array_new(self->num_attrs);
+      g_bit_array_copy(attr, alpha_true->bin);
       data = g_new0(guint, 2);
       g_tree_insert(self->rate_by_pattern, attr, data);
     }
-    data[0]++;
-    if (num == 0) data[1]++;
+    data[0]++;			// Number of examinees with this pattern
+    if (num == 0) data[1]++;	// Number correctly classified
   }
 }
 
@@ -157,15 +219,10 @@ static void finalize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
  */
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
-  OscatsAlgClassRates *self = OSCATS_ALG_CLASS_RATES(alg_data);
-  g_return_if_fail(oscats_item_bank_is_discr(test->itembank));
+//  OscatsAlgClassRates *self = OSCATS_ALG_CLASS_RATES(alg_data);
 
   g_signal_connect_data(test, "finalize", G_CALLBACK(finalize),
                         alg_data, oscats_algorithm_closure_finalize, 0);
-
-  self->num_attrs = oscats_item_bank_num_attrs(test->itembank);
-  self->correct_attribute = g_new0(guint, self->num_attrs);
-  self->misclassify_hist = g_new0(guint, self->num_attrs+1);
 }
 
 /**
@@ -245,13 +302,13 @@ gdouble oscats_alg_class_rates_get_misclassify_freq(
  * Returns: the number of examinees with true attribute pattern @attr.
  */
 guint oscats_alg_class_rates_num_examinees_by_pattern(
-          const OscatsAlgClassRates *alg_data, const OscatsAttributes *attr)
+          const OscatsAlgClassRates *alg_data, const OscatsPoint *attr)
 {
   guint *data;
   g_return_val_if_fail(OSCATS_IS_ALG_CLASS_RATES(alg_data) &&
-                       OSCATS_IS_ATTRIBUTES(attr), 0);
+                       OSCATS_IS_POINT(attr), 0);
   g_return_val_if_fail(alg_data->rate_by_pattern != NULL, 0);
-  data = g_tree_lookup(alg_data->rate_by_pattern, attr);
+  data = g_tree_lookup(alg_data->rate_by_pattern, attr->bin);
   if (!data) return 0;
   return data[0];
 }
@@ -270,13 +327,44 @@ guint oscats_alg_class_rates_num_examinees_by_pattern(
  * Returns: the number of examinees with true attribute pattern @attr.
  */
 gdouble oscats_alg_class_rates_get_rate_by_pattern(
-          const OscatsAlgClassRates *alg_data, const OscatsAttributes *attr)
+          const OscatsAlgClassRates *alg_data, const OscatsPoint *attr)
 {
   guint *data;
   g_return_val_if_fail(OSCATS_IS_ALG_CLASS_RATES(alg_data) &&
-                       OSCATS_IS_ATTRIBUTES(attr), 0);
+                       OSCATS_IS_POINT(attr), 0);
   g_return_val_if_fail(alg_data->rate_by_pattern != NULL, 0);
-  data = g_tree_lookup(alg_data->rate_by_pattern, attr);
+  data = g_tree_lookup(alg_data->rate_by_pattern, attr->bin);
   if (!data) return 0;
   return (gdouble)(data[1])/(gdouble)(data[0]);
+}
+
+static gboolean foreach_func(gpointer key, gpointer value, gpointer closure)
+{
+  OscatsAlgClassRatesForeachPatternFunc func = ((gpointer*)closure)[0];
+  gpointer user_data = ((gpointer*)closure)[1];
+  guint *data = value;
+  func(G_BIT_ARRAY(key), data[0], data[1], user_data);
+  return FALSE;
+}
+
+/**
+ * oscats_alg_class_rates_foreach_pattern:
+ * @alg_data: the #OscatsAlgClassRates data object
+ * @func: a function to call for each pattern
+ * @user_data: user data to pass to the function
+ *
+ * If #OscatsAlgClassRates.by-pattern is %TRUE for @alg_data, calls @func on
+ * each pattern observed in #GBitArray serialized order.  The @func takes
+ * four parameters: a pointer to the #GBitArray pattern, the number of times
+ * the pattern was observed, the number of times the pattern was correctly
+ * classified, and @user_data.
+ */
+void oscats_alg_class_rates_foreach_pattern(OscatsAlgClassRates *alg_data,
+         OscatsAlgClassRatesForeachPatternFunc func, gpointer user_data)
+{
+  gpointer closure[2] = { func, user_data };
+  g_return_if_fail(OSCATS_IS_ALG_CLASS_RATES(alg_data));
+  g_return_if_fail(func != NULL);
+  g_return_if_fail(alg_data->rate_by_pattern != NULL);
+  g_tree_foreach(alg_data->rate_by_pattern, foreach_func, closure);
 }

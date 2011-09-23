@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * CAT Algorithm: Select Item with Closest Difficulty
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 enum {
   PROP_0,
   PROP_NUM,
+  PROP_MODEL_KEY,
+  PROP_THETA_KEY,
 };
 
 G_DEFINE_TYPE(OscatsAlgClosestDiff, oscats_alg_closest_diff, OSCATS_TYPE_ALGORITHM);
@@ -60,6 +62,33 @@ static void oscats_alg_closest_diff_class_init (OscatsAlgClosestDiffClass *klass
                             G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_NUM, pspec);
 
+/**
+ * OscatsAlgClosestDiff:modelKey:
+ *
+ * The key indicating which model to use for selection.  A value of 0
+ * indicates the item's default model.
+ */
+  pspec = g_param_spec_ulong("modelKey", "model key", 
+                            "Which model to use for selection",
+                            0, G_MAXULONG, 0,
+                            G_PARAM_READWRITE |
+                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                            G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_MODEL_KEY, pspec);
+
+/**
+ * OscatsAlgClosestDiff:thetaKey:
+ *
+ * The key indicating which latent variable to use for selection.  A value
+ * of 0 indicates the examinee's default estimation theta.
+ */
+  pspec = g_param_spec_ulong("estKey", "estimation key", 
+                            "Which latent variable to use for selection",
+                            0, G_MAXULONG, 0,
+                            G_PARAM_READWRITE |
+                            G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                            G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_THETA_KEY, pspec);
 
 }
 
@@ -86,6 +115,14 @@ static void oscats_alg_closest_diff_set_property(GObject *object,
                                    "num", g_value_get_uint(value), NULL);
       break;
     
+    case PROP_MODEL_KEY:
+      self->modelKey = g_value_get_ulong(value);
+      break;
+    
+    case PROP_THETA_KEY:
+      self->thetaKey = g_value_get_ulong(value);
+      break;
+    
     default:
       // Unknown property
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -103,6 +140,14 @@ static void oscats_alg_closest_diff_get_property(GObject *object,
       g_value_set_uint(value, self->chooser->num);
       break;
     
+    case PROP_MODEL_KEY:
+      g_value_set_ulong(value, self->modelKey);
+      break;
+    
+    case PROP_THETA_KEY:
+      g_value_set_ulong(value, self->thetaKey);
+      break;
+    
     default:
       // Unknown property
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -110,18 +155,22 @@ static void oscats_alg_closest_diff_get_property(GObject *object,
   }
 }
 
-static gdouble criterion(const OscatsItem *item, const OscatsExaminee *e,
+static gdouble criterion(const OscatsItem *item, OscatsExaminee *e,
                          gpointer data)
 {
-  return oscats_cont_model_distance(item->cont_model, e->theta_hat,
-                                   e->covariates);
+  OscatsAlgClosestDiff *self = (OscatsAlgClosestDiff*)data;
+  OscatsModel *model = oscats_administrand_get_model(OSCATS_ADMINISTRAND(item), self->modelKey);
+  OscatsPoint *theta = ( self->thetaKey ?
+                           oscats_examinee_get_theta(e, self->thetaKey) :
+                           oscats_examinee_get_est_theta(e) );
+  return oscats_model_distance(model, theta, e->covariates);
 }
 
 static gint select (OscatsTest *test, OscatsExaminee *e,
                     GBitArray *eligible, gpointer alg_data)
 {
   return oscats_alg_chooser_choose(OSCATS_ALG_CLOSEST_DIFF(alg_data)->chooser,
-                                   e, eligible, NULL);
+                                   e, eligible, alg_data);
 }
 
 /*
@@ -134,9 +183,8 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
 static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgClosestDiff *self = OSCATS_ALG_CLOSEST_DIFF(alg_data);
-  g_return_if_fail(oscats_item_bank_is_cont(test->itembank));
   self->chooser->bank = g_object_ref(test->itembank);
-  self->chooser->criterion = criterion;
+  self->chooser->criterion = (OscatsAlgChooserCriterion)criterion;
   g_signal_connect_data(test, "select", G_CALLBACK(select),
                         alg_data, oscats_algorithm_closure_finalize, 0);
 }
