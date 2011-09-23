@@ -40,6 +40,7 @@
  * used.
  */
 
+#include <math.h>
 #include "examinee.h"
 
 G_DEFINE_TYPE(OscatsExaminee, oscats_examinee, G_TYPE_OBJECT);
@@ -434,5 +435,41 @@ guint oscats_examinee_num_items(const OscatsExaminee *e)
 {
   g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), 0);
   return (e->items ? e->items->len : 0);
+}
+
+/**
+ * oscats_examinee_logLik:
+ * @e: an #OscatsExaminee
+ * @theta: an #OscatsPoint
+ * @model: the model name to use
+ *
+ * Computes the log-likelihood of the responses from @e, given latent ability
+ * @theta. The default model is used if @model == 0.
+ *
+ * Returns: the log-likelihood
+ */
+gdouble oscats_examinee_logLik(const OscatsExaminee *e, const OscatsPoint *theta, GQuark modelKey)
+{
+  OscatsAdministrand **items;
+  OscatsResponse *resp;
+  OscatsModel *model;
+  gdouble L=0;
+  guint i, num;
+
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), G_MAXDOUBLE);
+  g_return_val_if_fail(OSCATS_IS_POINT(theta), G_MAXDOUBLE);
+  g_return_val_if_fail(e->items->len == e->resp->len, G_MAXDOUBLE);
+  num = e->items->len;
+  if (num == 0) return G_MAXDOUBLE;
+  items = (OscatsAdministrand**)(e->items->pdata);
+  resp = (OscatsResponse*)(e->resp->data);
+  
+  for (i=0; i < num; i++)
+  {
+    model = oscats_administrand_get_model(items[i], modelKey);
+    L += log(oscats_model_P(model, resp[i], theta, e->covariates));
+  }
+  
+  return L;
 }
 

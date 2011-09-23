@@ -68,6 +68,7 @@ OscatsPoint * oscats_examinee_init_theta(OscatsExaminee *e, GQuark name, OscatsS
 void oscats_examinee_prep(OscatsExaminee *e, guint length_hint);
 void oscats_examinee_add_item(OscatsExaminee *e, OscatsItem *item, OscatsResponse resp);
 guint oscats_examinee_num_items(const OscatsExaminee *e);
+gdouble oscats_examinee_logLik(const OscatsExaminee *e, const OscatsPoint *theta, GQuark modelKey);
 
 G_END_DECLS
 #endif
