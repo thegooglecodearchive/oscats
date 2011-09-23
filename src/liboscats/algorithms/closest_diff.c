@@ -18,7 +18,6 @@
 
 #include "random.h"
 #include "algorithms/closest_diff.h"
-#include "contmodel.h"
 
 enum {
   PROP_0,
