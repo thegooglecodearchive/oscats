@@ -574,8 +574,11 @@ void oscats_model_logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
   g_return_if_fail(OSCATS_IS_POINT(theta));
   g_return_if_fail(oscats_space_compatible(theta->space, model->space));
   if (covariates) g_return_if_fail(OSCATS_IS_COVARIATES(covariates));
-  if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v);
-  if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v);
+  if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v &&
+                             grad->v->size == theta->space->num_cont);
+  if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v &&
+                            hes->v->size1 == theta->space->num_cont &&
+                            hes->v->size1 == hes->v->size2);
   OSCATS_MODEL_GET_CLASS(model)->logLik_dtheta(model, resp, theta,
                                                covariates, grad, hes, FALSE);
 }
@@ -608,8 +611,11 @@ void oscats_model_logLik_dparam(const OscatsModel *model, OscatsResponse resp,
   g_return_if_fail(OSCATS_IS_POINT(theta));
   g_return_if_fail(oscats_space_compatible(theta->space, model->space));
   if (covariates) g_return_if_fail(OSCATS_IS_COVARIATES(covariates));
-  if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v);
-  if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v);
+  if (grad) g_return_if_fail(G_GSL_IS_VECTOR(grad) && grad->v &&
+                             grad->v->size == model->Np);
+  if (hes) g_return_if_fail(G_GSL_IS_MATRIX(hes) && hes->v &&
+                            hes->v->size1 == model->Np &&
+                            hes->v->size1 == hes->v->size2);
   OSCATS_MODEL_GET_CLASS(model)->logLik_dparam(model, resp, theta,
                                                covariates, grad, hes);
 }
