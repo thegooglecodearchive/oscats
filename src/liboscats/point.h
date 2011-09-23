@@ -55,6 +55,7 @@ OscatsPoint *oscats_point_new_from_space(OscatsSpace *space);
 gboolean oscats_point_same_space(const OscatsPoint *lhs, const OscatsPoint *rhs);
 gboolean oscats_point_space_compatible(const OscatsPoint *lhs, const OscatsPoint *rhs);
 gboolean oscats_point_equal(const OscatsPoint *lhs, const OscatsPoint *rhs, gdouble tol);
+void oscats_point_copy(OscatsPoint *lhs, const OscatsPoint *rhs);
 gdouble oscats_point_get_double(const OscatsPoint *point, OscatsDim dim);
 gdouble oscats_point_get_cont(const OscatsPoint *point, OscatsDim dim);
 gboolean oscats_point_get_bin(const OscatsPoint *point, OscatsDim dim);

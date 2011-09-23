@@ -214,6 +214,25 @@ gboolean oscats_point_equal(const OscatsPoint *lhs, const OscatsPoint *rhs, gdou
 }
 
 /**
+ * oscats_point_copy:
+ * @lhs: an #OscatsPoint to be replaced
+ * @rhs: the #OscatsPoint to copy
+ *
+ * Copies replaces @lhs with @rhs.  Points must be from compatible spaces.
+ */
+void oscats_point_copy(OscatsPoint *lhs, const OscatsPoint *rhs)
+{
+  guint i, num;
+  g_return_if_fail(OSCATS_IS_POINT(lhs) && OSCATS_IS_POINT(rhs));
+  g_return_if_fail(oscats_space_compatible(lhs->space, rhs->space));
+  num = lhs->space->num_cont;
+  for (i=0; i < num; i++) lhs->cont[i] = rhs->cont[i];
+  if (rhs->bin) g_bit_array_copy(lhs->bin, rhs->bin);
+  num = lhs->space->num_nat;
+  for (i=0; i < num; i++) lhs->nat[i] = rhs->nat[i];
+}
+
+/**
  * oscats_point_get_double:
  * @point: an #OscatsPoint
  * @dim: the coordinate to fetch
