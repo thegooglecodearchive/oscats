@@ -45,6 +45,9 @@ typedef enum
   OSCATS_DIM_MAX = 0x3fff		// == 16383
 } OscatsDimType;
 
+#define OSCATS_TYPE_DIM_TYPE (oscats_dim_type_get_type())
+GType oscats_dim_type_get_type (void);
+
 /**
  * OscatsDim:
  *

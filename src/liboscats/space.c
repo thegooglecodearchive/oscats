@@ -27,6 +27,24 @@
 
 #include "space.h"
 
+GType oscats_dim_type_get_type (void)
+{
+  static GType etype = 0;
+  if (etype == 0) {
+    static const GFlagsValue values[] = {
+      { OSCATS_DIM_CONT, "OSCATS_DIM_CONT", "cont" },
+      { OSCATS_DIM_BIN, "OSCATS_DIM_BIN", "bin" },
+      { OSCATS_DIM_NAT, "OSCATS_DIM_NAT", "nat" },
+      { OSCATS_DIM_TYPE_MASK, "OSCATS_DIM_TYPE_MASK", "type-mask" },
+      { OSCATS_DIM_MASK, "OSCATS_DIM_MASK", "mask" },
+      { OSCATS_DIM_MAX, "OSCATS_DIM_MAX", "max" },
+      { 0, NULL, NULL }
+    };
+    etype = g_flags_register_static ("OscatsDimType", values);
+  }
+  return etype;
+}
+
 G_DEFINE_TYPE(OscatsSpace, oscats_space, G_TYPE_OBJECT);
 
 enum
