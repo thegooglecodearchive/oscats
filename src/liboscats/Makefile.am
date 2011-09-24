@@ -53,3 +53,22 @@ liboscatsalginclude_HEADERS = algorithms/pick_rand.h                    \
 			algorithms/class_rates.h			\
 			algorithms/estimate.h				\
 			algorithms/fixed_length.h
+
+enum_headers = space.h
+
+oscats-enum-types.h: $(enum_headers) Makefile.am
+	glib-mkenums  \
+		--fhead "#ifndef __OSCATS_ENUM_TYPES_H__\n#define __OSCATS_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
+		--fprod "/* enumerations from \"@filename@\" */\n" \
+		--vhead "#define OSCATS_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\nGType @enum_name@_get_type (void);\n" 	\
+		--ftail "G_END_DECLS\n#endif /* __OSCATS_ENUM_TYPES_H__ */" \
+		$(enum_headers) > oscats-enum-types.h
+
+oscats-enum-types.c: oscats-enum-types.h Makefile.am
+	glib-mkenums  \
+		--fhead "#include <oscats.h>" \
+		--fprod "\n/* enumerations from \"@filename@\" */" \
+		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {" 	\
+		--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+		--vtail "      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n" \
+		$(enum_headers) > oscats-enum-types.c
