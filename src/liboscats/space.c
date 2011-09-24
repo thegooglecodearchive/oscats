@@ -165,7 +165,7 @@ static void oscats_space_constructed (GObject *object)
   if (self->num_cont + self->num_bin + self->num_nat == 0)
     g_warning("OscatsSpace %s has 0 size!", self->id);
   if (self->names == NULL)
-    self->names = g_hash_table_new(g_int_hash, g_int_equal);
+    self->names = g_hash_table_new(g_direct_hash, g_direct_equal);
 
   // Initialize dim names
   self->names_cont = g_new(GQuark, self->num_cont + self->num_bin + self->num_nat);
