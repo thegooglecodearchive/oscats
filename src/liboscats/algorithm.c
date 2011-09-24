@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Abstract CAT Algorithm Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ static void oscats_algorithm_init (OscatsAlgorithm *self)
 
 /**
  * oscats_algorithm_register:
- * @alg_data: the #OscatsAlgorithm descendant to register
+ * @alg_data: (transfer full): the #OscatsAlgorithm descendant to register
  * @test: the #OscatsTest on which to register the algorithm
  *
  * Registers the algorithm @alg_data for use in @test.  This will sink the
@@ -52,9 +52,9 @@ static void oscats_algorithm_init (OscatsAlgorithm *self)
  * @alg_data should call g_object_ref_sink() themselves.)  In general, an
  * algorithm object is registered to only one test.
  *
- * Returns: @alg_data
+ * Returns: (transfer none): @alg_data
  */
-OscatsAlgorithm * oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test)
+gpointer oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgorithmClass *klass = OSCATS_ALGORITHM_GET_CLASS(alg_data);
   g_return_val_if_fail(OSCATS_IS_ALGORITHM(alg_data) && OSCATS_IS_TEST(test), NULL);
