@@ -485,7 +485,7 @@ static gdouble eap_integrand(const GGslVector *x, gpointer data)
     gsl_vector_memcpy(self->tmp2, self->tmp);
   gsl_blas_ddot(self->tmp, self->tmp2, &g);
   return self->x->cont[self->dim] *
-         oscats_examinee_logLik(self->e, self->x, self->modelKey) * exp(-g/2);
+         exp(oscats_examinee_logLik(self->e, self->x, self->modelKey) - g/2);
 }
 
 static gdouble norm_integrand(const GGslVector *x, gpointer data)
@@ -499,7 +499,7 @@ static gdouble norm_integrand(const GGslVector *x, gpointer data)
   else
     gsl_vector_memcpy(self->tmp2, self->tmp);
   gsl_blas_ddot(self->tmp, self->tmp2, &g);
-  return oscats_examinee_logLik(self->e, self->x, self->modelKey) * exp(-g/2);
+  return exp(oscats_examinee_logLik(self->e, self->x, self->modelKey) - g/2);
 }
 
 // Note: This is only over cont dimensions, given the discr val of alg_data->x
