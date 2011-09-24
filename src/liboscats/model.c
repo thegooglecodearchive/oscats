@@ -248,6 +248,7 @@ static void oscats_model_constructed(GObject *object)
   if (model->dims == NULL)
   {
     // No dims specified; default to first dim available.
+    model->Ndims = 1;
     model->dims = g_new(OscatsDim, 1);
     if (model->space->num_cont > 0)
       model->dims[0] = model->dimType = OSCATS_DIM_CONT;
@@ -335,6 +336,7 @@ static void oscats_model_set_property(GObject *object, guint prop_id,
     
     case PROP_DIMS:			// construction only
       array = g_value_get_boxed(value);
+      if (array == NULL) break;		// will default to first dimension
       num = self->Ndims = array->n_values;
       if (num > 0) self->dims = g_new(OscatsDim, num);
       for (i=0; i < num; i++)
