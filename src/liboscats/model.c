@@ -152,7 +152,7 @@ static void oscats_model_class_init (OscatsModelClass *klass)
  */
   pspec = g_param_spec_uint("dimType", "Subspace Type", 
                             "Dimension type for the model's subspace",
-                            1, G_MAXUINT, 0,
+                            0, G_MAXUINT, 0,
                             G_PARAM_READABLE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
