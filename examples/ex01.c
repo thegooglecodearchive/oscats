@@ -1,5 +1,5 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  * Example 1
  *
@@ -22,9 +22,9 @@
 #define N_ITEMS 400
 #define LEN 30
 
-OscatsItemBank * gen_items()
+OscatsItemBank * gen_items(OscatsSpace *space)
 {
-  OscatsContModel *model;
+  OscatsModel *model;
   OscatsItem *item;
   // Create an item bank to store the items.
   // Setting the property "sizeHint" increases allocation efficiency.
@@ -35,51 +35,52 @@ OscatsItemBank * gen_items()
   for (i=0; i < N_ITEMS; i++)
   {
     // First we create an IRT model container for our item
-    model = g_object_new(OSCATS_TYPE_CONT_MODEL_L1P, NULL);
+    // Defaults to unidimensional, using the first dimension of space
+    model = g_object_new(OSCATS_TYPE_MODEL_L1P, "space", space, NULL);
     // Then, set the parameters.  Here there is only one, the difficulty (b).
-    oscats_cont_model_set_param_by_index(model, 0, oscats_rnd_normal(1));
-    // Create an item based on this model
-    item = g_object_new(OSCATS_TYPE_ITEM, "contmodel", model, NULL);
+    oscats_model_set_param_by_index(model, 0, oscats_rnd_normal(1));
+    // Create an item based on this model (as default model)
+    // Item takes ownership of model
+    item = oscats_item_new(OSCATS_DEFAULT_KEY, model);
     // Add the item to the item bank
-    oscats_item_bank_add_item(bank, item);
-    // We no longer need item and model (they're stored safely in the bank)
-    // so, we unref them here.
+    oscats_item_bank_add_item(bank, OSCATS_ADMINISTRAND(item));
+    // We no longer need item (it's stored safely in the bank), so unref here
     g_object_unref(item);
-    g_object_unref(model);
   }
   return bank;
 }
 
 // Returns an array of new OscatsExaminee pointers
-OscatsExaminee ** gen_examinees()
+OscatsExaminee ** gen_examinees(OscatsSpace *space)
 {
   OscatsExaminee ** ret = g_new(OscatsExaminee*, N_EXAMINEES);
-  GGslVector *theta;
+  OscatsPoint *theta;
+  OscatsDim dim = OSCATS_DIM_CONT + 0;  // First continuous dimension
   guint i;
   
-  // Latent IRT ability parameter.  This is a one-dimensional test.
-  theta = g_gsl_vector_new(1);
   for (i=0; i < N_EXAMINEES; i++)
   {
+    // Latent IRT ability parameter.  This is a one-dimensional test.
+    theta = oscats_point_new_from_space(space);
     // Sample the ability from N(0,1) distribution
-    g_gsl_vector_set(theta, 0, oscats_rnd_normal(1));
+    oscats_point_set_cont(theta, dim, oscats_rnd_normal(1));
     // Create a new examinee
     ret[i] = g_object_new(OSCATS_TYPE_EXAMINEE, NULL);
     // Set the examinee's true (simulated) ability
-    // Note, theta is *copied* into examinee.
-    oscats_examinee_set_true_theta(ret[i], theta);
+    // Examinee assumes ownership of theta
+    oscats_examinee_set_sim_theta(ret[i], theta);
   }
   
-  // Clean up
-  g_object_unref(theta);
   return ret;
 }
 
 int main()
 {
   FILE *f;
+  OscatsSpace *space;
   OscatsExaminee **examinees;
   OscatsItemBank *bank;
+  OscatsDim dim = OSCATS_DIM_CONT + 0;   // First continuous dimension
   const guint num_tests = 4;
   const gchar *test_names[] = { "random", "matched", "match.5", "match.10" };
   OscatsTest *test[num_tests];
@@ -90,10 +91,13 @@ int main()
   // Could just have called g_type_init(), instead.
   g_type_init_with_debug_flags(G_TYPE_DEBUG_OBJECTS);
   
+  // Create the latent space for the test: continuous unidimensional
+  space = g_object_new(OSCATS_TYPE_SPACE, "numCont", 1, NULL);
+
   printf("Creating examinees.\n");
-  examinees = gen_examinees();
+  examinees = gen_examinees(space);
   printf("Creating items.\n");
-  bank = gen_items();
+  bank = gen_items(space);
 
   printf("Creating tests.\n");
   for (j=0; j < num_tests; j++)
@@ -117,8 +121,8 @@ int main()
     // worry about keeping track of references to algorithms, unless we want
     // to keep a copy of the pointer ourselves, in which case, we need to
     // call g_object_ref_sink() or g_object_ref() on the algorithm.
-    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_SIMULATE_THETA, NULL), test[j]);
-    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_ESTIMATE_THETA, NULL), test[j]);
+    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_SIMULATE, NULL), test[j]);
+    oscats_algorithm_register(g_object_new(OSCATS_TYPE_ALG_ESTIMATE, NULL), test[j]);
 
     // In many cases, we don't care about the algorithm objects we create
     // after they're registered, since they don't contain any interesting
@@ -147,29 +151,30 @@ int main()
   f = fopen("ex01-examinees.dat", "w");
   fprintf(f, "ID\ttrue");
   for (j=0; j < num_tests; j++)
-    fprintf(f, "\t%s\t%s.err", test_names[j], test_names[j]);
+    fprintf(f, "\t%s", test_names[j]);
   fprintf(f, "\n");
   for (i=0; i < N_EXAMINEES; i++)
   {
 //    printf("  %s\n", examinees[i]->id);
 
     // An initial estimate for latent IRT ability must be provided.
-    examinees[i]->theta_hat = g_gsl_vector_new(1);
-    // We want errors for the estimates: initialize them.
-    // 1 is the test dimension
-    oscats_examinee_init_theta_err(examinees[i], 1);
+    // Note that examinee assumes ownership of the OscatsPoint
+    oscats_examinee_set_est_theta(examinees[i],
+                                  oscats_point_new_from_space(space));
 
     fprintf(f, "%d\t%g", i+1,
-            g_gsl_vector_get(examinees[i]->true_theta, 0));
+      oscats_point_get_cont(oscats_examinee_get_sim_theta(examinees[i]), dim));
     for (j=0; j < num_tests; j++)
     {
       // Reset initial latent ability for this test
-      g_gsl_vector_set(examinees[i]->theta_hat, 0, 0);
+      oscats_point_set_cont(oscats_examinee_get_est_theta(examinees[i]),
+                            dim, 0);
       // Do the administration!
       oscats_test_administer(test[j], examinees[i]);
-      // Output the resulting theta.hat and its *variance*
-      fprintf(f, "\t%g\t%g", g_gsl_vector_get(examinees[i]->theta_hat, 0),
-            g_gsl_matrix_get(examinees[i]->theta_err, 0, 0));
+      // Output the resulting theta.hat
+      fprintf(f, "\t%g",
+        oscats_point_get_cont(oscats_examinee_get_est_theta(examinees[i]),
+                              dim) );
     }
     fprintf(f, "\n");
   }
@@ -182,14 +187,16 @@ int main()
   fprintf(f, "\n");
   for (i=0; i < N_ITEMS; i++)
   {
-    // Get the item's difficulty parameter
+    // Get the item's difficulty parameter (for the default model)
     fprintf(f, "%d\t%g", i+1,
-            oscats_cont_model_get_param_by_index(oscats_item_bank_get_item(bank, i)->cont_model, 0));
+            oscats_model_get_param_by_index(
+              oscats_administrand_get_model(
+                oscats_item_bank_get_item(bank, i), OSCATS_DEFAULT_KEY), 0));
     // Get the exposure rate for this item in each test
     for (j=0; j < num_tests; j++)
       fprintf(f, "\t%g",
             oscats_alg_exposure_counter_get_rate(exposure[j],
-                  oscats_item_bank_get_item(bank, i)) );
+                  OSCATS_ITEM(oscats_item_bank_get_item(bank, i))) );
     fprintf(f, "\n");
   }
   fclose(f);
