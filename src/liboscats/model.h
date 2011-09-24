@@ -24,6 +24,8 @@
 #include <covariates.h>
 G_BEGIN_DECLS
 
+#define OSCATS_DEFAULT_KEY 0
+
 /**
  * OscatsResponse:
  *
