@@ -43,7 +43,7 @@ struct _OscatsAlgorithmClass {
 
 GType oscats_algorithm_get_type();
 
-gpointer oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test);
+OscatsAlgorithm * oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test);
 
 // Protected
 void oscats_algorithm_closure_finalize (gpointer alg_data, GClosure *closure);

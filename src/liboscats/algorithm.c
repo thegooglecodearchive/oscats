@@ -54,7 +54,7 @@ static void oscats_algorithm_init (OscatsAlgorithm *self)
  *
  * Returns: (transfer none): @alg_data
  */
-gpointer oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test)
+OscatsAlgorithm * oscats_algorithm_register(OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgorithmClass *klass = OSCATS_ALGORITHM_GET_CLASS(alg_data);
   g_return_val_if_fail(OSCATS_IS_ALGORITHM(alg_data) && OSCATS_IS_TEST(test), NULL);
