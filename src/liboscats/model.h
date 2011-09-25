@@ -107,7 +107,7 @@ void oscats_model_logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
 void oscats_model_logLik_dparam(const OscatsModel *model, OscatsResponse resp,
                                 const OscatsPoint *theta, const OscatsCovariates *covariates,
                                 GGslVector *grad, GGslMatrix *hes);
-void oscats_model_fisher_info(const OscatsModel *model,
+void oscats_model_fisher_inf(const OscatsModel *model,
                                 const OscatsPoint *theta, const OscatsCovariates *covariates,
                                 GGslMatrix *I);
 

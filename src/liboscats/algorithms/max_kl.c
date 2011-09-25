@@ -624,7 +624,7 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
   if (self->Inf)
   {
     for (; self->base_num < e->items->len; self->base_num++)
-      oscats_model_fisher_info(
+      oscats_model_fisher_inf(
         oscats_administrand_get_model(g_ptr_array_index(e->items, self->base_num), self->modelKey),
         self->theta_hat, e->covariates, self->Inf);
     g_gsl_matrix_copy(self->Inf_inv, self->Inf);

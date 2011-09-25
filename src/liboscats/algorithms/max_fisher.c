@@ -220,7 +220,7 @@ static gdouble criterion(const OscatsItem *item,
     g_gsl_matrix_copy(alg_data->work, alg_data->base);
   else
     g_gsl_matrix_set_all(alg_data->work, 0);
-  oscats_model_fisher_info(model, alg_data->theta, e->covariates,
+  oscats_model_fisher_inf(model, alg_data->theta, e->covariates,
                            alg_data->work);
   if (dim == 1)
     return -alg_data->work->v->data[0];
@@ -249,7 +249,7 @@ static gint select (OscatsTest *test, OscatsExaminee *e,
   
   if (self->base)
     for (; self->base_num < e->items->len; self->base_num++)
-      oscats_model_fisher_info(
+      oscats_model_fisher_inf(
         oscats_administrand_get_model(g_ptr_array_index(e->items, self->base_num), self->modelKey),
         self->theta, e->covariates, self->base);
 
