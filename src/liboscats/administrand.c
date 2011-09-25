@@ -485,7 +485,7 @@ gboolean oscats_administrand_check_space (const OscatsAdministrand *item, GQuark
 void oscats_administrand_set_default_model (OscatsAdministrand *item, GQuark name)
 {
   g_return_if_fail(OSCATS_IS_ADMINISTRAND(item));
-  g_return_if_fail(item->freeze_count > 0);
+  g_return_if_fail(item->freeze_count == 0);
   OSCATS_ADMINISTRAND_GET_CLASS(item)->set_default_model(item, name);
 }
 
@@ -529,7 +529,7 @@ void oscats_administrand_set_model (OscatsAdministrand *item, GQuark name, Oscat
 {
   g_return_if_fail(OSCATS_IS_ADMINISTRAND(item));
   g_return_if_fail(OSCATS_IS_MODEL(model));
-  g_return_if_fail(item->freeze_count > 0);
+  g_return_if_fail(item->freeze_count == 0);
   if (OSCATS_ADMINISTRAND_GET_CLASS(item)->set_model)
     OSCATS_ADMINISTRAND_GET_CLASS(item)->set_model(item, name, model);
   else
