@@ -1,7 +1,7 @@
 #! python 
 
 # OSCATS: Open-Source Computerized Adaptive Testing System
-# Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+# Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
 #
 # Example 1
 # 400 Items: 1PL, b ~ N(0,1)
@@ -21,17 +21,19 @@ N_EXAMINEES = 1000
 N_ITEMS = 400
 LEN = 30
 
-def gen_items() :
+def gen_items(space) :
   # Create an item bank to store the items.
   # Setting the property "sizeHint" increases allocation efficiency
   bank = gobject.new(oscats.ItemBank, sizeHint=N_ITEMS)
   for i in range(N_ITEMS) :
     # First we create an IRT model container for our item
-    model = gobject.new(oscats.ContModelL1p)
+    # Defaults to unidimensional, using the first dimension of space
+    model = gobject.new(oscats.ModelL1p, space=space)
     # Then, set the parameters.  Here there is only one, the difficulty (b).
     model.set_param_by_index(0, oscats.oscats_rnd_normal(1))
     # Create an item based on this model
-    item = gobject.new(oscats.Item, contmodel=model)
+    item = gobject.new(oscats.Item)
+    item.set_model(item.get_default_model(), model)
     # Add the item to the item bank
     bank.add_item(item)
     # Since Python is garbage collected, we don't have to worry about
@@ -39,18 +41,18 @@ def gen_items() :
   return bank
 
 # Returns a list of new OscatsExaminee objects
-def gen_examinees() :
+def gen_examinees(space) :
+  dim = space.get_dim_by_name("Cont.1")
   ret = []
-  # Latent IRT ability parameter.  This is a one-dimensional test.
-  theta = oscats.GslVector(1)
   for i in range(N_EXAMINEES) :
+    # Latent IRT ability parameter.  This is a one-dimensional test.
+    theta = oscats.Point(space=space)
     # Sample the ability from N(0,1) distribution
-    theta.set(0, oscats.oscats_rnd_normal(1))
+    theta.set_cont(dim, oscats.oscats_rnd_normal(1))
     # Create a new examinee
     e = gobject.new(oscats.Examinee)
     # Set the examinee's true (simulated) ability
-    # Note, theta is *copied* into examinee
-    e.set_true_theta(theta)
+    e.set_sim_theta(theta)
     ret.append(e)
   return ret
 
@@ -58,10 +60,14 @@ def gen_examinees() :
 
 test_names = ("random", "matched", "match.5", "match.10")
 
+# Create the latent space for the test: continuous unidimensional
+space = oscats.Space(numCont=1)
+dim = space.get_dim_by_name("Cont.1")
+
 print "Creating examinees."
-examinees = gen_examinees()
+examinees = gen_examinees(space)
 print "Creating items."
-bank = gen_items()
+bank = gen_items(space)
 
 print "Creating tests."
 # Create new tests with the given properties
@@ -76,8 +82,8 @@ exposures = []
 # A test must have at minimum a selection algorithm, and administration
 # algorithm, and a stoping critierion.
 for test in tests :
-  oscats.AlgSimulateTheta().register(test)
-  oscats.AlgEstimateTheta().register(test)
+  oscats.AlgSimulate().register(test)
+  oscats.AlgEstimate().register(test)
   
   # In many cases, we don't care about the algorithm objects after they've
   # been registered, since they don't contain any interesting information. 
@@ -97,26 +103,22 @@ oscats.AlgClosestDiff(num=10).register(tests[3])
 
 print "Administering."
 out = open("ex01-examinees.dat", "w")
-out.write("ID\ttrue\t" + "\t".join([ name + "\t" + name + ".err"
-                                     for name in test_names ]) + "\n")
-theta = oscats.GslVector(1)	# Initialized to 0
+out.write("ID\ttrue\t" + "\t".join(test_names) + "\n")
 i = 1
 for e in examinees :
-  # We want errors for the estimates: initialize them.
-  e.init_theta_err(1)	# 1 is the test dimension
+  # An initial estimate for latent IRT ability must be provided.
+  e.set_est_theta(oscats.Point(space=space))
 
-  out.write("%d\t%g" % (i, e.get_true_theta().get(0) ))
+  out.write("%d\t%g" % (i, e.get_sim_theta().get_cont(dim) ))
   for test in tests :
-    # An initial estimate for latent IRT ability must be provided.
-    # theta is *copied* into examinee
-    e.set_theta_hat(theta)
+    # Reset initial latent ability for this test
+    e.get_est_theta().set_cont(dim, 0)
     
     # Do the administration!
     test.administer(e)
     
-    # Output the resulting theta.hat and its *variance*
-    out.write("\t%g\t%g" % (e.get_theta_hat().get(0),
-                            e.get_theta_err().get(0, 0) ))
+    # Output the resulting theta.hat
+    out.write("\t%g" % e.get_est_theta().get_cont(dim) )
   out.write("\n")
   i += 1
 out.close()
@@ -127,7 +129,7 @@ for i in range(N_ITEMS) :
   item = bank.get_item(i)
   # Get item's difficulty paramter
   out.write("%d\t%g" % (i+1,
-    item.get_property("contmodel").get_param_by_index(0) ))
+    item.get_model(item.get_default_model()).get_param_by_index(0) ))
   for exposure in exposures :
     out.write("\t%g" % exposure.get_rate(item))
   out.write("\n")

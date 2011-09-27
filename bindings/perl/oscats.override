@@ -6,13 +6,13 @@ g_gsl_permutation_	GslPermutation
 oscats_rnd_	Random
 oscats_examinee_	Examinee
 oscats_covariates_	Covariates
-oscats_attributes_	Attributes
+oscats_space_	Space
+oscats_point_	Point
 oscats_administrand_	Administrand
-oscats_item_		Item
 oscats_item_bank_	ItemBank
+oscats_item_	Item
 oscats_test_	Test
-oscats_cont_model_	ContModel
-oscats_discr_model_	DiscrModel
+oscats_model_	Model
 oscats_algorithm_	Algorithm
 oscats_alg_exposure_counter_	AlgExposureCounter
 oscats_alg_class_rates_	AlgClassRates
@@ -21,7 +21,22 @@ ignore
 oscats_rnd_binorm
 oscats_rnd_multinomial
 oscats_rnd_sample
-oscats_estimate_theta_mle
-oscats_estimate_theta_eap
 oscats_alg_chooser_set_c_criterion
 oscats_integrate_set_c_function
+oscats_administrand_check_type
+oscats_administrand_check_model
+oscats_model_new
+oscats_alg_class_rates_foreach_pattern
+oscats_covariates_list
+%%
+init oscats_examinee_set_sim_theta
+	g_object_ref(theta);
+%%
+init oscats_examinee_set_est_theta
+	g_object_ref(theta);
+%%
+init oscats_examinee_set_theta
+	g_object_ref(theta);
+%%
+init oscats_item_new
+	g_object_ref(model);

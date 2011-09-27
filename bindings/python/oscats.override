@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Python Bindings for liboscats
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,3 +35,94 @@ import gobject.GObject as PyGObject_Type
 %%
 ignore-glob
   *_get_type
+%%
+override oscats_administrand_set_model kwargs
+static PyObject *
+_wrap_oscats_administrand_set_model(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "name", "model", NULL };
+    PyGObject *model;
+    GQuark name;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"lO!:OscatsAdministrand.set_model", kwlist, &name, &PyOscatsModel_Type, &model))
+        return NULL;
+    
+    g_object_ref(model->obj);
+    oscats_administrand_set_model(OSCATS_ADMINISTRAND(self->obj), name, OSCATS_MODEL(model->obj));
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override oscats_examinee_set_sim_theta kwargs
+static PyObject *
+_wrap_oscats_examinee_set_sim_theta(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "theta", NULL };
+    PyGObject *theta;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:OscatsExaminee.set_sim_theta", kwlist, &PyOscatsPoint_Type, &theta))
+        return NULL;
+    
+    g_object_ref(theta->obj);
+    oscats_examinee_set_sim_theta(OSCATS_EXAMINEE(self->obj), OSCATS_POINT(theta->obj));
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override oscats_examinee_set_est_theta kwargs
+static PyObject *
+_wrap_oscats_examinee_set_est_theta(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "theta", NULL };
+    PyGObject *theta;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:OscatsExaminee.set_est_theta", kwlist, &PyOscatsPoint_Type, &theta))
+        return NULL;
+    
+    g_object_ref(theta->obj);
+    oscats_examinee_set_est_theta(OSCATS_EXAMINEE(self->obj), OSCATS_POINT(theta->obj));
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override oscats_examinee_set_theta kwargs
+static PyObject *
+_wrap_oscats_examinee_set_theta(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "name", "theta", NULL };
+    PyGObject *theta;
+    GQuark name;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"lO!:OscatsExaminee.set_theta", kwlist, &name, &PyOscatsPoint_Type, &theta))
+        return NULL;
+    
+    g_object_ref(theta->obj);
+    oscats_examinee_set_theta(OSCATS_EXAMINEE(self->obj), name, OSCATS_POINT(theta->obj));
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override oscats_item_new kwargs
+static int
+_wrap_oscats_item_new(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "name", "model", NULL };
+    PyGObject *model;
+    GQuark name;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"lO!:OscatsItem.__init__", kwlist, &name, &PyOscatsModel_Type, &model))
+        return -1;
+    g_object_ref(model->obj);
+    self->obj = (GObject *)oscats_item_new(name, OSCATS_MODEL(model->obj));
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError, "could not create OscatsItem object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}

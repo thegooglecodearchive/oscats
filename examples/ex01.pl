@@ -1,7 +1,7 @@
 #! perl -I../bindings/perl/blib/arch -I../bindings/perl/blib/lib
 
 # OSCATS: Open-Source Computerized Adaptive Testing System
-# Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+# Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
 #
 # Example 1
 # 400 Items: 1PL, b ~ N(0,1)
@@ -22,16 +22,18 @@ $N_ITEMS = 400;
 $LEN = 30;
 
 sub gen_items {
+  my $space = shift;
   # Create an item bank to store the items.
   # Setting the property "sizeHint" increases allocation efficiency
   my $bank = new oscats::ItemBank("sizeHint", $N_ITEMS);
   for my $i (1 .. $N_ITEMS) {
     # First we create an IRT model container for our item
-    my $model = new oscats::ContModelL1p();
+    my $model = new oscats::ModelL1p("space", $space);
     # Then, set the parameters.  Here there is only one, the difficulty (b).
     $model->set_param_by_index(0, oscats::Random::normal(1));
     # Create an item based on this model
-    my $item = new oscats::Item("contmodel", $model);
+    # This is equivalent to oscats_item_new(0, model) in C
+    my $item = new oscats::Item(0, $model);
     # Add the item to the item bank
     $bank->add_item($item)
     # Since Perl is garbage collected, we don't have to worry about
@@ -42,17 +44,18 @@ sub gen_items {
 
 # Returns a list of new OscatsExaminee objects
 sub gen_examinees {
+  my $space = shift;
+  my $dim = $space->get_dim_by_name("Cont.1");
   my @ret;
-  # Latent IRT ability parameter.  This is a one-dimensional test.
-  my $theta = new oscats::GslVector(1);
   for my $i (1 .. $N_EXAMINEES) {
+    # Latent IRT ability parameter.  This is a one-dimensional test.
+    my $theta = new oscats::Point("space", $space);
     # Sample the ability from N(0,1) distribution
-    $theta->set(0, oscats::Random::normal(1));
+    $theta->set_cont($dim, oscats::Random::normal(1));
     # Create a new examinee
     my $e = new oscats::Examinee();
     # Set the examinee's true (simulated) ability
-    # Note, theta is *copied* into examinee
-    $e->set_true_theta($theta);
+    $e->set_sim_theta($theta);
     push @ret, $e;
   }
   return @ret;
@@ -62,10 +65,14 @@ sub gen_examinees {
 
 @test_names = ("random", "matched", "match.5", "match.10");
 
+# Create the latent space for the test: continuous unidimensional
+$space = new oscats::Space("numCont", 1);
+$dim = $space->get_dim_by_name("Cont.1");
+
 print "Creating examinees.\n";
-@examinees = gen_examinees();
+@examinees = gen_examinees($space);
 print "Creating items.\n";
-$bank = gen_items();
+$bank = gen_items($space);
 
 print "Creating tests.\n";
 # Create new tests with the given properties
@@ -81,8 +88,8 @@ for $name (@test_names) {
 # A test must have at minimum a selection algorithm, and administration
 # algorithm, and a stoping critierion.
 for $test (@tests) {
-  (new oscats::AlgSimulateTheta())->register($test);
-  (new oscats::AlgEstimateTheta())->register($test);
+  (new oscats::AlgSimulate())->register($test);
+  (new oscats::AlgEstimate())->register($test);
   
   # In many cases, we don't care about the algorithm objects after they've
   # been registered, since they don't contain any interesting information. 
@@ -104,25 +111,22 @@ for $test (@tests) {
 
 print "Administering.\n";
 open OUT, ">ex01-examinees.dat" or die "Can't open >ex01-examinees.dat: $!\n";
-print OUT "ID\ttrue\t" . join("\t", map "$_\t$_.err", @test_names) . "\n";
-$theta = new oscats::GslVector(1);	# Initialized to 0
+print OUT "ID\ttrue\t" . join("\t", @test_names) . "\n";
 $i = 1;
 for $e (@examinees) {
-  # We want errors for the estimates: initialize them.
-  $e->init_theta_err(1);		# 1 is the test dimension
+  # An initial estimate for latent IRT ability must be provided.
+  $e->set_est_theta(new oscats::Point("space", $space));
 
-  printf OUT "%d\t%g", $i, $e->get_true_theta()->get(0);
+  printf OUT "%d\t%g", $i, $e->get_sim_theta()->get_cont($dim);
   for $test (@tests) {
-    # An initial estimate for latent IRT ability must be provided.
-    # theta is *copied* into examinee
-    $e->set_theta_hat($theta);
+    # Reset initial latent ability for this test
+    $e->get_est_theta()->set_cont($dim, 0);
     
     # Do the administration!
     $test->administer($e);
     
     # Output the resulting theta.hat and its *variance*
-    printf OUT "\t%g\t%g", $e->get_theta_hat()->get(0),
-                           $e->get_theta_err()->get(0, 0);
+    printf OUT "\t%g", $e->get_est_theta()->get_cont($dim);
   }
   print OUT "\n";
   $i += 1;
@@ -134,7 +138,7 @@ print OUT "ID\tb\t" . join("\t", @test_names) . "\n";
 for $i (1 .. $N_ITEMS) {
   $item = $bank->get_item($i-1);
   # Get item's difficulty paramter
-  printf OUT "%d\t%g", $i, $item->get_property("contmodel")->get_param_by_index(0);
+  printf OUT "%d\t%g", $i, $item->get_model($item->get_default_model())->get_param_by_index(0);
   for $exposure (@exposures) {
     printf OUT "\t%g", $exposure->get_rate($item);
   }

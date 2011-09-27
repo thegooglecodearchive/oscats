@@ -1414,6 +1414,10 @@ class Generator {
                                  
                                  'gpointer'             => 'int',
                                  'GQuark'		=> 'int',
+
+                                 'OscatsDim'		=> 'int',
+                                 'OscatsNatural'	=> 'int',
+                                 'OscatsResponse'	=> 'int',
                                  
                                  'gboolean'       => 'bool',
                                  

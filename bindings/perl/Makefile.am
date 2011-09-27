@@ -10,7 +10,11 @@ oscats.maps: $(srcdir)/../oscats-common.defs $(srcdir)/oscats.override
 	cp $(srcdir)/../oscats-common.defs oscats.defs
 	$(PERL) $(srcdir)/codegen.pl $(srcdir)/oscats.override oscats.defs
 
-Build: oscats.maps Build.PL
+$(builddir)/lib/oscats-typedefs.typemap: $(srcdir)/oscats-typedefs.typemap
+	if test ! -d lib; then mkdir lib; fi
+	cp $(srcdir)/oscats-typedefs.typemap lib/oscats-typedefs.typemap
+
+Build: oscats.maps Build.PL $(builddir)/lib/oscats-typedefs.typemap
 	top_builddir=$(top_builddir) srcdir=$(srcdir) \
 	top_srcdir=$(top_srcdir) $(PERL) Build.PL
 

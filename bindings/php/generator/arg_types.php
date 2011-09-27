@@ -1116,6 +1116,10 @@ $matcher->register('gint32', $arg);
 $matcher->register('GtkType', $arg);
 $matcher->register('GQuark', $arg);
 
+$matcher->register('OscatsDim', $arg);
+$matcher->register('OscatsNatural', $arg);
+$matcher->register('OscatsResponse', $arg);
+
 $arg = new Bool_Arg();
 $matcher->register('gboolean', $arg);
 

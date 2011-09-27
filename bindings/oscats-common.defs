@@ -49,18 +49,11 @@
   (gtype-id "OSCATS_TYPE_ALGORITHM")
 )
 
-(define-object AlgSimulateTheta
+(define-object AlgSimulate
   (in-module "Oscats")
   (parent "OscatsAlgorithm")
-  (c-name "OscatsAlgSimulateTheta")
-  (gtype-id "OSCATS_TYPE_ALG_SIMULATE_THETA")
-)
-
-(define-object AlgSimulateAlpha
-  (in-module "Oscats")
-  (parent "OscatsAlgorithm")
-  (c-name "OscatsAlgSimulateAlpha")
-  (gtype-id "OSCATS_TYPE_ALG_SIMULATE_ALPHA")
+  (c-name "OscatsAlgSimulate")
+  (gtype-id "OSCATS_TYPE_ALG_SIMULATE")
 )
 
 (define-object AlgPickRand
@@ -70,18 +63,11 @@
   (gtype-id "OSCATS_TYPE_ALG_PICK_RAND")
 )
 
-(define-object AlgMaxKlDiscr
+(define-object AlgMaxKl
   (in-module "Oscats")
   (parent "OscatsAlgorithm")
-  (c-name "OscatsAlgMaxKlDiscr")
-  (gtype-id "OSCATS_TYPE_ALG_MAX_KL_DISCR")
-)
-
-(define-object AlgMaxKlCont
-  (in-module "Oscats")
-  (parent "OscatsAlgorithm")
-  (c-name "OscatsAlgMaxKlCont")
-  (gtype-id "OSCATS_TYPE_ALG_MAX_KL_CONT")
+  (c-name "OscatsAlgMaxKl")
+  (gtype-id "OSCATS_TYPE_ALG_MAX_KL")
 )
 
 (define-object AlgMaxFisher
@@ -105,18 +91,11 @@
   (gtype-id "OSCATS_TYPE_ALG_EXPOSURE_COUNTER")
 )
 
-(define-object AlgEstimateTheta
+(define-object AlgEstimate
   (in-module "Oscats")
   (parent "OscatsAlgorithm")
-  (c-name "OscatsAlgEstimateTheta")
-  (gtype-id "OSCATS_TYPE_ALG_ESTIMATE_THETA")
-)
-
-(define-object AlgEstimateAlpha
-  (in-module "Oscats")
-  (parent "OscatsAlgorithm")
-  (c-name "OscatsAlgEstimateAlpha")
-  (gtype-id "OSCATS_TYPE_ALG_ESTIMATE_ALPHA")
+  (c-name "OscatsAlgEstimate")
+  (gtype-id "OSCATS_TYPE_ALG_ESTIMATE")
 )
 
 (define-object AlgClosestDiff
@@ -133,74 +112,11 @@
   (gtype-id "OSCATS_TYPE_ALG_CLASS_RATES")
 )
 
-(define-object Attributes
-  (in-module "Oscats")
-  (parent "GObject")
-  (c-name "OscatsAttributes")
-  (gtype-id "OSCATS_TYPE_ATTRIBUTES")
-)
-
-(define-object ContModel
-  (in-module "Oscats")
-  (parent "GObject")
-  (c-name "OscatsContModel")
-  (gtype-id "OSCATS_TYPE_CONT_MODEL")
-)
-
-(define-object ContModelL1p
-  (in-module "Oscats")
-  (parent "OscatsContModel")
-  (c-name "OscatsContModelL1p")
-  (gtype-id "OSCATS_TYPE_CONT_MODEL_L1P")
-)
-
-(define-object ContModelL2p
-  (in-module "Oscats")
-  (parent "OscatsContModel")
-  (c-name "OscatsContModelL2p")
-  (gtype-id "OSCATS_TYPE_CONT_MODEL_L2P")
-)
-
-(define-object ContModelL3p
-  (in-module "Oscats")
-  (parent "OscatsContModel")
-  (c-name "OscatsContModelL3p")
-  (gtype-id "OSCATS_TYPE_CONT_MODEL_L3P")
-)
-
-(define-object ContModelNominal
-  (in-module "Oscats")
-  (parent "OscatsContModel")
-  (c-name "OscatsContModelNominal")
-  (gtype-id "OSCATS_TYPE_CONT_MODEL_NOMINAL")
-)
-
 (define-object Covariates
   (in-module "Oscats")
   (parent "GObject")
   (c-name "OscatsCovariates")
   (gtype-id "OSCATS_TYPE_COVARIATES")
-)
-
-(define-object DiscrModel
-  (in-module "Oscats")
-  (parent "GObject")
-  (c-name "OscatsDiscrModel")
-  (gtype-id "OSCATS_TYPE_DISCR_MODEL")
-)
-
-(define-object DiscrModelDina
-  (in-module "Oscats")
-  (parent "OscatsDiscrModel")
-  (c-name "OscatsDiscrModelDina")
-  (gtype-id "OSCATS_TYPE_DISCR_MODEL_DINA")
-)
-
-(define-object DiscrModelNida
-  (in-module "Oscats")
-  (parent "OscatsDiscrModel")
-  (c-name "OscatsDiscrModelNida")
-  (gtype-id "OSCATS_TYPE_DISCR_MODEL_NIDA")
 )
 
 (define-object Examinee
@@ -231,6 +147,69 @@
   (gtype-id "OSCATS_TYPE_ITEM_BANK")
 )
 
+(define-object Model
+  (in-module "Oscats")
+  (parent "GObject")
+  (c-name "OscatsModel")
+  (gtype-id "OSCATS_TYPE_MODEL")
+)
+
+(define-object ModelDina
+  (in-module "Oscats")
+  (parent "OscatsModel")
+  (c-name "OscatsModelDina")
+  (gtype-id "OSCATS_TYPE_MODEL_DINA")
+)
+
+(define-object ModelL1p
+  (in-module "Oscats")
+  (parent "OscatsModel")
+  (c-name "OscatsModelL1p")
+  (gtype-id "OSCATS_TYPE_MODEL_L1P")
+)
+
+(define-object ModelL2p
+  (in-module "Oscats")
+  (parent "OscatsModel")
+  (c-name "OscatsModelL2p")
+  (gtype-id "OSCATS_TYPE_MODEL_L2P")
+)
+
+(define-object ModelL3p
+  (in-module "Oscats")
+  (parent "OscatsModel")
+  (c-name "OscatsModelL3p")
+  (gtype-id "OSCATS_TYPE_MODEL_L3P")
+)
+
+(define-object ModelNida
+  (in-module "Oscats")
+  (parent "OscatsModel")
+  (c-name "OscatsModelNida")
+  (gtype-id "OSCATS_TYPE_MODEL_NIDA")
+)
+
+(define-object ModelNominal
+  (in-module "Oscats")
+  (parent "OscatsModel")
+  (c-name "OscatsModelNominal")
+  (gtype-id "OSCATS_TYPE_MODEL_NOMINAL")
+)
+
+(define-object Point
+  (in-module "Oscats")
+  (parent "GObject")
+  (c-name "OscatsPoint")
+  (gtype-id "OSCATS_TYPE_POINT")
+)
+
+(define-object Space
+  (in-module "Oscats")
+  (parent "GObject")
+  (c-name "OscatsSpace")
+  (gtype-id "OSCATS_TYPE_SPACE")
+)
+
 (define-object Test
   (in-module "Oscats")
   (parent "GObject")
@@ -240,6 +219,20 @@
 
 ;; Enumerations and flags ...
 
+(define-flags DimType
+  (in-module "Oscats")
+  (c-name "OscatsDimType")
+  (gtype-id "OSCATS_TYPE_DIM_TYPE")
+  (values
+    '("cont" "OSCATS_DIM_CONT")
+    '("bin" "OSCATS_DIM_BIN")
+    '("nat" "OSCATS_DIM_NAT")
+    '("type-mask" "OSCATS_DIM_TYPE_MASK")
+    '("mask" "OSCATS_DIM_MASK")
+    '("max" "OSCATS_DIM_MAX")
+  )
+)
+
 
 ;; From administrand.h
 
@@ -248,6 +241,18 @@
   (return-type "GType")
   (parameters
   )
+)
+
+(define-method freeze
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_freeze")
+  (return-type "none")
+)
+
+(define-method unfreeze
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_unfreeze")
+  (return-type "none")
 )
 
 (define-function oscats_administrand_reset_characteristics
@@ -326,34 +331,77 @@
   (return-type "GQuark")
 )
 
-(define-method is_cont
+(define-method check_type
   (of-object "OscatsAdministrand")
-  (c-name "oscats_administrand_is_cont")
+  (c-name "oscats_administrand_check_type")
   (return-type "gboolean")
+  (parameters
+    '("GType" "type")
+  )
 )
 
-(define-method is_discr
+(define-method check_model
   (of-object "OscatsAdministrand")
-  (c-name "oscats_administrand_is_discr")
+  (c-name "oscats_administrand_check_model")
   (return-type "gboolean")
+  (parameters
+    '("GQuark" "model")
+    '("GType" "type")
+  )
 )
 
-(define-method num_dims
+(define-method check_dim_type
   (of-object "OscatsAdministrand")
-  (c-name "oscats_administrand_num_dims")
-  (return-type "guint")
+  (c-name "oscats_administrand_check_dim_type")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "model")
+    '("OscatsDim" "type")
+  )
 )
 
-(define-method num_attrs
+(define-method check_space
   (of-object "OscatsAdministrand")
-  (c-name "oscats_administrand_num_attrs")
-  (return-type "guint")
+  (c-name "oscats_administrand_check_space")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "model")
+    '("const-OscatsSpace*" "space")
+  )
 )
 
-(define-method max_resp
+(define-method set_default_model
   (of-object "OscatsAdministrand")
-  (c-name "oscats_administrand_max_resp")
-  (return-type "guint")
+  (c-name "oscats_administrand_set_default_model")
+  (return-type "none")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method get_default_model
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_get_default_model")
+  (return-type "GQuark")
+)
+
+(define-method set_model
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_set_model")
+  (return-type "none")
+  (parameters
+    '("GQuark" "name")
+    '("OscatsModel*" "model")
+  )
+)
+
+(define-method get_model
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_get_model")
+  (return-type "OscatsModel*")
+  (parameters
+    '("GQuark" "name")
+  )
 )
 
 
@@ -379,74 +427,6 @@
 
 
 ;; From algorithms.h
-
-
-
-;; From attributes.h
-
-(define-function oscats_attributes_get_type
-  (c-name "oscats_attributes_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-(define-function oscats_attributes_from_string
-  (c-name "oscats_attributes_from_string")
-  (return-type "OscatsAttributes*")
-  (parameters
-    '("const-gchar*" "str")
-  )
-)
-
-(define-method set
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_set")
-  (return-type "none")
-  (parameters
-    '("guint8" "index")
-    '("gboolean" "value")
-  )
-)
-
-(define-method get
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_get")
-  (return-type "gboolean")
-  (parameters
-    '("guint8" "index")
-  )
-)
-
-(define-method as_int
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_as_int")
-  (return-type "guint32")
-)
-
-(define-method as_string
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_as_string")
-  (return-type "gchar*")
-)
-
-(define-method copy
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_copy")
-  (return-type "none")
-  (parameters
-    '("const-OscatsAttributes*" "rhs")
-  )
-)
-
-(define-method compare
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_compare")
-  (return-type "gint")
-  (parameters
-    '("OscatsAttributes*" "b")
-  )
-)
 
 
 
@@ -573,6 +553,24 @@
   )
 )
 
+(define-method equal
+  (of-object "GBitArray")
+  (c-name "g_bit_array_equal")
+  (return-type "gboolean")
+  (parameters
+    '("GBitArray*" "rhs")
+  )
+)
+
+(define-method serial_compare
+  (of-object "GBitArray")
+  (c-name "g_bit_array_serial_compare")
+  (return-type "gint")
+  (parameters
+    '("const-GBitArray*" "b")
+  )
+)
+
 (define-method iter_reset
   (of-object "GBitArray")
   (c-name "g_bit_array_iter_reset")
@@ -583,212 +581,6 @@
   (of-object "GBitArray")
   (c-name "g_bit_array_iter_next")
   (return-type "gint")
-)
-
-
-
-;; From contmodel.h
-
-(define-function oscats_cont_model_get_type
-  (c-name "oscats_cont_model_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-(define-method get_max
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_get_max")
-  (return-type "guint8")
-)
-
-(define-method P
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_P")
-  (return-type "gdouble")
-  (parameters
-    '("guint" "resp")
-    '("const-GGslVector*" "theta")
-    '("const-OscatsCovariates*" "covariates")
-  )
-)
-
-(define-method distance
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_distance")
-  (return-type "gdouble")
-  (parameters
-    '("const-GGslVector*" "theta")
-    '("const-OscatsCovariates*" "covariates")
-  )
-)
-
-(define-method logLik_dtheta
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_logLik_dtheta")
-  (return-type "none")
-  (parameters
-    '("guint" "resp")
-    '("const-GGslVector*" "theta")
-    '("const-OscatsCovariates*" "covariates")
-    '("GGslVector*" "grad")
-    '("GGslMatrix*" "hes")
-  )
-)
-
-(define-method logLik_dparam
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_logLik_dparam")
-  (return-type "none")
-  (parameters
-    '("guint" "resp")
-    '("const-GGslVector*" "theta")
-    '("const-OscatsCovariates*" "covariates")
-    '("GGslVector*" "grad")
-    '("GGslMatrix*" "hes")
-  )
-)
-
-(define-method fisher_inf
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_fisher_inf")
-  (return-type "none")
-  (parameters
-    '("const-GGslVector*" "theta")
-    '("const-OscatsCovariates*" "covariates")
-    '("GGslMatrix*" "I")
-  )
-)
-
-(define-method get_param_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_get_param_name")
-  (return-type "const-gchar*")
-  (parameters
-    '("guint" "index")
-  )
-)
-
-(define-method has_param_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_has_param_name")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-
-(define-method has_param
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_has_param")
-  (return-type "gboolean")
-  (parameters
-    '("GQuark" "name")
-  )
-)
-
-(define-method get_param
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_get_param")
-  (return-type "gdouble")
-  (parameters
-    '("GQuark" "name")
-  )
-)
-
-(define-method get_param_by_index
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_get_param_by_index")
-  (return-type "gdouble")
-  (parameters
-    '("guint" "index")
-  )
-)
-
-(define-method get_param_by_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_get_param_by_name")
-  (return-type "gdouble")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-
-(define-method set_param
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_set_param")
-  (return-type "none")
-  (parameters
-    '("GQuark" "name")
-    '("gdouble" "value")
-  )
-)
-
-(define-method set_param_by_index
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_set_param_by_index")
-  (return-type "none")
-  (parameters
-    '("guint" "index")
-    '("gdouble" "value")
-  )
-)
-
-(define-method set_param_by_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_set_param_by_name")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "name")
-    '("gdouble" "value")
-  )
-)
-
-(define-method get_covariate_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_get_covariate_name")
-  (return-type "const-gchar*")
-  (parameters
-    '("guint" "index")
-  )
-)
-
-(define-method has_covariate
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_has_covariate")
-  (return-type "gboolean")
-  (parameters
-    '("GQuark" "name")
-  )
-)
-
-(define-method has_covariate_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_has_covariate_name")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-
-(define-method set_covariate_name
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_set_covariate_name")
-  (return-type "none")
-  (parameters
-    '("guint" "index")
-    '("GQuark" "name")
-  )
-)
-
-(define-method set_covariate_name_str
-  (of-object "OscatsContModel")
-  (c-name "oscats_cont_model_set_covariate_name_str")
-  (return-type "none")
-  (parameters
-    '("guint" "index")
-    '("const-gchar*" "name")
-  )
 )
 
 
@@ -818,6 +610,18 @@
   )
 )
 
+(define-method num
+  (of-object "OscatsCovariates")
+  (c-name "oscats_covariates_num")
+  (return-type "guint")
+)
+
+(define-method list
+  (of-object "OscatsCovariates")
+  (c-name "oscats_covariates_list")
+  (return-type "GQuark*")
+)
+
 (define-method set
   (of-object "OscatsCovariates")
   (c-name "oscats_covariates_set")
@@ -828,9 +632,9 @@
   )
 )
 
-(define-method set_str
+(define-method set_by_name
   (of-object "OscatsCovariates")
-  (c-name "oscats_covariates_set_str")
+  (c-name "oscats_covariates_set_by_name")
   (return-type "none")
   (parameters
     '("const-gchar*" "name")
@@ -847,135 +651,12 @@
   )
 )
 
-(define-method get_str
+(define-method get_by_name
   (of-object "OscatsCovariates")
-  (c-name "oscats_covariates_get_str")
+  (c-name "oscats_covariates_get_by_name")
   (return-type "gdouble")
   (parameters
     '("const-gchar*" "name")
-  )
-)
-
-
-
-;; From discrmodel.h
-
-(define-function oscats_discr_model_get_type
-  (c-name "oscats_discr_model_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-(define-method get_max
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_get_max")
-  (return-type "guint8")
-)
-
-(define-method P
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_P")
-  (return-type "gdouble")
-  (parameters
-    '("guint" "resp")
-    '("const-OscatsAttributes*" "attr")
-  )
-)
-
-(define-method logLik_dparam
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_logLik_dparam")
-  (return-type "none")
-  (parameters
-    '("guint" "resp")
-    '("const-OscatsAttributes*" "attr")
-    '("GGslVector*" "grad")
-    '("GGslMatrix*" "hes")
-  )
-)
-
-(define-method get_param_name
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_get_param_name")
-  (return-type "const-gchar*")
-  (parameters
-    '("guint" "index")
-  )
-)
-
-(define-method has_param_name
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_has_param_name")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-
-(define-method has_param
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_has_param")
-  (return-type "gboolean")
-  (parameters
-    '("GQuark" "name")
-  )
-)
-
-(define-method get_param
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_get_param")
-  (return-type "gdouble")
-  (parameters
-    '("GQuark" "name")
-  )
-)
-
-(define-method get_param_by_index
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_get_param_by_index")
-  (return-type "gdouble")
-  (parameters
-    '("guint" "index")
-  )
-)
-
-(define-method get_param_by_name
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_get_param_by_name")
-  (return-type "gdouble")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-
-(define-method set_param
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_set_param")
-  (return-type "none")
-  (parameters
-    '("GQuark" "name")
-    '("gdouble" "value")
-  )
-)
-
-(define-method set_param_by_index
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_set_param_by_index")
-  (return-type "none")
-  (parameters
-    '("guint" "index")
-    '("gdouble" "value")
-  )
-)
-
-(define-method set_param_by_name
-  (of-object "OscatsDiscrModel")
-  (c-name "oscats_discr_model_set_param_by_name")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "name")
-    '("gdouble" "value")
   )
 )
 
@@ -990,79 +671,111 @@
   )
 )
 
-(define-method set_true_theta
+(define-method set_sim_key
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_set_true_theta")
+  (c-name "oscats_examinee_set_sim_key")
   (return-type "none")
   (parameters
-    '("const-GGslVector*" "t")
+    '("GQuark" "name")
   )
 )
 
-(define-method get_true_theta
+(define-method get_sim_key
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_get_true_theta")
-  (return-type "GGslVector*")
+  (c-name "oscats_examinee_get_sim_key")
+  (return-type "GQuark")
 )
 
-(define-method set_theta_hat
+(define-method set_est_key
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_set_theta_hat")
+  (c-name "oscats_examinee_set_est_key")
   (return-type "none")
   (parameters
-    '("const-GGslVector*" "t")
+    '("GQuark" "name")
   )
 )
 
-(define-method get_theta_hat
+(define-method get_est_key
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_get_theta_hat")
-  (return-type "GGslVector*")
+  (c-name "oscats_examinee_get_est_key")
+  (return-type "GQuark")
 )
 
-(define-method init_theta_err
+(define-method set_sim_theta
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_init_theta_err")
+  (c-name "oscats_examinee_set_sim_theta")
   (return-type "none")
   (parameters
-    '("guint" "dim")
+    '("OscatsPoint*" "theta")
   )
 )
 
-(define-method get_theta_err
+(define-method get_sim_theta
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_get_theta_err")
-  (return-type "GGslMatrix*")
+  (c-name "oscats_examinee_get_sim_theta")
+  (return-type "OscatsPoint*")
 )
 
-(define-method set_true_alpha
+(define-method set_est_theta
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_set_true_alpha")
+  (c-name "oscats_examinee_set_est_theta")
   (return-type "none")
   (parameters
-    '("const-OscatsAttributes*" "attr")
+    '("OscatsPoint*" "theta")
   )
 )
 
-(define-method get_true_alpha
+(define-method get_est_theta
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_get_true_alpha")
-  (return-type "OscatsAttributes*")
+  (c-name "oscats_examinee_get_est_theta")
+  (return-type "OscatsPoint*")
 )
 
-(define-method set_alpha_hat
+(define-method set_theta
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_set_alpha_hat")
+  (c-name "oscats_examinee_set_theta")
   (return-type "none")
   (parameters
-    '("const-OscatsAttributes*" "attr")
+    '("GQuark" "name")
+    '("OscatsPoint*" "theta")
   )
 )
 
-(define-method get_alpha_hat
+(define-method get_theta
   (of-object "OscatsExaminee")
-  (c-name "oscats_examinee_get_alpha_hat")
-  (return-type "OscatsAttributes*")
+  (c-name "oscats_examinee_get_theta")
+  (return-type "OscatsPoint*")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method init_sim_theta
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_init_sim_theta")
+  (return-type "OscatsPoint*")
+  (parameters
+    '("OscatsSpace*" "space")
+  )
+)
+
+(define-method init_est_theta
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_init_est_theta")
+  (return-type "OscatsPoint*")
+  (parameters
+    '("OscatsSpace*" "space")
+  )
+)
+
+(define-method init_theta
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_init_theta")
+  (return-type "OscatsPoint*")
+  (parameters
+    '("GQuark" "name")
+    '("OscatsSpace*" "space")
+  )
 )
 
 (define-method prep
@@ -1080,7 +793,7 @@
   (return-type "none")
   (parameters
     '("OscatsItem*" "item")
-    '("guint8" "resp")
+    '("OscatsResponse" "resp")
   )
 )
 
@@ -1088,6 +801,16 @@
   (of-object "OscatsExaminee")
   (c-name "oscats_examinee_num_items")
   (return-type "guint")
+)
+
+(define-method logLik
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_logLik")
+  (return-type "gdouble")
+  (parameters
+    '("const-OscatsPoint*" "theta")
+    '("GQuark" "modelKey")
+  )
 )
 
 
@@ -1368,6 +1091,15 @@
   )
 )
 
+(define-method link_point
+  (of-object "OscatsIntegrate")
+  (c-name "oscats_integrate_link_point")
+  (return-type "none")
+  (parameters
+    '("OscatsPoint*" "point")
+  )
+)
+
 
 
 ;; From item.h
@@ -1376,6 +1108,16 @@
   (c-name "oscats_item_get_type")
   (return-type "GType")
   (parameters
+  )
+)
+
+(define-function oscats_item_new
+  (c-name "oscats_item_new")
+  (is-constructor-of "OscatsItem")
+  (return-type "OscatsItem*")
+  (parameters
+    '("GQuark" "name")
+    '("OscatsModel*" "model")
   )
 )
 
@@ -1399,16 +1141,19 @@
   )
 )
 
+(define-method remove_item
+  (of-object "OscatsItemBank")
+  (c-name "oscats_item_bank_remove_item")
+  (return-type "none")
+  (parameters
+    '("OscatsAdministrand*" "item")
+  )
+)
+
 (define-method num_items
   (of-object "OscatsItemBank")
   (c-name "oscats_item_bank_num_items")
   (return-type "guint")
-)
-
-(define-method is_pure
-  (of-object "OscatsItemBank")
-  (c-name "oscats_item_bank_is_pure")
-  (return-type "gboolean")
 )
 
 (define-method get_item
@@ -1426,11 +1171,329 @@
 
 
 
+;; From model.h
+
+(define-function oscats_model_get_type
+  (c-name "oscats_model_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function oscats_model_new
+  (c-name "oscats_model_new")
+  (is-constructor-of "OscatsModel")
+  (return-type "OscatsModel*")
+  (parameters
+    '("GType" "type")
+    '("OscatsSpace*" "space")
+    '("const-OscatsDim*" "dims")
+    '("OscatsDim" "ndims")
+    '("OscatsCovariates*" "covariates")
+  )
+)
+
+(define-method get_max
+  (of-object "OscatsModel")
+  (c-name "oscats_model_get_max")
+  (return-type "OscatsResponse")
+)
+
+(define-method P
+  (of-object "OscatsModel")
+  (c-name "oscats_model_P")
+  (return-type "gdouble")
+  (parameters
+    '("OscatsResponse" "resp")
+    '("const-OscatsPoint*" "theta")
+    '("const-OscatsCovariates*" "covariates")
+  )
+)
+
+(define-method distance
+  (of-object "OscatsModel")
+  (c-name "oscats_model_distance")
+  (return-type "gdouble")
+  (parameters
+    '("const-OscatsPoint*" "theta")
+    '("const-OscatsCovariates*" "covariates")
+  )
+)
+
+(define-method logLik_dtheta
+  (of-object "OscatsModel")
+  (c-name "oscats_model_logLik_dtheta")
+  (return-type "none")
+  (parameters
+    '("OscatsResponse" "resp")
+    '("const-OscatsPoint*" "theta")
+    '("const-OscatsCovariates*" "covariates")
+    '("GGslVector*" "grad")
+    '("GGslMatrix*" "hes")
+  )
+)
+
+(define-method logLik_dparam
+  (of-object "OscatsModel")
+  (c-name "oscats_model_logLik_dparam")
+  (return-type "none")
+  (parameters
+    '("OscatsResponse" "resp")
+    '("const-OscatsPoint*" "theta")
+    '("const-OscatsCovariates*" "covariates")
+    '("GGslVector*" "grad")
+    '("GGslMatrix*" "hes")
+  )
+)
+
+(define-method fisher_inf
+  (of-object "OscatsModel")
+  (c-name "oscats_model_fisher_inf")
+  (return-type "none")
+  (parameters
+    '("const-OscatsPoint*" "theta")
+    '("const-OscatsCovariates*" "covariates")
+    '("GGslMatrix*" "I")
+  )
+)
+
+(define-method get_param_name
+  (of-object "OscatsModel")
+  (c-name "oscats_model_get_param_name")
+  (return-type "const-gchar*")
+  (parameters
+    '("guint" "index")
+  )
+)
+
+(define-method has_param_name
+  (of-object "OscatsModel")
+  (c-name "oscats_model_has_param_name")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method has_param
+  (of-object "OscatsModel")
+  (c-name "oscats_model_has_param")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method get_param
+  (of-object "OscatsModel")
+  (c-name "oscats_model_get_param")
+  (return-type "gdouble")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method get_param_by_index
+  (of-object "OscatsModel")
+  (c-name "oscats_model_get_param_by_index")
+  (return-type "gdouble")
+  (parameters
+    '("guint" "index")
+  )
+)
+
+(define-method get_param_by_name
+  (of-object "OscatsModel")
+  (c-name "oscats_model_get_param_by_name")
+  (return-type "gdouble")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method set_param
+  (of-object "OscatsModel")
+  (c-name "oscats_model_set_param")
+  (return-type "none")
+  (parameters
+    '("GQuark" "name")
+    '("gdouble" "value")
+  )
+)
+
+(define-method set_param_by_index
+  (of-object "OscatsModel")
+  (c-name "oscats_model_set_param_by_index")
+  (return-type "none")
+  (parameters
+    '("guint" "index")
+    '("gdouble" "value")
+  )
+)
+
+(define-method set_param_by_name
+  (of-object "OscatsModel")
+  (c-name "oscats_model_set_param_by_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "name")
+    '("gdouble" "value")
+  )
+)
+
+(define-method has_covariate
+  (of-object "OscatsModel")
+  (c-name "oscats_model_has_covariate")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method has_covariate_name
+  (of-object "OscatsModel")
+  (c-name "oscats_model_has_covariate_name")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+
+
 ;; From models.h
 
 
 
 ;; From oscats.h
+
+
+
+;; From point.h
+
+(define-function oscats_point_get_type
+  (c-name "oscats_point_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function oscats_point_new_from_space
+  (c-name "oscats_point_new_from_space")
+  (return-type "OscatsPoint*")
+  (parameters
+    '("OscatsSpace*" "space")
+  )
+)
+
+(define-method same_space
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_same_space")
+  (return-type "gboolean")
+  (parameters
+    '("const-OscatsPoint*" "rhs")
+  )
+)
+
+(define-method space_compatible
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_space_compatible")
+  (return-type "gboolean")
+  (parameters
+    '("const-OscatsPoint*" "rhs")
+  )
+)
+
+(define-method equal
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_equal")
+  (return-type "gboolean")
+  (parameters
+    '("const-OscatsPoint*" "rhs")
+    '("gdouble" "tol")
+  )
+)
+
+(define-method copy
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_copy")
+  (return-type "none")
+  (parameters
+    '("const-OscatsPoint*" "rhs")
+  )
+)
+
+(define-method get_double
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_get_double")
+  (return-type "gdouble")
+  (parameters
+    '("OscatsDim" "dim")
+  )
+)
+
+(define-method get_cont
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_get_cont")
+  (return-type "gdouble")
+  (parameters
+    '("OscatsDim" "dim")
+  )
+)
+
+(define-method get_bin
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_get_bin")
+  (return-type "gboolean")
+  (parameters
+    '("OscatsDim" "dim")
+  )
+)
+
+(define-method get_nat
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_get_nat")
+  (return-type "OscatsNatural")
+  (parameters
+    '("OscatsDim" "dim")
+  )
+)
+
+(define-method set_cont
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_set_cont")
+  (return-type "none")
+  (parameters
+    '("OscatsDim" "dim")
+    '("gdouble" "value")
+  )
+)
+
+(define-method set_bin
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_set_bin")
+  (return-type "none")
+  (parameters
+    '("OscatsDim" "dim")
+    '("gboolean" "value")
+  )
+)
+
+(define-method set_nat
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_set_nat")
+  (return-type "none")
+  (parameters
+    '("OscatsDim" "dim")
+    '("OscatsNatural" "value")
+  )
+)
+
+(define-method cont_as_vector
+  (of-object "OscatsPoint")
+  (c-name "oscats_point_cont_as_vector")
+  (return-type "GGslVector*")
+)
 
 
 
@@ -1629,6 +1692,111 @@
 
 
 
+;; From space.h
+
+(define-function oscats_dim_type_get_type
+  (c-name "oscats_dim_type_get_type")
+  (return-type "GType")
+)
+
+(define-function oscats_space_get_type
+  (c-name "oscats_space_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-method size
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_size")
+  (return-type "guint16")
+)
+
+(define-method set_dim_name
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_set_dim_name")
+  (return-type "none")
+  (parameters
+    '("OscatsDim" "dim")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method has_dim
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_has_dim")
+  (return-type "gboolean")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method has_dim_name
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_has_dim_name")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method get_dim
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_get_dim")
+  (return-type "OscatsDim")
+  (parameters
+    '("GQuark" "name")
+  )
+)
+
+(define-method get_dim_by_name
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_get_dim_by_name")
+  (return-type "OscatsDim")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method dim_get_name
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_dim_get_name")
+  (return-type "const-gchar*")
+  (parameters
+    '("OscatsDim" "dim")
+  )
+)
+
+(define-method dim_get_max
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_dim_get_max")
+  (return-type "OscatsNatural")
+  (parameters
+    '("OscatsDim" "dim")
+  )
+)
+
+(define-method validate
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_validate")
+  (return-type "gboolean")
+  (parameters
+    '("OscatsDim" "dim")
+    '("OscatsNatural" "x")
+  )
+)
+
+(define-method compatible
+  (of-object "OscatsSpace")
+  (c-name "oscats_space_compatible")
+  (return-type "gboolean")
+  (parameters
+    '("const-OscatsSpace*" "rhs")
+  )
+)
+
+
+
 ;; From test.h
 
 (define-function oscats_test_get_type
@@ -1653,6 +1821,72 @@
   (return-type "none")
   (parameters
     '("GBitArray*" "hint")
+  )
+)
+
+
+
+;; From dina.h
+
+(define-function oscats_model_dina_get_type
+  (c-name "oscats_model_dina_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l1p.h
+
+(define-function oscats_model_l1p_get_type
+  (c-name "oscats_model_l1p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l2p.h
+
+(define-function oscats_model_l2p_get_type
+  (c-name "oscats_model_l2p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From l3p.h
+
+(define-function oscats_model_l3p_get_type
+  (c-name "oscats_model_l3p_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From nida.h
+
+(define-function oscats_model_nida_get_type
+  (c-name "oscats_model_nida_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+
+
+;; From nominal.h
+
+(define-function oscats_model_nominal_get_type
+  (c-name "oscats_model_nominal_get_type")
+  (return-type "GType")
+  (parameters
   )
 )
 
@@ -1733,7 +1967,7 @@
   (c-name "oscats_alg_class_rates_num_examinees_by_pattern")
   (return-type "guint")
   (parameters
-    '("const-OscatsAttributes*" "attr")
+    '("const-OscatsPoint*" "attr")
   )
 )
 
@@ -1742,7 +1976,17 @@
   (c-name "oscats_alg_class_rates_get_rate_by_pattern")
   (return-type "gdouble")
   (parameters
-    '("const-OscatsAttributes*" "attr")
+    '("const-OscatsPoint*" "attr")
+  )
+)
+
+(define-method foreach_pattern
+  (of-object "OscatsAlgClassRates")
+  (c-name "oscats_alg_class_rates_foreach_pattern")
+  (return-type "none")
+  (parameters
+    '("OscatsAlgClassRatesForeachPatternFunc" "func")
+    '("gpointer" "user_data")
   )
 )
 
@@ -1759,65 +2003,12 @@
 
 
 
-;; From estimate_alpha.h
+;; From estimate.h
 
-(define-function oscats_alg_estimate_alpha_get_type
-  (c-name "oscats_alg_estimate_alpha_get_type")
+(define-function oscats_alg_estimate_get_type
+  (c-name "oscats_alg_estimate_get_type")
   (return-type "GType")
   (parameters
-  )
-)
-
-
-
-;; From estimate_theta.h
-
-(define-function oscats_alg_estimate_theta_get_type
-  (c-name "oscats_alg_estimate_theta_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-(define-function oscats_estimate_theta_mle
-  (c-name "oscats_estimate_theta_mle")
-  (return-type "gboolean")
-  (parameters
-    '("const-GPtrArray*" "items")
-    '("const-GByteArray*" "resp")
-    '("const-OscatsCovariates*" "covariates")
-    '("GGslVector*" "theta")
-    '("GGslMatrix*" "err")
-  )
-)
-
-(define-function oscats_estimate_theta_eap
-  (c-name "oscats_estimate_theta_eap")
-  (return-type "none")
-  (parameters
-    '("const-GPtrArray*" "items")
-    '("const-GByteArray*" "resp")
-    '("const-OscatsCovariates*" "covariates")
-    '("GGslVector*" "theta")
-    '("GGslMatrix*" "err")
-    '("const-GGslVector*" "mu")
-    '("const-GGslMatrix*" "Sigma")
-  )
-)
-
-(define-function oscats_estimate_theta_mle_set_tol
-  (c-name "oscats_estimate_theta_mle_set_tol")
-  (return-type "none")
-  (parameters
-    '("gdouble" "tol")
-  )
-)
-
-(define-function oscats_estimate_theta_eap_set_eps
-  (c-name "oscats_estimate_theta_eap_set_eps")
-  (return-type "none")
-  (parameters
-    '("gdouble" "eps")
   )
 )
 
@@ -1869,23 +2060,21 @@
   )
 )
 
-
-
-;; From max_kl_cont.h
-
-(define-function oscats_alg_max_kl_cont_get_type
-  (c-name "oscats_alg_max_kl_cont_get_type")
-  (return-type "GType")
+(define-method resize
+  (of-object "OscatsAlgMaxFisher")
+  (c-name "oscats_alg_max_fisher_resize")
+  (return-type "none")
   (parameters
+    '("guint" "num")
   )
 )
 
 
 
-;; From max_kl_discr.h
+;; From max_kl.h
 
-(define-function oscats_alg_max_kl_discr_get_type
-  (c-name "oscats_alg_max_kl_discr_get_type")
+(define-function oscats_alg_max_kl_get_type
+  (c-name "oscats_alg_max_kl_get_type")
   (return-type "GType")
   (parameters
   )
@@ -1904,87 +2093,10 @@
 
 
 
-;; From simulate_alpha.h
+;; From simulate.h
 
-(define-function oscats_alg_simulate_alpha_get_type
-  (c-name "oscats_alg_simulate_alpha_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From simulate_theta.h
-
-(define-function oscats_alg_simulate_theta_get_type
-  (c-name "oscats_alg_simulate_theta_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From dina.h
-
-(define-function oscats_discr_model_dina_get_type
-  (c-name "oscats_discr_model_dina_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l1p.h
-
-(define-function oscats_cont_model_l1p_get_type
-  (c-name "oscats_cont_model_l1p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l2p.h
-
-(define-function oscats_cont_model_l2p_get_type
-  (c-name "oscats_cont_model_l2p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From l3p.h
-
-(define-function oscats_cont_model_l3p_get_type
-  (c-name "oscats_cont_model_l3p_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From nida.h
-
-(define-function oscats_discr_model_nida_get_type
-  (c-name "oscats_discr_model_nida_get_type")
-  (return-type "GType")
-  (parameters
-  )
-)
-
-
-
-;; From nominal.h
-
-(define-function oscats_cont_model_nominal_get_type
-  (c-name "oscats_cont_model_nominal_get_type")
+(define-function oscats_alg_simulate_get_type
+  (c-name "oscats_alg_simulate_get_type")
   (return-type "GType")
   (parameters
   )

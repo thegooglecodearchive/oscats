@@ -1,6 +1,6 @@
 <?
 # OSCATS: Open-Source Computerized Adaptive Testing System
-# Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+# Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
 #
 # Example 1
 # 400 Items: 1PL, b ~ N(0,1)
@@ -24,7 +24,7 @@
   $N_ITEMS = 400;
   $LEN = 30;
 
-  function gen_items() {
+  function gen_items($space) {
     global $N_ITEMS;
     # Create an item bank to store the items.
     # Setting the property "sizeHint" increases allocation efficiency
@@ -35,11 +35,12 @@
     $bank = new OscatsItemBank('OscatsItemBank', array("sizeHint" => $N_ITEMS));
     for ($i=0; $i < $N_ITEMS; $i++) {
       # First we create an IRT model container for our item
-      $model = new OscatsContModelL1p();
+      $model = new OscatsModelL1p('OscatsModelL1p', array("space" => $space));
       # Then, set the parameters.  Here there is only one, the difficulty (b).
       $model->set_param_by_index(0, Oscats::rnd_normal(1));
       # Create an item based on this model
-      $item = new OscatsItem('OscatsItem', array("contmodel" => $model));
+      # This is equivalent to oscats_item_new(0, model) in C
+      $item = new OscatsItem(0, $model);
       # Add the item to the item bank
       $bank->add_item($item);
       # Since php is garbage collected, we don't have to worry about
@@ -49,19 +50,19 @@
   }
 
   # Returns a list of new OscatsExaminee objects
-  function gen_examinees () {
+  function gen_examinees ($space) {
     global $N_EXAMINEES;
+    $dim = $space->get_dim_by_name("Cont.1");
     $ret = array();
-    # Latent IRT ability parameter.  This is a one-dimensional test.
-    $theta = new GGslVector(1);
     for ($i=0; $i < $N_EXAMINEES; $i++) {
+      # Latent IRT ability parameter.  This is a one-dimensional test.
+      $theta = new OscatsPoint('OscatsPoint', array("space" => $space));
       # Sample the ability from N(0,1) distribution
-      $theta->set(0, Oscats::rnd_normal(1));
+      $theta->set_cont($dim, Oscats::rnd_normal(1));
       # Create a new examinee
       $e = new OscatsExaminee();
       # Set the examinee's true (simulated) ability
-      # Note, theta is *copied* into examinee
-      $e->set_true_theta($theta);
+      $e->set_sim_theta($theta);
       $ret[] = $e;
     }
     return $ret;
@@ -71,10 +72,14 @@
 
   $test_names = array("random", "matched", "match.5", "match.10");
 
+  # Create the latent space for the test: continuous unidimensional
+  $space = new OscatsSpace('OscatsSpace', array("numCont" => 1));
+  $dim = $space->get_dim_by_name("Cont.1");
+
   print "Creating examinees.\n";
-  $examinees = gen_examinees();
+  $examinees = gen_examinees($space);
   print "Creating items.\n";
-  $bank = gen_items();
+  $bank = gen_items($space);
 
   print "Creating tests.\n";
   # Create new tests with the given properties
@@ -92,9 +97,9 @@
   # algorithm, and a stoping critierion.
   $exposures = array();
   foreach ($tests as $test) {
-    $alg = new OscatsAlgSimulateTheta();
+    $alg = new OscatsAlgSimulate();
     $alg->register($test);
-    $alg = new OscatsAlgEstimateTheta();
+    $alg = new OscatsAlgEstimate();
     $alg->register($test);
     
     # All calls to oscats_algorithm_register() return an algorithm
@@ -125,27 +130,22 @@
 
   print "Administering.\n";
   $out = fopen("ex01-examinees.dat", "w");
-  fwrite($out, "ID\ttrue\t" .
-         join("\t", array_map(create_function('$n', 'return "$n\t$n.err";'),
-              $test_names)) . "\n");
-  $theta = new GGslVector(1);		# Initialized to 0
+  fwrite($out, "ID\ttrue\t" . join("\t", $test_names) . "\n");
   $i = 1;
   foreach ($examinees as $e) {
-    # We want errors for the estimates: initialize them.
-    $e->init_theta_err(1);		# 1 is the test dimension
-
-    fwrite($out, sprintf("%d\t%g", $i, $e->get_true_theta()->get(0)));
+    # An initial estimate for latent IRT ability must be provided.
+    $e->set_est_theta(new OscatsPoint('OscatsPoint', array("space" => $space)));
+    
+    fwrite($out, sprintf("%d\t%g", $i, $e->get_sim_theta()->get_cont($dim)));
     foreach ($tests as $test) {
-      # An initial estimate for latent IRT ability must be provided.
-      # theta is *copied* into examinee
-      $e->set_theta_hat($theta);
-      
+      # Reset initial latent ability for this test
+      $e->get_est_theta()->set_cont($dim, 0);
+              
       # Do the administration!
       $test->administer($e);
       
       # Output the resulting theta.hat and its *variance*
-      fwrite($out, sprintf("\t%g\t%g", $e->get_theta_hat()->get(0),
-                           $e->get_theta_err()->get(0, 0)) );
+      fwrite($out, sprintf("\t%g", $e->get_est_theta()->get_cont($dim)) );
     }
     fwrite($out, "\n");
     $i += 1;
@@ -158,7 +158,7 @@
     $item = $bank->get_item($i);
     # Get item's difficulty paramter
     fwrite($out, sprintf("%d\t%g", $i+1,
-                         $item->get_property("contmodel")->get_param_by_index(0)) );
+      $item->get_model($item->get_default_model())->get_param_by_index(0)) );
     foreach ($exposures as $exposure) {
       fwrite($out, sprintf("\t%g", $exposure->get_rate($item)) );
     }

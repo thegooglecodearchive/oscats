@@ -986,9 +986,13 @@ matcher.register('GSeekType', arg) # Hack, but we have no python wrapper
 arg = LongArg()
 matcher.register('long', arg)
 matcher.register('glong', arg)
+matcher.register('GQuark', arg)
 
 arg = UIntArg()
 matcher.register('guint', arg)
+matcher.register('OscatsDim', arg)
+matcher.register('OscatsNatural', arg)
+matcher.register('OscatsResponse', arg)
 
 arg = BoolArg()
 matcher.register('gboolean', arg)

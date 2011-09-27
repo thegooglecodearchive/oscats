@@ -26,7 +26,7 @@ $glib_typemap = "$glib_loc/typemap";
 
 ExtUtils::ParseXS::process_file(
   filename => 'lib/oscats.xs',
-  typemap => [ 'oscats.typemap', $glib_typemap ],
+  typemap => [ 'oscats.typemap', 'oscats-typedefs.typemap', $glib_typemap ],
   prototypes => 0,
   output => 'lib/oscats.c');
 
