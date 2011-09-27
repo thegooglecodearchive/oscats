@@ -11,11 +11,16 @@ if ($ARGV[0] =~ /\.override$/) {
     if ($secname eq 'ignore') {
       $ignores = "|" . join("|", @lines) . "|";
     } elsif ($secname eq 'prefixes') {
-      for $line (@lines) { ($a, $b) = split /\t/, $line; $prefix{$a} = $b; }
+      for $line (@lines) { ($a, $b) = split /\t/, $line;
+                           $prefix{$a} = $b; push @prefixes, $a; }
     } elsif ($secname =~ /^function/) {
       ($junk, $name, $prefix, $package) = split /\t/, $secname;
       print "Found override function $name\n";
       push @{$funcs{$prefix}}, join("\n", @lines) . "\n\n";
+    } elsif ($secname =~ /^init\s+(\w+)/) {
+      $name = $1;
+      print "Found init section for $name\n";
+      $init{$name} = join("\n", @lines);
     } else {
       warn "Unkown section: $secname\n";
     }
@@ -72,7 +77,7 @@ for $defn ($info =~ /\(define-(\w+\s+([^()]+|[(]([^()]*|[(][^)]*[)])*[)])+)\)/sg
 
   $package = '';
   $myprefix = '';
-  for $prefix (keys %prefix) {
+  for $prefix (@prefixes) {
     if ($cname =~ /^$prefix(.+)$/) {
       $package = "::" . $prefix{$prefix};
       $myprefix = $prefix;
@@ -103,10 +108,12 @@ for $defn ($info =~ /\(define-(\w+\s+([^()]+|[(]([^()]*|[(][^)]*[)])*[)])+)\)/sg
       push @{$funcs{$myprefix}}, "## call as \$obj = new $modname$package"."::$name($pparams)\n" .
                    "$ret $cname (SV * class" .
                    ($params ? ", $params" : "") .
-                   ")\n\tC_ARGS:\n\t\t$pnames\n\n";
+                   ")\n\tC_ARGS:\n\t\t$pnames" .
+                   ($init{$cname} ? "\n    INIT:\n$init{$cname}" : "") . "\n\n";
     } else { 
       push @{$funcs{$myprefix}}, "## call as $modname$package"."::$name($pparams)\n" .
-                   "$ret $cname ($params);\n\n";
+                   "$ret $cname ($params);" . 
+                   ($init{$cname} ? "\n    INIT:\n$init{$cname}" : "") . "\n\n";
     }
   }
   if ($type eq 'method')
@@ -119,7 +126,8 @@ for $defn ($info =~ /\(define-(\w+\s+([^()]+|[(]([^()]*|[(][^)]*[)])*[)])+)\)/sg
     push @{$funcs{$myprefix}}, "## call as \$obj->$name($pparams)\n" .
                  "$ret $cname ($obj"." *self" .
                  ($params ? ", $params" : "") .
-                 ");\n\n";
+                 ");" . 
+                 ($init{$cname} ? "\n    INIT:\n$init{$cname}" : "") . "\n\n";
   }
 }
 
