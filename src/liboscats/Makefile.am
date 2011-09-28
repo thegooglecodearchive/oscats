@@ -19,6 +19,7 @@ liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c point.c        \
 			models/nida.c					\
 			algorithms/pick_rand.c				\
 			algorithms/chooser.c				\
+			algorithms/stratify.c				\
 			algorithms/closest_diff.c			\
 			algorithms/max_fisher.c				\
 			algorithms/max_kl.c				\
@@ -45,6 +46,7 @@ liboscatsmodelsinclude_HEADERS = models/l1p.h				\
 liboscatsalgincludedir = $(liboscatsincludedir)/algorithms
 liboscatsalginclude_HEADERS = algorithms/pick_rand.h                    \
 			algorithms/chooser.h				\
+			algorithms/stratify.h				\
 			algorithms/closest_diff.h			\
 			algorithms/max_fisher.h				\
 			algorithms/max_kl.h				\
