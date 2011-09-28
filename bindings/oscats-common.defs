@@ -42,6 +42,13 @@
   (gtype-id "OSCATS_TYPE_ALG_CHOOSER")
 )
 
+(define-object AlgStratify
+  (in-module "Oscats")
+  (parent "GObject")
+  (c-name "OscatsAlgStratify")
+  (gtype-id "OSCATS_TYPE_ALG_STRATIFY")
+)
+
 (define-object Algorithm
   (in-module "Oscats")
   (parent "GInitiallyUnowned")
@@ -110,6 +117,13 @@
   (parent "OscatsAlgorithm")
   (c-name "OscatsAlgClassRates")
   (gtype-id "OSCATS_TYPE_ALG_CLASS_RATES")
+)
+
+(define-object AlgAstrat
+  (in-module "Oscats")
+  (parent "OscatsAlgorithm")
+  (c-name "OscatsAlgAstrat")
+  (gtype-id "OSCATS_TYPE_ALG_ASTRAT")
 )
 
 (define-object Covariates
@@ -1892,6 +1906,33 @@
 
 
 
+;; From astrat.h
+
+(define-function oscats_alg_astrat_get_type
+  (c-name "oscats_alg_astrat_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-function oscats_alg_astrat_register_model
+  (c-name "oscats_alg_astrat_register_model")
+  (return-type "none")
+  (parameters
+    '("GType" "model")
+    '("OscatsAlgAstratCriterion" "a")
+    '("OscatsAlgAstratCriterion" "b")
+  )
+)
+
+(define-method restratify
+  (of-object "OscatsAlgAstrat")
+  (c-name "oscats_alg_astrat_restratify")
+  (return-type "none")
+)
+
+
+
 ;; From chooser.h
 
 (define-function oscats_alg_chooser_get_type
@@ -2100,6 +2141,52 @@
   (return-type "GType")
   (parameters
   )
+)
+
+
+
+;; From stratify.h
+
+(define-function oscats_alg_stratify_get_type
+  (c-name "oscats_alg_stratify_get_type")
+  (return-type "GType")
+  (parameters
+  )
+)
+
+(define-method stratify
+  (of-object "OscatsAlgStratify")
+  (c-name "oscats_alg_stratify_stratify")
+  (return-type "none")
+  (parameters
+    '("guint" "n_strata")
+    '("OscatsAlgStratifyCriterion" "f")
+    '("gpointer" "f_data")
+    '("guint" "n_blocks")
+    '("OscatsAlgStratifyCriterion" "block")
+    '("gpointer" "b_data")
+  )
+)
+
+(define-method get_stratum
+  (of-object "OscatsAlgStratify")
+  (c-name "oscats_alg_stratify_get_stratum")
+  (return-type "GBitArray*")
+  (parameters
+    '("guint" "stratum")
+  )
+)
+
+(define-method reset
+  (of-object "OscatsAlgStratify")
+  (c-name "oscats_alg_stratify_reset")
+  (return-type "none")
+)
+
+(define-method next
+  (of-object "OscatsAlgStratify")
+  (c-name "oscats_alg_stratify_next")
+  (return-type "GBitArray*")
 )
 
 

@@ -16,6 +16,7 @@ oscats_model_	Model
 oscats_algorithm_	Algorithm
 oscats_alg_exposure_counter_	AlgExposureCounter
 oscats_alg_class_rates_	AlgClassRates
+oscats_alg_astrat_	AlgAstrat
 %%
 ignore
 oscats_rnd_binorm
@@ -28,6 +29,8 @@ oscats_administrand_check_model
 oscats_model_new
 oscats_alg_class_rates_foreach_pattern
 oscats_covariates_list
+oscats_alg_stratify_stratify
+oscats_alg_astrat_register_model
 %%
 init oscats_examinee_set_sim_theta
 	g_object_ref(theta);
