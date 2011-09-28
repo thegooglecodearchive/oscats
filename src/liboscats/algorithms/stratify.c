@@ -226,7 +226,7 @@ void oscats_alg_stratify_stratify(OscatsAlgStratify *stratify,
  *
  * Returns: (transfer none): the stratum @stratum of @stratify
  */
-const GBitArray * oscats_alg_stratify_get_stratum(const OscatsAlgStratify *stratify,
+GBitArray * oscats_alg_stratify_get_stratum(const OscatsAlgStratify *stratify,
                                                   guint stratum)
 {
   g_return_val_if_fail(OSCATS_IS_ALG_STRATIFY(stratify), NULL);
@@ -256,7 +256,7 @@ void oscats_alg_stratify_reset(OscatsAlgStratify *stratify)
  *
  * Returns: (transfer none): the next stratum
  */
-const GBitArray * oscats_alg_stratify_next(OscatsAlgStratify *stratify)
+GBitArray * oscats_alg_stratify_next(OscatsAlgStratify *stratify)
 {
   g_return_val_if_fail(OSCATS_IS_ALG_STRATIFY(stratify), NULL);
   g_return_val_if_fail(stratify->strata != NULL, NULL);

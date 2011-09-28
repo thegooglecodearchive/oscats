@@ -57,9 +57,9 @@ GType oscats_alg_stratify_get_type();
 void oscats_alg_stratify_stratify(OscatsAlgStratify *stratify,
            guint n_strata, OscatsAlgStratifyCriterion f,     gpointer f_data,
            guint n_blocks, OscatsAlgStratifyCriterion block, gpointer b_data);
-const GBitArray * oscats_alg_stratify_get_stratum(const OscatsAlgStratify *stratify, guint stratum);
+GBitArray * oscats_alg_stratify_get_stratum(const OscatsAlgStratify *stratify, guint stratum);
 void oscats_alg_stratify_reset(OscatsAlgStratify *stratify);
-const GBitArray * oscats_alg_stratify_next(OscatsAlgStratify *stratify);
+GBitArray * oscats_alg_stratify_next(OscatsAlgStratify *stratify);
 
 G_END_DECLS
 #endif
