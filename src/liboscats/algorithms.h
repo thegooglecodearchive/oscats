@@ -1,5 +1,6 @@
 
 // Item Selection
+#include  <algorithms/astrat.h>
 #include  <algorithms/pick_rand.h>
 #include  <algorithms/closest_diff.h>
 #include  <algorithms/max_fisher.h>
