@@ -438,6 +438,34 @@ guint oscats_examinee_num_items(const OscatsExaminee *e)
 }
 
 /**
+ * oscats_examinee_get_item:
+ * @e: an #OscatsExaminee
+ * @i: the item number
+ *
+ * Returns: (transfer none): the #OscatsItem @i for examinee @e
+ */
+OscatsItem * oscats_examinee_get_item(OscatsExaminee *e, guint i)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
+  g_return_val_if_fail(e->items && i < e->items->len, NULL);
+  return g_ptr_array_index(e->items, i);
+}
+
+/**
+ * oscats_examinee_get_resp:
+ * @e: an #OscatsExaminee
+ * @i: the item number
+ *
+ * Returns: the response to item @i for examineee @e
+ */
+OscatsResponse oscats_examinee_get_resp(OscatsExaminee *e, guint i)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), 0);
+  g_return_val_if_fail(e->resp && i < e->resp->len, 0);
+  return g_array_index(e->resp, OscatsResponse, i);
+}
+
+/**
  * oscats_examinee_logLik:
  * @e: an #OscatsExaminee
  * @theta: an #OscatsPoint

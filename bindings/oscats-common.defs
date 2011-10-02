@@ -817,6 +817,24 @@
   (return-type "guint")
 )
 
+(define-method get_item
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_get_item")
+  (return-type "OscatsItem*")
+  (parameters
+    '("guint" "i")
+  )
+)
+
+(define-method get_resp
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_get_resp")
+  (return-type "OscatsResponse")
+  (parameters
+    '("guint" "i")
+  )
+)
+
 (define-method logLik
   (of-object "OscatsExaminee")
   (c-name "oscats_examinee_logLik")
