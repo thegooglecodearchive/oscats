@@ -408,6 +408,7 @@ static void initialize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
     g_return_if_fail(self->n_items);
     self->rem = self->n_items[0];
   }
+  oscats_alg_stratify_reset(self->stratify);
   g_signal_emit(self, OSCATS_ALG_ASTRAT_GET_CLASS(self)->stratum, 0, e,
                 oscats_alg_stratify_get_stratum(self->stratify, 0));
 }
