@@ -267,7 +267,7 @@ static void alg_register (OscatsAlgorithm *alg_data, OscatsTest *test)
 {
   OscatsAlgMaxFisher *self = OSCATS_ALG_MAX_FISHER(alg_data);
 
-  self->chooser->bank = test->itembank;
+  self->chooser->bank = g_object_ref(test->itembank);
   self->chooser->criterion = criterion;
 
   g_signal_connect_data(test, "initialize", G_CALLBACK(initialize),
