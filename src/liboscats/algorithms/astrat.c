@@ -400,6 +400,7 @@ static gdouble diff_criterion(const OscatsAdministrand *item, gpointer data)
 static void initialize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
 {
   OscatsAlgAstrat *self = OSCATS_ALG_ASTRAT(alg_data);
+  GBitArray *stratum;
   self->flag = FALSE;
   self->cur = 0;
   if (self->equalSize) self->rem = self->n_equal;
@@ -409,8 +410,10 @@ static void initialize(OscatsTest *test, OscatsExaminee *e, gpointer alg_data)
     self->rem = self->n_items[0];
   }
   oscats_alg_stratify_reset(self->stratify);
+  stratum = oscats_alg_stratify_next(self->stratify);	// First stratum
+  oscats_test_set_hint(test, stratum);
   g_signal_emit(self, OSCATS_ALG_ASTRAT_GET_CLASS(self)->stratum, 0, e,
-                oscats_alg_stratify_get_stratum(self->stratify, 0));
+                stratum);
 }
 
 static void administered (OscatsTest *test, OscatsExaminee *e,
