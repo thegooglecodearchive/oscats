@@ -67,6 +67,7 @@ static void oscats_model_l1p_init (OscatsModelL1p *self)
 static void model_constructed(GObject *object)
 {
   OscatsModel *model = OSCATS_MODEL(object);
+  guint i;
   G_OBJECT_CLASS(oscats_model_l1p_parent_class)->constructed(object);
 
   // Set up parameters
@@ -76,6 +77,8 @@ static void model_constructed(GObject *object)
   // Set up parameter names
   model->names = g_new(GQuark, model->Np);
   model->names[PARAM_B] = g_quark_from_string("Diff");
+  for (i=0; i < model->Ncov; i++)
+    model->names[NUM_PARAMS+i] = model->covariates[i];
   
   // Check subspace type
   if (model->dimType != OSCATS_DIM_CONT)

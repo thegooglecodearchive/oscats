@@ -68,7 +68,7 @@ static void oscats_model_l3p_init (OscatsModelL3p *self)
 static void model_constructed(GObject *object)
 {
   GString *str;
-  guint i;
+  guint i, I;
   OscatsModel *model = OSCATS_MODEL(object);
   G_OBJECT_CLASS(oscats_model_l3p_parent_class)->constructed(object);
 
@@ -88,6 +88,8 @@ static void model_constructed(GObject *object)
     model->names[PARAM_A_FIRST+i] = g_quark_from_string(str->str);
   }
   g_string_free(str, TRUE);
+  for (i=PARAM_A_FIRST+model->Ndims, I=0; I < model->Ncov; i++, I++)
+    model->names[i] = model->covariates[I];
 
   // Check subspace type
   if (model->dimType != OSCATS_DIM_CONT)

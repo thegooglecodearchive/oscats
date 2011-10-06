@@ -119,6 +119,8 @@ static void model_constructed(GObject *object)
     }
   }
   g_string_free(str, TRUE);
+  for (k=(model->Ndims+1)*Ncat, i=0; i < model->Ncov; k++, i++)
+    model->names[k] = model->covariates[i];
 
   // Check subspace type
   if (model->dimType != OSCATS_DIM_CONT)
