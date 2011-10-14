@@ -469,7 +469,8 @@ OscatsModel *oscats_model_new(GType type, OscatsSpace *space,
     g_return_val_if_fail(OSCATS_IS_COVARIATES(covariates), NULL);
 
   g_value_init(&(params[0].value), OSCATS_TYPE_SPACE);
-  g_value_take_boxed(&(params[0].value), space);
+  g_value_take_object(&(params[0].value), space);
+  // Use g_value_take_* so that we don't have to bother unsetting value
 
   array = g_value_array_new(ndims);
   g_value_init(&v, G_TYPE_UINT);
