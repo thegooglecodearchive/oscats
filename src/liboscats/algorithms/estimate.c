@@ -29,6 +29,7 @@ enum {
   PROP_0,
   PROP_INDEPENDENT,
   PROP_POSTERIOR,
+  PROP_N_POSTERIOR,
   PROP_MU,
   PROP_SIGMA,
   PROP_DPRIOR,
@@ -73,10 +74,11 @@ static void oscats_alg_estimate_class_init (OscatsAlgEstimateClass *klass)
 /**
  * OscatsAlgEstimate:posterior:
  *
- * Always use Expected A Priori (EAP) estimation for continuous dimensions
- * and Maximum A Posterior (MAP) estimation for discrete dimensions, instead
- * of Maximum Likelihood (MLE).  Note, EAP/MAP is always used as a fallback
- * if the MLE fails to converge, e.g. for perfect response patterns.
+ * Always use Expected A Posteriori (EAP) estimation for continuous
+ * dimensions and Maximum A Posteriori (MAP) estimation for discrete
+ * dimensions, instead of Maximum Likelihood (MLE).  Note, EAP/MAP is always
+ * used as a fallback if the MLE fails to converge, e.g. for perfect
+ * response patterns.
  */
   pspec = g_param_spec_boolean("posterior", "Use Posterior", 
                               "Find EAP/MAP instead of MLE",
@@ -85,6 +87,23 @@ static void oscats_alg_estimate_class_init (OscatsAlgEstimateClass *klass)
                               G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                               G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_POSTERIOR, pspec);
+
+/**
+ * OscatsAlgEstimate:Nposterior:
+ *
+ * For the first N items, use Expected A Posteriori (EAP) estimation for
+ * continuous dimensions and Maximum A Posteriori (MAP) estimation for
+ * discrete dimensions.  Switch to Maximum Likelihood (MLE) estimation after
+ * N items have been recorded.  Note, EAP/MAP is always used as a fallback
+ * if the MLE fails to converge, e.g. for perfect response patterns.
+ */
+  pspec = g_param_spec_uint("Nposterior", "Nposterior", 
+                              "Number of items for EAP/MAP",
+                              0, G_MAXUINT, 0,
+                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT |
+                              G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
+                              G_PARAM_STATIC_BLURB);
+  g_object_class_install_property(gobject_class, PROP_N_POSTERIOR, pspec);
 
 /**
  * OscatsAlgEstimate:mu:
@@ -213,6 +232,10 @@ static void oscats_alg_estimate_set_property(GObject *object,
       self->eap = g_value_get_boolean(value);
       break;
 
+    case PROP_N_POSTERIOR:
+      self->Nposterior = g_value_get_uint(value);
+      break;
+
     case PROP_INDEPENDENT:
       self->independent = g_value_get_boolean(value);
       break;
@@ -285,6 +308,10 @@ static void oscats_alg_estimate_get_property(GObject *object,
   {
     case PROP_POSTERIOR:
       g_value_set_boolean(value, self->eap);
+      break;
+    
+    case PROP_N_POSTERIOR:
+      g_value_set_uint(value, self->Nposterior);
       break;
     
     case PROP_INDEPENDENT:
@@ -622,7 +649,7 @@ static void administered (OscatsTest *test, OscatsExaminee *e,
   if (e->items->len == 0) return;  // First item wasn't recorded
   self->e = e;
 
-  if (self->eap)
+  if (self->eap || e->items->len <= self->Nposterior)
   {
     MAP(e, theta, self);
     return;

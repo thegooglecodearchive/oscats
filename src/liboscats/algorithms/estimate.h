@@ -43,6 +43,7 @@ struct _OscatsAlgEstimate {
   OscatsAlgorithm parent_instance;
   /*< private >*/
   gboolean eap, independent;
+  guint Nposterior;
   GQuark modelKey, thetaKey;
   gdouble tol;
   GGslVector *Dprior;
