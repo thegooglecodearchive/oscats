@@ -142,7 +142,7 @@ static void oscats_alg_estimate_class_init (OscatsAlgEstimateClass *klass)
   pspec = g_param_spec_double("tol", "tolerance", 
                               "Newton-Raphson tolerance",
                               G_MINDOUBLE, G_MAXDOUBLE, 1e-6,
-                              G_PARAM_READWRITE |
+                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT |
                               G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                               G_PARAM_STATIC_BLURB);
   g_object_class_install_property(gobject_class, PROP_TOL, pspec);
@@ -385,7 +385,7 @@ static gboolean NR(OscatsExaminee *e, OscatsPoint *theta, OscatsAlgEstimate *alg
     {
       x = gsl_vector_get(delta->v, i);
       if (fabs(x) > diff) diff = fabs(x);
-      x = (theta->cont[i] -= - x);
+      x = (theta->cont[i] -= x);
       if (!isfinite(x)) fail = TRUE;
     }
     if (++iters == MAX_MLE_ITERS) fail = TRUE;
