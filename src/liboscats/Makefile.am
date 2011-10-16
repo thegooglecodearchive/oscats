@@ -15,6 +15,7 @@ liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c point.c        \
 			models/l2p.c					\
 			models/l3p.c					\
 			models/nominal.c				\
+			models/gr.c					\
 			models/dina.c					\
 			models/nida.c					\
 			algorithms/pick_rand.c				\
@@ -42,6 +43,7 @@ liboscatsmodelsinclude_HEADERS = models/l1p.h				\
 			models/l2p.h					\
 			models/l3p.h					\
 			models/nominal.h				\
+			models/gr.h					\
 			models/dina.h					\
 			models/nida.h
 liboscatsalgincludedir = $(liboscatsincludedir)/algorithms
