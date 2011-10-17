@@ -1,5 +1,5 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Graded Response IRT Model
+ * Homogenous Logistic Graded Response IRT Model
  * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -35,18 +35,19 @@ typedef struct _OscatsModelGrClass OscatsModelGrClass;
 /**
  * OscatsModelGr:
  *
- * The Graded Response IRT model:
+ * The Homogenous Logistic Graded Response IRT model (commonly called simply
+ * the Graded Response Model):
  * P(X=k|theta) = P*_k(theta) - P*_{k+1}(theta),
- * P*_k(theta) = 1/1+exp[-(sum_i a_ki theta_i - b_k + sum_j d_j covariate_j)]
+ * P*_k(theta) = 1/1+exp[-(sum_i a_i theta_i - b_k + sum_j d_j covariate_j)]
  * where P*_k(theta) = P(X>=k|theta) is the probability of scoring at least k,
  * P*_0(theta) = 1, P*_{Ncat} = 0,
- * a_ki is the discrimination on dimension i for response k,
+ * a_i is the discrimination on dimension i,
  * and b_k is the scaled response boundary location.
  * Responses are numbered 0, 1, ..., Ncat-1.
  * Note that all respose options share the same parameters for the covariates.
  * No distance metric is currently provided, but see Ali (2011) for possibilities.
  *
- * Parameter names: Diff.j, Discr.j.DimName
+ * Parameter names: Diff.k, Discr.DimName
  *
  * References:
  * <bibliolist>

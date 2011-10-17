@@ -1,5 +1,5 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Graded Response IRT Model
+ * Homogenous Logistic Graded Response IRT Model
  * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 /**
  * SECTION:gr
  * @title:OscatsModelGr
- * @short_description: Gr Response Model
+ * @short_description: Homogenous Logistic Graded Response Model
  */
 
 #include <math.h>
@@ -33,8 +33,8 @@ G_DEFINE_TYPE(OscatsModelGr, oscats_model_gr, OSCATS_TYPE_MODEL);
  * numbered 1, ..., Ncat.
  */
 #define PARAM_B(k) ((k)-1)
-#define PARAM_A(k,i) (Ncat+((k)-1)*Ncat+(i))
-#define PARAM_D(j) (Ncat+Ncat*Ndims+(j))
+#define PARAM_A(i) (Ncat+(i))
+#define PARAM_D(j) (Ncat+Ndims+(j))
 
 enum
 {
@@ -104,7 +104,7 @@ static void model_constructed(GObject *object)
   Ndims = OSCATS_MODEL(model)->Ndims;
 
   // Set up parameters
-  model->Np = Ncat + Ndims*Ncat + model->Ncov;
+  model->Np = Ncat + Ndims + model->Ncov;
   model->params = g_new0(gdouble, model->Np);
 
   // Set up parameter names
@@ -114,12 +114,12 @@ static void model_constructed(GObject *object)
   {
     g_string_printf(str, "Diff.%d", k+1);
     model->names[PARAM_B(k)] = g_quark_from_string(str->str);
-    for (i=0; i < model->Ndims; i++)
-    {
-      g_string_printf(str, "Discr.%d.%s", k+1,
-                      oscats_space_dim_get_name(model->space, model->dims[i]));
-      model->names[PARAM_A(k,i)] = g_quark_from_string(str->str);
-    }
+  }
+  for (i=0; i < model->Ndims; i++)
+  {
+    g_string_printf(str, "Discr.%s",
+                    oscats_space_dim_get_name(model->space, model->dims[i]));
+    model->names[PARAM_A(i)] = g_quark_from_string(str->str);
   }
   g_string_free(str, TRUE);
   for (i=0; i < model->Ncov; i++)
@@ -185,14 +185,14 @@ static gdouble P_star(const OscatsModel *model, OscatsResponse k,
   switch (model->Ndims)
   {
     case 2:
-      z = -model->params[PARAM_A(k,1)] * theta->cont[dims[1]];
+      z = -model->params[PARAM_A(1)] * theta->cont[dims[1]];
     case 1:
-      z -= model->params[PARAM_A(k,0)] * theta->cont[dims[0]];
+      z -= model->params[PARAM_A(0)] * theta->cont[dims[0]];
       break;
     
     default:
       for (i=0; i < model->Ndims; i++)
-        z -= model->params[PARAM_A(k,i)] * theta->cont[dims[i]];
+        z -= model->params[PARAM_A(i)] * theta->cont[dims[i]];
   }
   for (i=0; i < model->Ncov; i++)
     z -= model->params[PARAM_D(i)] *
@@ -211,7 +211,7 @@ static gdouble P(const OscatsModel *model, OscatsResponse resp,
 }
 
 /* See below for general derivatives.
- * dz_k/dtheta_i = a_ki
+ * dz_k/dtheta_i = a_i
  */
 static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
                           const OscatsPoint *theta, const OscatsCovariates *covariates,
@@ -224,7 +224,7 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
   guint i, j, I, J;
   guint hes_stride = (hes ? hes_v->tda : 0);
   gdouble p, pq_k, pq_kk, pqqp_k, pqqp_kk, inf_factor;
-  gdouble a_ki, a_kki, a_kj, a_kkj;
+  gdouble a_i, a_j;
   g_return_if_fail(resp <= Ncat);
 
   if (resp == 0)
@@ -258,63 +258,45 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
     case 2:
       I = model->shortDims[1];
       J = model->shortDims[0];
-      if (resp == 0) a_ki = a_kj = 0;
-      else
-      {
-        a_ki = model->params[PARAM_A(resp,1)];
-        a_kj = model->params[PARAM_A(resp,0)];
-      }
-      if (resp == Ncat) a_kki = a_kkj = 0;
-      else
-      {
-        a_kki = model->params[PARAM_A(resp+1,1)];
-        a_kkj = model->params[PARAM_A(resp+1,0)];
-      }
-      if (grad) grad_v->data[I] += pq_k * a_ki - pq_kk * a_kki;
+      a_i = model->params[PARAM_A(1)];
+      a_j = model->params[PARAM_A(0)];
+      if (grad) grad_v->data[I] += (pq_k - pq_kk) * a_i;
       if (hes)
       {
         gdouble tmp;
-        hes_v->data[I*hes_stride+I] += inf_factor *
-          (a_ki*a_ki*pqqp_k - a_kki*a_kki*pqqp_kk
-           - (a_ki*pq_k - a_kki*pq_kk) * (a_ki*pq_k - a_kki*pq_kk));
-        tmp = inf_factor *
-          (a_ki*a_kj*pqqp_k - a_kki*a_kkj*pqqp_kk
-           - (a_ki*pq_k - a_kki*pq_kk) * (a_kj*pq_k - a_kkj*pq_kk));
+        hes_v->data[I*hes_stride+I] += inf_factor * a_i * a_i *
+          (pqqp_k - pqqp_kk - (pq_k-pq_kk)*(pq_k-pq_kk));
+        tmp = inf_factor * a_i * a_j *
+          (pqqp_k-pqqp_kk - (pq_k-pq_kk)*(pq_k-pq_kk));
         hes_v->data[I*hes_stride+J] += tmp;
         hes_v->data[J*hes_stride+I] += tmp;
       }
     case 1:
       J = model->shortDims[0];
-      a_kj = (resp == 0 ? 0 : model->params[PARAM_A(resp,0)]);
-      a_kkj = (resp == Ncat ? 0 : model->params[PARAM_A(resp+1,0)]);
-      if (grad) grad_v->data[J] += pq_k * a_kj - pq_kk * a_kkj;
+      a_j = model->params[PARAM_A(0)];
+      if (grad) grad_v->data[J] += (pq_k - pq_kk) * a_j;
       if (hes)
-        hes_v->data[J*hes_stride+J] += inf_factor *
-          (a_kj*a_kj*pqqp_k - a_kkj*a_kkj*pqqp_kk
-           - (a_kj*pq_k - a_kkj*pq_kk) * (a_kj*pq_k - a_kkj*pq_kk));
+        hes_v->data[J*hes_stride+J] += inf_factor * a_j * a_j *
+          (pqqp_k - pqqp_kk - (pq_k-pq_kk)*(pq_k-pq_kk));
       break;
     
     default:
       for (j=0; j < Ndims; j++)
       {
         J = model->shortDims[j];
-        a_kj = (resp == 0 ? 0 : model->params[PARAM_A(resp,j)]);
-        a_kkj = (resp == Ncat ? 0 : model->params[PARAM_A(resp+1,j)]);
-        if (grad) grad_v->data[J] += pq_k * a_kj - pq_kk * a_kkj;
+        a_j = model->params[PARAM_A(j)];
+        if (grad) grad_v->data[J] += (pq_k - pq_kk) * a_j;
         if (hes)
         {
-          hes_v->data[J*hes_stride+J] += inf_factor *
-            (a_kj*a_kj*pqqp_k - a_kkj*a_kkj*pqqp_kk
-             - (a_kj*pq_k - a_kkj*pq_kk) * (a_kj*pq_k - a_kkj*pq_kk));
+          hes_v->data[J*hes_stride+J] += inf_factor * a_j * a_j *
+            (pqqp_k - pqqp_kk - (pq_k-pq_kk)*(pq_k-pq_kk));
           for (i=j+1; i < Ndims; i++)
           {
             gdouble tmp;
             I = model->shortDims[i];
-            a_ki = (resp == 0 ? 0 : model->params[PARAM_A(resp,i)]);
-            a_kki = (resp == Ncat ? 0 : model->params[PARAM_A(resp+1,i)]);
-            tmp = inf_factor *
-              (a_ki*a_kj*pqqp_k - a_kki*a_kkj*pqqp_kk
-               - (a_ki*pq_k - a_kki*pq_kk) * (a_kj*pq_k - a_kkj*pq_kk));
+            a_i = model->params[PARAM_A(i)];
+            tmp = inf_factor * a_j * a_i *
+              (pqqp_k - pqqp_kk - (pq_k-pq_kk)*(pq_k-pq_kk));
             hes_v->data[I*hes_stride+J] += tmp;
             hes_v->data[J*hes_stride+I] += tmp;
           }
@@ -338,7 +320,7 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
  *    [P_k Q_k (Q_k - P_k) dz_k/dA dz_k/dB - P_k+1 Q_k+1 (Q_k+1 - P_k+1) dz_k+1/dA dz_k+1/dB] / P
  *  - [P_k Q_k dz_k/dA - P_k+1 Q_k+1 dz_k+1/dA] [P_k Q_k dz_k/dB - P_k+1 Q_k+1 dz_k+1/dB] / P^2
  *
- * dz_k/da_ki = theta_i
+ * dz_k/da_i = theta_i
  * dz_k/db_k = -1
  * dz_k/dd_j = covariate_j
  */
@@ -355,7 +337,7 @@ static void logLik_dparam(const OscatsModel *model, OscatsResponse k,
   guint hes_stride = (hes ? hes_v->tda : 0);
   guint i, j, I, J;
   gdouble p, pq_k, pq_kk, pqqp_k, pqqp_kk;
-  gdouble zk_a=0, zkk_a=0, zk_b=0, zkk_b=0, theta_1, theta_2, tmp;
+  gdouble dz_a, dz_b, tmp;
   g_return_if_fail(k <= Ncat);
 
   if (k == 0)
@@ -384,94 +366,36 @@ static void logLik_dparam(const OscatsModel *model, OscatsResponse k,
   pqqp_kk /= p;
 
 #define DO_GRAD(i) if(grad) grad_v->data[(i)*grad_v->stride] += \
-                              pq_k * zk_a - pq_kk * zkk_a;
-#define DO_VAR(i) hes_v->data[(i)*hes_stride+(i)] += \
-                   zk_a*zk_a*pqqp_k - zkk_a*zkk_a*pqqp_kk \
-                   - (zk_a*pq_k - zkk_a*pq_kk) * (zk_b*pq_k - zkk_b*pq_kk);
-#define DO_COV(i,j) { tmp = zk_a*zk_a*pqqp_k - zkk_a*zkk_a*pqqp_kk \
-                   - (zk_a*pq_k - zkk_a*pq_kk) * (zk_b*pq_k - zkk_b*pq_kk); \
+                              (pq_k - pq_kk) * dz_a;
+#define DO_VAR(i) hes_v->data[(i)*hes_stride+(i)] += dz_a * dz_a * \
+                   (pqqp_k - pqqp_kk - (pq_k-pq_kk)*(pq_k-pq_kk));
+#define DO_COV(i,j) { tmp = dz_a * dz_b * (pqqp_k - pqqp_kk \
+                                           - (pq_k-pq_kk)*(pq_k-pq_kk)); \
                   hes_v->data[(i)*hes_stride+(j)] += tmp; \
                   hes_v->data[(j)*hes_stride+(i)] += tmp; }
   
   // Discrimination (a_ki, a_k+1,i)
   for (i=0; i < Ndims; i++)
   {
-    theta_1 = theta->cont[dims[i]];
-    if (k > 0)
-    {
-      zk_a = theta_1;  zkk_a = 0;
-      DO_GRAD(PARAM_A(k,i));
-      if (hes)
-      {
-        DO_VAR(PARAM_A(k,i));
-        zk_b = -1;  zkk_b = 0;
-        DO_COV(PARAM_A(k,i), PARAM_B(k));
-        if (k < Ncat)
-        {
-          zk_b = 0;  zkk_b = theta_1;
-          DO_COV(PARAM_A(k,i), PARAM_A(k+1,i));
-          zk_b = 0;  zkk_b = -1;
-          DO_COV(PARAM_A(k,i), PARAM_B(k+1));
-        }
-      }
-    }
-    if (k < Ncat)
-    {
-      zk_a = 0; zkk_a = theta_1;
-      DO_GRAD(PARAM_A(k+1,i));
-      if (hes)
-      {
-        DO_VAR(PARAM_A(k+1,i));
-        zk_b = 0;  zkk_b = -1;
-        DO_COV(PARAM_A(k+1,i), PARAM_B(k+1));
-        if (k > 0)
-        {
-          zk_b = -1;  zkk_b = 0;
-          DO_COV(PARAM_A(k+1,i), PARAM_B(k));
-        }
-      }
-    }
+    dz_a = theta->cont[dims[i]];
+    DO_GRAD(PARAM_A(i));
     if (hes)
     {
+      DO_VAR(PARAM_A(i));
+
+      dz_b = -1;
+      if (k > 0) DO_COV(PARAM_A(i), PARAM_B(k));
+      if (k < Ncat) DO_COV(PARAM_A(i), PARAM_B(k+1));
+
       for (j=i+1; j < Ndims; j++)
       {
-        theta_2 = theta->cont[dims[j]];
-        if (k > 0)
-        {
-          zk_a = theta_1;  zkk_a = 0;
-          zk_b = theta_2;  zkk_b = 0;
-          DO_COV(PARAM_A(k,i), PARAM_A(k,j));
-          if (k < Ncat)
-          {
-            zk_b = 0;  zkk_b = theta_2;
-            DO_COV(PARAM_A(k,i), PARAM_A(k+1,j));
-          }
-        }
-        if (k < Ncat)
-        {
-          zk_a = 0;  zkk_a = theta_1;
-          zk_b = 0;  zkk_b = theta_2;
-          DO_COV(PARAM_A(k+1,i), PARAM_A(k+1,j));
-          if (k > 0)
-          {
-            zk_b = theta_2;  zkk_b = 0;
-            DO_COV(PARAM_A(k+1,i), PARAM_A(k,j));
-          }
-        }
+        dz_b = theta->cont[dims[j]];
+        DO_COV(PARAM_A(i), PARAM_A(j));
       }
       for (j=0, J=PARAM_D(0); j < Ncov; j++, J++)
       {
-        zk_b = zkk_b = oscats_covariates_get(covariates, model->covariates[j]);
-        if (k > 0)
-        {
-          zk_a = theta_1;  zkk_a = 0;
-          DO_COV(PARAM_A(k,i), J);
-        }
-        if (k < Ncov)
-        {
-          zk_a = 0;  zkk_a = theta_1;
-          DO_COV(PARAM_A(k+1,i), J);
-        }
+        dz_b = oscats_covariates_get(covariates, model->covariates[j]);
+        DO_COV(PARAM_A(i), J);
       }
     }
   } // each dimension
@@ -479,49 +403,32 @@ static void logLik_dparam(const OscatsModel *model, OscatsResponse k,
   // Covariates (d_j)
   for (j=0, J=PARAM_D(0); j < Ncov; j++, J++)
   {
-    zk_a = zkk_a = oscats_covariates_get(covariates, model->covariates[j]);
+    dz_a = oscats_covariates_get(covariates, model->covariates[j]);
     DO_GRAD(J);
     if (hes)
     {
       DO_VAR(J);
-      if (k > 0)
-      {
-        zk_b = -1;  zkk_b = 0;
-        DO_COV(J,PARAM_B(k));
-      }
-      if (k < Ncov)
-      {
-        zk_b = 0;  zkk_b = -1;
-        DO_COV(J,PARAM_B(k+1));
-      }
+      dz_b = -1;
+      if (k > 0) DO_COV(J,PARAM_B(k));
+      if (k < Ncov) DO_COV(J,PARAM_B(k+1));
       for (i=j+1, I=J+1; i < Ncov; i++, I++)
       {
-        zk_b = zkk_b = oscats_covariates_get(covariates, model->covariates[i]);
+        dz_b = oscats_covariates_get(covariates, model->covariates[i]);
         DO_COV(J,I);
       }
     }  
   } // each covariate
 
   // Location (b_k, b_k+1)
-  if (k > 0)
+  dz_a = dz_b = -1;
+  if (k > 0) DO_GRAD(PARAM_B(k));
+  if (k < Ncov) DO_GRAD(PARAM_B(k+1));
+  if (hes)
   {
-    zk_a = -1;  zkk_b = 0;
-    DO_GRAD(PARAM_B(k));
-    if (hes)
-    {
-      DO_VAR(PARAM_B(k));
-      if (k < Ncov)
-      {
-        zk_b = 0;  zkk_b = -1;
-        DO_COV(PARAM_B(k), PARAM_B(k+1));
-      }
-    }
-  }
-  if (k < Ncov)
-  {
-    zk_a = 0;  zkk_a = -1;
-    DO_GRAD(PARAM_B(k+1));
-    if (hes) DO_VAR(PARAM_B(k+1));
+    if (k > 0) DO_VAR(PARAM_B(k));
+    if (k < Ncov) DO_VAR(PARAM_B(k+1));
+    if (k > 0 && k < Ncov)
+      DO_COV(PARAM_B(k), PARAM_B(k+1));
   }
 
 }
