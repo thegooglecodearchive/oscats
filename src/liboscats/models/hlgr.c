@@ -388,7 +388,7 @@ static void logLik_dparam(const OscatsModel *model, OscatsResponse k,
 #define DO_VAR(i) hes_v->data[(i)*hes_stride+(i)] += \
                    zk_a*zk_a*pqqp_k - zkk_a*zkk_a*pqqp_kk \
                    - (zk_a*pq_k - zkk_a*pq_kk) * (zk_b*pq_k - zkk_b*pq_kk);
-#define DO_COV(i,j) { tmp = zk_a*zk_a*pqqp_k - zkk_a*zkk_a*pqqp_kk \
+#define DO_COV(i,j) { tmp = zk_a*zk_b*pqqp_k - zkk_a*zkk_b*pqqp_kk \
                    - (zk_a*pq_k - zkk_a*pq_kk) * (zk_b*pq_k - zkk_b*pq_kk); \
                   hes_v->data[(i)*hes_stride+(j)] += tmp; \
                   hes_v->data[(j)*hes_stride+(i)] += tmp; }
