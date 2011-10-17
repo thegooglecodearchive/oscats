@@ -48,7 +48,7 @@ typedef struct _OscatsModelHetlgrClass OscatsModelHetlgrClass;
  * Note that all respose options share the same parameters for the covariates.
  * No distance metric is currently provided, but see Ali (2011) for possibilities.
  *
- * Parameter names: Diff.j, Discr.j.DimName
+ * Parameter names: Diff.k, Discr.k.DimName
  *
  * References:
  * <bibliolist>
