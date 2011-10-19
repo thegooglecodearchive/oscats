@@ -35,7 +35,7 @@ typedef struct _OscatsModelGpcClass OscatsModelGpcClass;
 /**
  * OscatsModelGpc:
  *
- * The Generalized Partical Credit Model is a special case of Bock's
+ * The Generalized Partial Credit Model is a special case of Bock's
  * Nominal Response Model (#OscatsNominal):
  * P(X=k|theta) = f_k(theta)/[1+sum_j f_j(theta)],
  * where f_j(theta) = sum_i a_i theta_i - b_j + sum_l d_l covariate_l,
