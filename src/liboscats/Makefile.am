@@ -17,6 +17,7 @@ liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c point.c        \
 			models/nominal.c				\
 			models/gr.c					\
 			models/gpc.c					\
+			models/pc.c					\
 			models/hlgr.c					\
 			models/dina.c					\
 			models/nida.c					\
@@ -47,6 +48,7 @@ liboscatsmodelsinclude_HEADERS = models/l1p.h				\
 			models/nominal.h				\
 			models/gr.h					\
 			models/gpc.h					\
+			models/pc.h					\
 			models/hlgr.h					\
 			models/dina.h					\
 			models/nida.h
