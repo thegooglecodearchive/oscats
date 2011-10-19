@@ -92,6 +92,14 @@ public class Value extends Pointer
      * Dispatch based on generic java.lang.Object
      */
     protected static Value fromObject(java.lang.Object value) {
+      if (value.getClass().isArray())
+      {
+        java.lang.Object[] values = (java.lang.Object[])value;
+        Value[] vals = new Value[values.length];
+        for (int i=0; i < values.length; i++)
+          vals[i] = fromObject(values[i]);
+        return new Value(GValue.createValue(vals), true);
+      }
       if (value instanceof String)
         return new Value(GValue.createValue((String)value), true);
       else if (value instanceof Object)		// glib.Object

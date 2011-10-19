@@ -322,6 +322,51 @@ Java_oscats_glib_GValue_g_1value_1init__Ljava_lang_String_2
 
 /**
  * Implements
+ *   org.gnome.glib.GValue.g_value_init_value_array(long[] v)
+ * called from
+ *   org.gnome.glib.GValue.createValue(Value[] v)
+ *
+ * Allocate a GValue for a GValueArray with GSlice, then initialize it and
+ * return the pointer.
+ */
+JNIEXPORT jlong JNICALL
+Java_oscats_glib_GValue_g_1value_1init_1value_1array
+(
+	JNIEnv *env,
+	jclass cls,
+	jlongArray _ptrs
+)
+{
+	jlong *ptrs;
+	jint num, i;
+	GValue *value;
+	GValueArray* array;
+	
+	// translate obj
+	ptrs = (*env)->GetLongArrayElements(env, _ptrs, NULL);
+	if (ptrs == NULL) return 0;
+	num = (*env)->GetArrayLength(env, _ptrs);
+
+	// allocate and set to zeros, per what g_value_init requires
+	array = g_value_array_new(num);
+	value =	g_slice_new0(GValue);
+	g_value_init(value, G_TYPE_VALUE_ARRAY);
+
+	// set the value
+	for (i=0; i < num; i++)
+	  g_value_array_append(array, (GValue*)(ptrs[i]));
+	g_value_take_boxed(value, array);
+
+	// clean up obj
+	(*env)->ReleaseLongArrayElements(env, _ptrs, ptrs, 0);
+
+	// return address
+	return (jlong) value;
+}
+
+
+/**
+ * Implements
  *   org.gnome.glib.GValue.g_value_init_object(long obj)
  * called from
  *   org.gnome.glib.GValue.createValue(Object obj)

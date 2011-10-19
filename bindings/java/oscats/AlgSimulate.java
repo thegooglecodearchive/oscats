@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Estimate Theta Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Simulate Algorithm Java Wrapper Class
+ * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,15 +22,11 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class AlgEstimateTheta extends Algorithm
+public final class AlgSimulate extends Algorithm
 {
-    protected AlgEstimateTheta(long pointer) { super(pointer); }
+    protected AlgSimulate(long pointer) { super(pointer); }
 
-    public AlgEstimateTheta() { this(OscatsAlgEstimateTheta.new_with_params()); }
+    public AlgSimulate() { this(OscatsAlgSimulate.new_with_params()); }
 
-    public AlgEstimateTheta(GslVector mu, GslMatrix sigma)
-    {
-      this(OscatsAlgEstimateTheta.new_with_params("mu", mu, "Sigma", sigma));
-    }
 }
 

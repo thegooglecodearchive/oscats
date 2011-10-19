@@ -394,3 +394,56 @@ Java_oscats_glib_GObject_g_1object_1remove_1toggle_1ref
 	 * the JavaDoc for org.gnome.glib.Object's release() method. 
 	 */
 }
+
+/**
+ * Implements
+ *   org.gnome.glib.GObject.g_quark_from_string(String str)
+ */
+JNIEXPORT jlong JNICALL
+Java_oscats_glib_GObject_g_1quark_1from_1string
+(
+	JNIEnv *env,
+	jclass cls,
+	jstring _str
+)
+{
+	const gchar* str;
+	GQuark quark;
+
+	// translate
+	str = bindings_java_getString(env, _str);
+	if (str == NULL) {
+		return 0; /* OutOfMemoryError already thrown */
+	}
+
+	// make the call
+	quark = g_quark_from_string(str);
+
+	// clean up
+	bindings_java_releaseString(str);
+
+	// return value
+	return (jlong) quark;
+}
+
+/**
+ * Implements
+ *   org.gnome.glib.GObject.g_quark_as_string(long quark)
+ */
+JNIEXPORT jstring JNICALL
+Java_oscats_glib_GObject_g_1quark_1as_1string
+(
+	JNIEnv* env,
+	jclass cls,
+	jlong _quark
+)
+{
+	const gchar* str; 
+
+	// call function
+	str = g_quark_as_string((GQuark)_quark);
+
+	// and return	
+	return bindings_java_newString(env, str);
+}
+

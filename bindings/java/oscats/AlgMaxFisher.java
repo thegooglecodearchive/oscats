@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Fisher Maximum Information Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,5 +28,9 @@ public final class AlgMaxFisher extends Algorithm
 
     public AlgMaxFisher() { this(OscatsAlgMaxFisher.new_with_params()); }
 
+    public static AlgMaxFisher createAlgMaxFisher(int num)
+    {
+      return new AlgMaxFisher(OscatsAlgMaxFisher.new_with_params("num", num));
+    }
 }
 

@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * 3PL IRT Model Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,16 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ContModelL3p extends ContModel
+public final class ModelL3p extends Model
 {
-    protected ContModelL3p(long pointer) { super(pointer); }
+    protected ModelL3p(long pointer) { super(pointer); }
 
-    public ContModelL3p() {
-      this(OscatsContModelL3p.new_with_params());
+    public ModelL3p(Space space) {
+      this(OscatsModelL3p.new_with_params("space", space));
     }
 
-    public ContModelL3p(BitArray dims) {
-      this(OscatsContModelL3p.new_with_params("dims", dims));
+    public ModelL3p(Space space, char[] dims) {
+      this(OscatsModelL3p.new_with_params("space", space, "dims", dims));
+    }
+
+    public ModelL3p(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelL3p.new_with_params("space", space, "dims", dims, "covariates", covariates));
     }
 
 }

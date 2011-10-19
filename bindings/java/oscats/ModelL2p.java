@@ -1,5 +1,5 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Item Java Wrapper Class
+ * 2PL IRT Model Java Wrapper Class
  * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
@@ -22,19 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class Item extends Administrand
+public final class ModelL2p extends Model
 {
-    protected Item(long pointer) { super(pointer); }
+    protected ModelL2p(long pointer) { super(pointer); }
 
-    public Item(String id, Model model) {
-      this(OscatsItem.new_with_params("id", id));
-      setModel(model);
+    public ModelL2p(Space space) {
+      this(OscatsModelL2p.new_with_params("space", space));
     }
-    
-    public Item(Model model) {
-      this(OscatsItem.new_with_params());
-      setModel(model);
+
+    public ModelL2p(Space space, char[] dims) {
+      this(OscatsModelL2p.new_with_params("space", space, "dims", dims));
     }
-    
+
+    public ModelL2p(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelL2p.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    }
+
 }
-

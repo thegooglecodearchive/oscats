@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Item Java Wrapper Class
- * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
+ * Heterogeneous Logistic Graded Response Model Java Wrapper Class
+ * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,19 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class Item extends Administrand
+public final class ModelHetlgr extends Model
 {
-    protected Item(long pointer) { super(pointer); }
+    protected ModelHetlgr(long pointer) { super(pointer); }
 
-    public Item(String id, Model model) {
-      this(OscatsItem.new_with_params("id", id));
-      setModel(model);
+    public ModelHetlgr(Space space) {
+      this(OscatsModelHetlgr.new_with_params("space", space));
     }
-    
-    public Item(Model model) {
-      this(OscatsItem.new_with_params());
-      setModel(model);
+
+    public ModelHetlgr(Space space, char[] dims) {
+      this(OscatsModelHetlgr.new_with_params("space", space, "dims", dims));
     }
-    
+
+    public ModelHetlgr(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelHetlgr.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    }
+
 }
-

@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Administrand Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package oscats;
 import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
+import oscats.glib.GObject;
 
 public class Administrand extends Object
 {
@@ -42,11 +43,11 @@ public class Administrand extends Object
       OscatsAdministrand.registerCharacteristic(characteristic);
     }
     
-    static public int characteristicFromString(String name) {
+    static public long characteristicFromString(String name) {
       return OscatsAdministrand.characteristicFromString(name);
     }
     
-    static public String characteristicAsString(int characteristic) {
+    static public String characteristicAsString(long characteristic) {
       return OscatsAdministrand.characteristicAsString(characteristic);
     }
     
@@ -70,29 +71,33 @@ public class Administrand extends Object
       OscatsAdministrand.characteristicsIterReset(this);
     }
     
-    public int characteristicsIterNext() {
+    public long characteristicsIterNext() {
       return OscatsAdministrand.characteristicsIterNext(this);
     }
 
-    public boolean isCont() {
-      return OscatsAdministrand.isCont(this);
-    }    
+    public void setDefaultModel(String name) {
+      OscatsAdministrand.setDefaultModel(this, GObject.quarkFromString(name));
+    }
 
-    public boolean isDiscr() {
-      return OscatsAdministrand.isDiscr(this);
-    }    
+    public String getDefaultModel() {
+      return GObject.quarkAsString(OscatsAdministrand.getDefaultModel(this));
+    }
 
-    public int numDims() {
-      return OscatsAdministrand.numDims(this);
-    }    
+    public void setModel(String name, Model model) {
+      OscatsAdministrandOverride.setModel(this, GObject.quarkFromString(name), model);
+    }
 
-    public int numAttrs() {
-      return OscatsAdministrand.numAttrs(this);
-    }    
+    public void setModel(Model model) {  // set default model
+      OscatsAdministrand.setModel(this, 0, model);
+    }
 
-    public int maxResp() {
-      return OscatsAdministrand.maxResp(this);
-    }    
+    public Model getModel(String name) {
+      return OscatsAdministrand.getModel(this, GObject.quarkFromString(name));
+    }
+
+    public Model getModel() {  // get default model
+      return OscatsAdministrand.getModel(this, 0);
+    }
 
 }
 

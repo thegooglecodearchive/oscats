@@ -26,11 +26,11 @@ public final class Covariates extends Object
 {
     protected Covariates(long pointer) { super(pointer); }
 
-    static public int fromString(String name) {
+    static public long fromString(String name) {
       return OscatsCovariates.fromString(name);
     }
     
-    static public String asString(int name) {
+    static public String asString(long name) {
       return OscatsCovariates.asString(name);
     }
     
@@ -39,7 +39,7 @@ public final class Covariates extends Object
     }
     
     public void set(String name, double value) {
-      OscatsCovariates.setStr(this, name, value);
+      OscatsCovariates.setByName(this, name, value);
     }
     
     public double get(int name) {
@@ -47,7 +47,7 @@ public final class Covariates extends Object
     }
     
     public double get(String name) {
-      return OscatsCovariates.getStr(this, name);
+      return OscatsCovariates.getByName(this, name);
     }
     
 }

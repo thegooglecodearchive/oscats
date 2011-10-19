@@ -123,8 +123,11 @@ public abstract class Thing
         register(new FundamentalThing("guint", "int", "int", "jint"));
         register(new FundamentalThing("gint8", "byte", "byte", "jbyte"));
         register(new FundamentalThing("guint8", "byte", "byte", "jbyte"));
+        register(new FundamentalThing("OscatsResponse", "byte", "byte", "jbyte"));
         register(new FundamentalThing("gint16", "short", "short", "jshort"));
         register(new FundamentalThing("guint16", "char", "char", "jchar"));
+        register(new FundamentalThing("OscatsDim", "char", "char", "jchar"));
+        register(new FundamentalThing("OscatsNatural", "char", "char", "jchar"));
         register(new FundamentalThing("gint32", "int", "int", "jint"));
         register(new FundamentalThing("guint32", "int", "int", "jint"));
         register(new FundamentalThing("gssize", "int", "int", "jint"));
@@ -211,7 +214,7 @@ public abstract class Thing
          * FIXME! Weirdo cases we haven't figured out what to do with yet.
          * Should these be a new (define...) type intead of here?
          */
-        register(new TypedefFundamentalThing("GQuark", "int", "int", "jint"));
+        register(new TypedefFundamentalThing("GQuark", "long", "long", "jlong"));
         register(new TypedefFundamentalThing("GdkNativeWindow", "long", "long", "jlong"));
         register(new FixmeThing("gpointer"));
         register(new FixmeThing("gpointer*"));

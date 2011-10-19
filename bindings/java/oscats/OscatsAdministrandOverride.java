@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Maximum KL Divergence (Class) Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * OscatsAdministrand Java Overrides
+ * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,15 +18,30 @@
 
 package oscats;
 
+import oscats.Administrand;
+import oscats.Model;
+import oscats.Space;
 import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
-import oscats.glib.Object;
 
-public final class AlgMaxKlDiscr extends Algorithm
+final class OscatsAdministrandOverride extends Plumbing
 {
-    protected AlgMaxKlDiscr(long pointer) { super(pointer); }
+    private OscatsAdministrandOverride() {}
 
-    public AlgMaxKlDiscr() { this(OscatsAlgMaxKlDiscr.new_with_params()); }
+    static final void setModel(Administrand self, long name, Model model) {
+        if (self == null) {
+            throw new IllegalArgumentException("self can't be null");
+        }
+
+        if (model == null) {
+            throw new IllegalArgumentException("model can't be null");
+        }
+
+        {
+            oscats_administrand_set_model(pointerOf(self), name, pointerOf(model));
+        }
+    }
+
+    private static native final void oscats_administrand_set_model(long self, long name, long model);
 
 }
-

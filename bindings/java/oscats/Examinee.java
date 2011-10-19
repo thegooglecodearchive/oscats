@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Examinee Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ package oscats;
 import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
+import oscats.glib.GObject;
 
 public final class Examinee extends Object
 {
@@ -34,47 +35,79 @@ public final class Examinee extends Object
       this(OscatsExaminee.new_with_params("id", id));
     }
     
-    public void setTrueTheta(GslVector t) { 
-      OscatsExaminee.setTrueTheta(this, t);
+    public void setSimKey(String name) {
+      OscatsExaminee.setSimKey(this, GObject.quarkFromString(name));
     }
     
-    public GslVector getTrueTheta() {
-      return OscatsExaminee.getTrueTheta(this);
+    public String getSimKey() {
+      return GObject.quarkAsString(OscatsExaminee.getSimKey(this));
     }
     
-    public void setThetaHat(GslVector t) {
-      OscatsExaminee.setThetaHat(this, t);
+    public void setEstKey(String name) {
+      OscatsExaminee.setEstKey(this, GObject.quarkFromString(name));
     }
     
-    public GslVector getThetaHat() {
-      return OscatsExaminee.getThetaHat(this);
+    public String getEstKey() {
+      return GObject.quarkAsString(OscatsExaminee.getEstKey(this));
     }
     
-    public void initThetaErr(int dim) {
-      OscatsExaminee.initThetaErr(this, dim);
-    }
-
-    public GslMatrix getThetaErr() {
-      return OscatsExaminee.getThetaErr(this);
+    public void setSimTheta(Point theta) {
+      OscatsExamineeOverride.setSimTheta(this, theta);
     }
     
-    public void setTrueAlpha(Attributes attr) {
-      OscatsExaminee.setTrueAlpha(this, attr);
+    public Point getSimTheta() {
+      return OscatsExaminee.getSimTheta(this);
     }
     
-    public Attributes getTrueAlpha() {
-      return OscatsExaminee.getTrueAlpha(this);
+    public void setEstTheta(Point theta) {
+      OscatsExamineeOverride.setEstTheta(this, theta);
     }
     
-    public void setAlphaHat(Attributes attr) {
-      OscatsExaminee.setAlphaHat(this, attr);
+    public Point getEstTheta() {
+      return OscatsExaminee.getEstTheta(this);
     }
     
-    public Attributes getAlphaHat() {
-      return OscatsExaminee.getAlphaHat(this);
+    public void setTheta(String name, Point theta) {
+      OscatsExamineeOverride.setTheta(this, GObject.quarkFromString(name), theta);
     }
-
+    
+    public Point getTheta(String name, Point theta) {
+      return OscatsExaminee.getTheta(this, GObject.quarkFromString(name));
+    }
+    
+    public void initSimTheta(Space space) {
+      OscatsExaminee.initSimTheta(this, space);
+    }
+    
+    public void initEstTheta(Space space) {
+      OscatsExaminee.initEstTheta(this, space);
+    }
+    
+    public void initTheta(String name, Space space) {
+      OscatsExaminee.initTheta(this, GObject.quarkFromString(name), space);
+    }
+    
     public int numItems() { return OscatsExaminee.numItems(this); }
+
+    public void addItem(Item item, byte resp) {
+      OscatsExaminee.addItem(this, item, resp);
+    }
+    
+    public Item getItem(int i) {
+      return OscatsExaminee.getItem(this, i);
+    }
+    
+    public byte getResp(int i) {
+      return OscatsExaminee.getResp(this, i);
+    }
+    
+    public double logLik(Point theta, String model) {
+      return OscatsExaminee.logLik(this, theta, GObject.quarkFromString(model));
+    }
+
+    public double logLik(Point theta) {
+      return OscatsExaminee.logLik(this, theta, 0);
+    }
 
 }
 

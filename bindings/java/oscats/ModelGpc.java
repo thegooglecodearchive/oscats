@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * 2PL IRT Model Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Generalized Partical Credit Model Java Wrapper Class
+ * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,16 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ContModelL2p extends ContModel
+public final class ModelGpc extends Model
 {
-    protected ContModelL2p(long pointer) { super(pointer); }
+    protected ModelGpc(long pointer) { super(pointer); }
 
-    public ContModelL2p() {
-      this(OscatsContModelL2p.new_with_params());
+    public ModelGpc(Space space) {
+      this(OscatsModelGpc.new_with_params("space", space));
     }
 
-    public ContModelL2p(BitArray dims) {
-      this(OscatsContModelL2p.new_with_params("dims", dims));
+    public ModelGpc(Space space, char[] dims) {
+      this(OscatsModelGpc.new_with_params("space", space, "dims", dims));
+    }
+
+    public ModelGpc(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelGpc.new_with_params("space", space, "dims", dims, "covariates", covariates));
     }
 
 }

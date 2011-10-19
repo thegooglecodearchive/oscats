@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Simulate Class Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * DINA Classification Model Java Wrapper Class
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,11 +22,18 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class AlgSimulateAlpha extends Algorithm
+public final class ModelDina extends Model
 {
-    protected AlgSimulateAlpha(long pointer) { super(pointer); }
+    protected ModelDina(long pointer) { super(pointer); }
 
-    public AlgSimulateAlpha() { this(OscatsAlgSimulateAlpha.new_with_params()); }
+    public ModelDina(Space space) {
+      this(OscatsModelDina.new_with_params("space", space));
+    }
+
+    public ModelDina(Space space, char[] dims) {
+      this(OscatsModelDina.new_with_params("space", space, "dims", dims));
+    }
+
+    // This model doesn't support covariates
 
 }
-

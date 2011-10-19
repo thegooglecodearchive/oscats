@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Simulate IRT Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Nominal IRT Model Java Wrapper Class
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,11 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class AlgSimulateTheta extends Algorithm
+public final class ModelNominal extends Model
 {
-    protected AlgSimulateTheta(long pointer) { super(pointer); }
+    protected ModelNominal(long pointer) { super(pointer); }
 
-    public AlgSimulateTheta() { this(OscatsAlgSimulateTheta.new_with_params()); }
+    public ModelNominal(Space space) {
+      this(OscatsModelNominal.new_with_params("space", space));
+    }
+
+    public ModelNominal(Space space, char[] dims) {
+      this(OscatsModelNominal.new_with_params("space", space, "dims", dims));
+    }
+
+    public ModelNominal(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelNominal.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    }
 
 }
-

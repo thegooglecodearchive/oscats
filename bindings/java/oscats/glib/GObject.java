@@ -143,4 +143,16 @@ public final class GObject extends Plumbing
     private static native final void g_object_add_toggle_ref(long reference, Object target);
 
     private static native final void g_object_remove_toggle_ref(long reference);
+
+    public static final long quarkFromString(String str) {
+        return g_quark_from_string(str);
+    }
+    
+    private static native final long g_quark_from_string(String str);
+    
+    public static final String quarkAsString(long q) {
+        return g_quark_as_string(q);
+    }
+    
+    private static native final String g_quark_as_string(long q);
 }

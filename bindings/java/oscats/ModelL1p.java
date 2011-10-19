@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Estimate Class Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * 1PL IRT Model Java Wrapper Class
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,11 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class AlgEstimateAlpha extends Algorithm
+public final class ModelL1p extends Model
 {
-    protected AlgEstimateAlpha(long pointer) { super(pointer); }
+    protected ModelL1p(long pointer) { super(pointer); }
 
-    public AlgEstimateAlpha() { this(OscatsAlgEstimateAlpha.new_with_params()); }
-    
+    public ModelL1p(Space space) {
+      this(OscatsModelL1p.new_with_params("space", space));
+    }
+
+    public ModelL1p(Space space, char[] dims) {
+      this(OscatsModelL1p.new_with_params("space", space, "dims", dims));
+    }
+
+    public ModelL1p(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelL1p.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    }
+
 }
-

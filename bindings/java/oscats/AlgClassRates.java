@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
  * Classification Rates Tabulation Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,11 +44,11 @@ public final class AlgClassRates extends Algorithm
       return OscatsAlgClassRates.getMisclassifyFreq(this, num);
     }
 
-    public int numExamineesByPattern(Attributes attr) {
+    public int numExamineesByPattern(Point attr) {
       return OscatsAlgClassRates.numExamineesByPattern(this, attr);
     }
 
-    public double getRateByPattern(Attributes attr) {
+    public double getRateByPattern(Point attr) {
       return OscatsAlgClassRates.getRateByPattern(this, attr);
     }
 

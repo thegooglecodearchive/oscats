@@ -1,5 +1,5 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  * Example 1
  *
@@ -14,8 +14,9 @@
  *  - theta.hat, Item exposure
  */
 
-import oscats.GslVector;
-import oscats.ContModelL1p;
+import oscats.Space;
+import oscats.Point;
+import oscats.ModelL1p;
 import oscats.ItemBank;
 import oscats.Item;
 import oscats.Examinee;
@@ -31,7 +32,7 @@ public class ex01 {
   static final int N_ITEMS = 400;
   static final int LEN = 30;
 
-  static ItemBank gen_items()
+  static ItemBank gen_items(Space space)
   {
     // Create an item bank to store the items.
     // Setting the property "sizeHint" increases allocation efficiency.
@@ -39,10 +40,11 @@ public class ex01 {
     for (int i=0; i < N_ITEMS; i++)
     {
       // First we create an IRT model container for our item
-      ContModelL1p model = new ContModelL1p();
+      // Defaults to unidimensional, using the first dimension of space
+      ModelL1p model = new ModelL1p(space);
       // Then, set the parameters.  Here there is only one, the difficulty (b).
       model.setParamByIndex(0, oscats.Random.normal(1));
-      // Create an item based on this model
+      // Create an item based on this model (as default model)
       Item item = new Item(model);
       // Add the item to the item bank
       bank.addItem(item);
@@ -53,24 +55,23 @@ public class ex01 {
   }
 
   // Returns an array of new OscatsExaminee pointers
-  static Examinee[] gen_examinees()
+  static Examinee[] gen_examinees(Space space)
   {
     Examinee[] ret = new Examinee[N_EXAMINEES];
+    char dim = Space.OSCATS_DIM_CONT + 0;  // First continuous dimension
     
-    // Latent IRT ability parameter.  This is a one-dimensional test.
-    GslVector theta = GslVector.createGslVector(1);
     for (int i=0; i < N_EXAMINEES; i++)
     {
+      // Latent IRT ability parameter.  This is a one-dimensional test.
+      Point theta = new Point(space);
       // Sample the ability from N(0,1) distribution
-      theta.set(0, oscats.Random.normal(1));
+      theta.setCont(dim, oscats.Random.normal(1));
       // Create a new examinee
       ret[i] = new Examinee();
       // Set the examinee's true (simulated) ability
-      // Note, theta is *copied* into examinee.
-      ret[i].setTrueTheta(theta);
+      ret[i].setSimTheta(theta);
     }
     
-    // Clean up
     return ret;
   }
 
@@ -82,10 +83,14 @@ public class ex01 {
     AlgExposureCounter[] exposure = new AlgExposureCounter[num_tests];
     int i, j;
     
+    // Create the latent space for the test: continuous unidimensional
+    Space space = new Space(1, 0);
+    char dim = Space.OSCATS_DIM_CONT + 0;  // First continuous dimension
+    
     System.out.println("Creating examinees.");
-    Examinee[] examinees = gen_examinees();
+    Examinee[] examinees = gen_examinees(space);
     System.out.println("Creating items.");
-    ItemBank bank = gen_items();
+    ItemBank bank = gen_items(space);
 
     System.out.println("Creating tests.");
     for (j=0; j < num_tests; j++)
@@ -102,8 +107,8 @@ public class ex01 {
       // A test must have at minimum a selection algorithm, and administration
       // algorithm, and a stoping critierion.
 
-      new oscats.AlgSimulateTheta().register(test[j]);
-      new oscats.AlgEstimateTheta().register(test[j]);
+      new oscats.AlgSimulate().register(test[j]);
+      new oscats.AlgEstimate().register(test[j]);
 
       // All calls to oscats.Algorithm.register() return an algorithm
       // data object.  In many cases, we don't care about this object, since
@@ -129,28 +134,24 @@ public class ex01 {
     Formatter f = new Formatter(fos);
     f.format("ID\ttrue");
     for (j=0; j < num_tests; j++)
-      f.format("\t%s\t%s.err", test_names[j], test_names[j]);
+      f.format("\t%s", test_names[j]);
     f.format("\n");
     for (i=0; i < N_EXAMINEES; i++)
     {
   //    printf("  %s\n", examinees[i]->id);
 
       // An initial estimate for latent IRT ability must be provided.
-      examinees[i].setThetaHat(GslVector.createGslVector(1));
-      // We want errors for the estimates: initialize them.
-      // 1 is the test dimension
-      examinees[i].initThetaErr(1);
+      examinees[i].setEstTheta(new Point(space));
 
-      f.format("%d\t%g", i+1, examinees[i].getTrueTheta().get(0));
+      f.format("%d\t%g", i+1, examinees[i].getSimTheta().getCont(dim));
       for (j=0; j < num_tests; j++)
       {
         // Reset initial latent ability for this test
-        examinees[i].getThetaHat().set(0, 0);
+        examinees[i].getEstTheta().setCont(dim, 0);
         // Do the administration!
         test[j].administer(examinees[i]);
-        // Output the resulting theta.hat and its *variance*
-        f.format("\t%g\t%g", examinees[i].getThetaHat().get(0),
-              examinees[i].getThetaErr().get(0, 0));
+        // Output the resulting theta.hat
+        f.format("\t%g", examinees[i].getEstTheta().getCont(dim));
       }
       f.format("\n");
     }
@@ -165,10 +166,10 @@ public class ex01 {
     for (i=0; i < N_ITEMS; i++)
     {
       // Get the item's difficulty parameter
-      f.format("%d\t%g", i+1, bank.getItem(i).getContModel().getParamByIndex(0));
+      f.format("%d\t%g", i+1, bank.getItem(i).getModel().getParamByIndex(0));
       // Get the exposure rate for this item in each test
       for (j=0; j < num_tests; j++)
-        f.format("\t%g", exposure[j].getRate(bank.getItem(i)) );
+        f.format("\t%g", exposure[j].getRate((Item)bank.getItem(i)) );
       f.format("\n");
     }
     fos.close();

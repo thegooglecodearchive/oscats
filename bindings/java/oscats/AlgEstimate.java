@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Maximum KL Divergence (IRT) Algorithm Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Estimate Algorithm Java Wrapper Class
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,11 +22,15 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class AlgMaxKlCont extends Algorithm
+public final class AlgEstimate extends Algorithm
 {
-    protected AlgMaxKlCont(long pointer) { super(pointer); }
+    protected AlgEstimate(long pointer) { super(pointer); }
 
-    public AlgMaxKlCont() { this(OscatsAlgMaxKlCont.new_with_params()); }
+    public AlgEstimate() { this(OscatsAlgEstimate.new_with_params()); }
 
+    public AlgEstimate(GslVector mu, GslMatrix sigma)
+    {
+      this(OscatsAlgEstimate.new_with_params("mu", mu, "Sigma", sigma));
+    }
 }
 

@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Attributes Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Homogeneous Logistic Graded Response Model Java Wrapper Class
+ * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,29 +22,20 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class Attributes extends Object
+public final class ModelGr extends Model
 {
-    protected Attributes(long pointer) { super(pointer); }
+    protected ModelGr(long pointer) { super(pointer); }
 
-    static public Attributes fromString(String str) {
-      return OscatsAttributes.fromString(str);
+    public ModelGr(Space space) {
+      this(OscatsModelGr.new_with_params("space", space));
     }
-    
-    public void set(byte index, boolean value) {
-      OscatsAttributes.set(this, index, value);
+
+    public ModelGr(Space space, char[] dims) {
+      this(OscatsModelGr.new_with_params("space", space, "dims", dims));
     }
-    
-    public boolean get(byte index) {
-      return OscatsAttributes.get(this, index);
+
+    public ModelGr(Space space, char[] dims, Covariates covariates) {
+      this(OscatsModelGr.new_with_params("space", space, "dims", dims, "covariates", covariates));
     }
-    
-    public int asInt() { return OscatsAttributes.asInt(this); }
-    
-    public String asString() { return OscatsAttributes.asString(this); }
-    
-    public void copy(Attributes rhs) { OscatsAttributes.copy(this, rhs); }
-    
-    public int compare(Attributes rhs) { return OscatsAttributes.compare(this, rhs); }
 
 }
-

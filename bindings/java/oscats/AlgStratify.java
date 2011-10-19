@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * Nominal IRT Model Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Stratify Algorithm Java Wrapper Class
+ * Copyright 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,16 +22,11 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ContModelNominal extends ContModel
+public final class AlgStratify extends Algorithm
 {
-    protected ContModelNominal(long pointer) { super(pointer); }
+    protected AlgStratify(long pointer) { super(pointer); }
 
-    public ContModelNominal() {
-      this(OscatsContModelNominal.new_with_params());
-    }
-
-    public ContModelNominal(BitArray dims) {
-      this(OscatsContModelNominal.new_with_params("dims", dims));
-    }
-
+    public AlgStratify() { this(OscatsAlgStratify.new_with_params()); }
+    
 }
+

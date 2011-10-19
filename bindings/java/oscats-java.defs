@@ -272,14 +272,3 @@
   )
 )
 
-;; static Attributes methods
-
-(define-function from_string
-  (of-object "OscatsAttributes")
-  (c-name "oscats_attributes_from_string")
-  (return-type "OscatsAttributes*")
-  (parameters
-    '("const-gchar*" "name")
-  )
-)
-

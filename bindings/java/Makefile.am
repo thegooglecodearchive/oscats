@@ -73,7 +73,8 @@ libglibjni_la_CFLAGS = @GLIB_CFLAGS@ -I.libs/include @JAVA_CPPFLAGS0@ \
 libglibjni_la_LIBADD = @GLIB_LIBS@ -lgthread-2.0 @JAVA_LIBS0@
 
 liboscatsjni_la_DEPENDENCIES = oscats.jar libglibjni.la
-#liboscatsjni_la_SOURCES = oscats/OscatsAlgorithmOverride.c
+liboscatsjni_la_SOURCES = oscats/OscatsAdministrandOverride.c \
+			oscats/OscatsExamineeOverride.c 
 nodist_liboscatsjni_la_SOURCES = $(OSCATS_GENERATED_SOURCES)
 liboscatsjni_la_CFLAGS = @GLIB_CFLAGS@ -I.libs/include @JAVA_CPPFLAGS0@ \
 			-I$(srcdir)/jni -I$(top_srcdir)/src/liboscats
@@ -180,39 +181,44 @@ GLIB_FILES = oscats/glib/Boxed.java \
 
 OSCATS_FILES = oscats/Plumbing.java \
 	oscats/Random.java	   \
+	oscats/AlgAstrat.java \
 	oscats/AlgClosestDiff.java \
-	oscats/AlgEstimateTheta.java \
-	oscats/AlgEstimateAlpha.java \
+	oscats/AlgEstimate.java \
 	oscats/AlgExposureCounter.java \
 	oscats/AlgClassRates.java \
 	oscats/AlgFixedLength.java \
 	oscats/AlgPickRand.java \
 	oscats/AlgChooser.java \
 	oscats/AlgMaxFisher.java \
-	oscats/AlgMaxKlCont.java \
-	oscats/AlgMaxKlDiscr.java \
-	oscats/AlgSimulateTheta.java \
-	oscats/AlgSimulateAlpha.java \
+	oscats/AlgMaxKl.java \
+	oscats/AlgSimulate.java \
+	oscats/AlgStratify.java \
 	oscats/Algorithm.java \
 	oscats/BitArray.java \
 	oscats/Examinee.java \
+	oscats/OscatsExamineeOverride.java \
 	oscats/Covariates.java \
-	oscats/Attributes.java \
 	oscats/GslMatrix.java \
 	oscats/GslPermutation.java \
 	oscats/GslVector.java \
 	oscats/Integrate.java \
-	oscats/ContModel.java \
-	oscats/DiscrModel.java \
+	oscats/Space.java \
+	oscats/Point.java \
+	oscats/Model.java \
 	oscats/Administrand.java \
+	oscats/OscatsAdministrandOverride.java \
 	oscats/Item.java \
 	oscats/ItemBank.java \
-	oscats/ContModelL1p.java \
-	oscats/ContModelL2p.java \
-	oscats/ContModelL3p.java \
-	oscats/ContModelNominal.java \
-	oscats/DiscrModelDina.java \
-	oscats/DiscrModelNida.java \
+	oscats/ModelL1p.java \
+	oscats/ModelL2p.java \
+	oscats/ModelL3p.java \
+	oscats/ModelNominal.java \
+	oscats/ModelGr.java \
+	oscats/ModelHetlgr.java \
+	oscats/ModelGpc.java \
+	oscats/ModelPc.java \
+	oscats/ModelDina.java \
+	oscats/ModelNida.java \
 	oscats/Test.java
 
 OSCATS_GENERATED_SOURCES = generated/oscats/GBitArray.c \
@@ -220,31 +226,34 @@ OSCATS_GENERATED_SOURCES = generated/oscats/GBitArray.c \
 	generated/oscats/GGslPermutation.c \
 	generated/oscats/GGslVector.c \
 	generated/oscats/OscatsIntegrate.c \
+	generated/oscats/OscatsAlgAstrat.c \
 	generated/oscats/OscatsAlgClosestDiff.c \
-	generated/oscats/OscatsAlgEstimateTheta.c \
-	generated/oscats/OscatsAlgEstimateAlpha.c \
+	generated/oscats/OscatsAlgEstimate.c \
 	generated/oscats/OscatsAlgExposureCounter.c \
 	generated/oscats/OscatsAlgClassRates.c \
 	generated/oscats/OscatsAlgFixedLength.c \
 	generated/oscats/OscatsAlgPickRand.c \
 	generated/oscats/OscatsAlgChooser.c \
 	generated/oscats/OscatsAlgMaxFisher.c \
-	generated/oscats/OscatsAlgMaxKlCont.c \
-	generated/oscats/OscatsAlgMaxKlDiscr.c \
-	generated/oscats/OscatsAlgSimulateTheta.c \
-	generated/oscats/OscatsAlgSimulateAlpha.c \
+	generated/oscats/OscatsAlgMaxKl.c \
+	generated/oscats/OscatsAlgSimulate.c \
+	generated/oscats/OscatsAlgStratify.c \
 	generated/oscats/OscatsAlgorithm.c \
 	generated/oscats/OscatsExaminee.c \
 	generated/oscats/OscatsCovariates.c \
-	generated/oscats/OscatsAttributes.c \
-	generated/oscats/OscatsContModel.c \
-	generated/oscats/OscatsDiscrModel.c \
-	generated/oscats/OscatsContModelL1p.c \
-	generated/oscats/OscatsContModelL2p.c \
-	generated/oscats/OscatsContModelL3p.c \
-	generated/oscats/OscatsContModelNominal.c \
-	generated/oscats/OscatsDiscrModelDina.c \
-	generated/oscats/OscatsDiscrModelNida.c \
+	generated/oscats/OscatsSpace.c \
+	generated/oscats/OscatsPoint.c \
+	generated/oscats/OscatsModel.c \
+	generated/oscats/OscatsModelL1p.c \
+	generated/oscats/OscatsModelL2p.c \
+	generated/oscats/OscatsModelL3p.c \
+	generated/oscats/OscatsModelNominal.c \
+	generated/oscats/OscatsModelGr.c \
+	generated/oscats/OscatsModelHetlgr.c \
+	generated/oscats/OscatsModelGpc.c \
+	generated/oscats/OscatsModelPc.c \
+	generated/oscats/OscatsModelDina.c \
+	generated/oscats/OscatsModelNida.c \
 	generated/oscats/OscatsAdministrand.c \
 	generated/oscats/OscatsItem.c \
 	generated/oscats/OscatsItemBank.c \

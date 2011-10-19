@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * 1PL IRT Model Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * Maximum KL Divergence Algorithm Java Wrapper Class
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,16 +22,15 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class ContModelL1p extends ContModel
+public final class AlgMaxKl extends Algorithm
 {
-    protected ContModelL1p(long pointer) { super(pointer); }
+    protected AlgMaxKl(long pointer) { super(pointer); }
 
-    public ContModelL1p() {
-      this(OscatsContModelL1p.new_with_params());
+    public AlgMaxKl() { this(OscatsAlgMaxKl.new_with_params()); }
+
+    public static AlgMaxKl createAlgMaxKl(int num)
+    {
+      return new AlgMaxKl(OscatsAlgMaxKl.new_with_params("num", num));
     }
-
-    public ContModelL1p(BitArray dims) {
-      this(OscatsContModelL1p.new_with_params("dims", dims));
-    }
-
 }
+

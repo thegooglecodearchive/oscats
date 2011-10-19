@@ -1,6 +1,6 @@
 /* OSCATS: Open-Source Computerized Adaptive Testing System
- * DINA Classification Model Java Wrapper Class
- * Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ * NIDA Classification Model Java Wrapper Class
+ * Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  *
  *  OSCATS is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,16 +22,18 @@ import oscats.bindings.BlacklistedMethodError;
 import oscats.bindings.FIXME;
 import oscats.glib.Object;
 
-public final class DiscrModelDina extends DiscrModel
+public final class ModelNida extends Model
 {
-    protected DiscrModelDina(long pointer) { super(pointer); }
+    protected ModelNida(long pointer) { super(pointer); }
 
-    public DiscrModelDina() {
-      this(OscatsDiscrModelDina.new_with_params());
+    public ModelNida(Space space) {
+      this(OscatsModelNida.new_with_params("space", space));
     }
 
-    public DiscrModelDina(Attributes dims) {
-      this(OscatsDiscrModelDina.new_with_params("dims", dims));
+    public ModelNida(Space space, char[] dims) {
+      this(OscatsModelNida.new_with_params("space", space, "dims", dims));
     }
+    
+    // This model doesn't support covariates.
 
 }

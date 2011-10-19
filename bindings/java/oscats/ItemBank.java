@@ -46,13 +46,13 @@ public final class ItemBank extends Administrand
       OscatsItemBank.addItem(this, item);
     }
     
-    public int maxResponse() { return maxResp(); }
-    
     public Administrand getItem(int i) {
       return OscatsItemBank.getItem(this, i);
     }
-    
-    public boolean isPure() { return OscatsItemBank.isPure(this); }
+
+    public int numItems() {
+      return OscatsItemBank.numItems(this);
+    }
 
 }
 

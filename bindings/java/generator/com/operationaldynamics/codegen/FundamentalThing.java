@@ -40,7 +40,7 @@ public class FundamentalThing extends Thing
     String jniReturnErrorValue() {
         if ("jboolean".equals(jniType)) {
             return " JNI_FALSE";
-        } else if ("jint".equals(jniType)) {
+        } else if ("jint".equals(jniType) || "jchar".equals(jniType)) {
             return " 0";
         } else if ("jlong".equals(jniType) || "jdouble".equals(jniType)) {
             return " 0L";

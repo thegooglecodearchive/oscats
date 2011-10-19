@@ -56,6 +56,13 @@ final class GValue extends Plumbing
         return g_value_init(j);
     }
 
+    static final long createValue(Value[] v) {
+        long[] ptrs = new long[v.length];
+        for (int i=0; i < v.length; i++)
+          ptrs[i] = pointerOf(v[i]);
+        return g_value_init_value_array(ptrs);
+    }
+
     public static long createValue(Constant value) {
         final String typeName;
 
@@ -80,6 +87,8 @@ final class GValue extends Plumbing
     private static native final long g_value_init(double d);
 
     private static native final long g_value_init(String str);
+
+    private static native final long g_value_init_value_array(long[] v);
 
     /*
      * ... and boom, our naming conventon goes splat when we added
