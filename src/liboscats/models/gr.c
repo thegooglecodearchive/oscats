@@ -110,9 +110,9 @@ static void model_constructed(GObject *object)
   // Set up parameter names
   str = g_string_sized_new(10);
   model->names = g_new(GQuark, model->Np);
-  for (k=0; k < Ncat; k++)
+  for (k=1; k <= Ncat; k++)
   {
-    g_string_printf(str, "Diff.%d", k+1);
+    g_string_printf(str, "Diff.%d", k);
     model->names[PARAM_B(k)] = g_quark_from_string(str->str);
   }
   for (i=0; i < model->Ndims; i++)
