@@ -36,7 +36,7 @@ typedef struct _OscatsModelGpcClass OscatsModelGpcClass;
  * OscatsModelGpc:
  *
  * The Generalized Partial Credit Model is a special case of Bock's
- * Nominal Response Model (#OscatsNominal):
+ * Nominal Response Model (#OscatsModelNominal):
  * P(X=k|theta) = f_k(theta)/[1+sum_j f_j(theta)],
  * where f_j(theta) = sum_i a_i theta_i - b_j + sum_l d_l covariate_l,
  * a_i is the discrimination for dimension i,
@@ -44,7 +44,7 @@ typedef struct _OscatsModelGpcClass OscatsModelGpcClass;
  * and f_0(theta) = 0.
  * Responses are numbered 0, 1, ..., Ncat-1.
  * Note that all options share the same parameters for the covariates.
- * o distance metric is currently provided, but see Ali (2011) for possibilities.
+ * No distance metric is currently provided, but see Ali (2011) for possibilities.
  *
  * Parameter names: Diff.k, Discr.DimName
  *
