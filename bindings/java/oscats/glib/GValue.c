@@ -281,6 +281,40 @@ Java_oscats_glib_GValue_g_1value_1init__D
 
 /**
  * Implements
+ *   org.gnome.glib.GValue.g_value_init(char d)
+ * called from
+ *   org.gnome.glib.GValue.createValue(char d)
+ *
+ * Allocate a GValue for a gint16 with GSlice, then initialize it and return
+ * the pointer.
+ */
+JNIEXPORT jlong JNICALL
+Java_oscats_glib_GValue_g_1value_1init__C
+(
+	JNIEnv *env,
+	jclass cls,
+	jchar _c
+)
+{
+	gint16 c;
+	GValue* value;
+	
+	c = (gint16) _c;
+
+	// allocate it and set to zeros, per what g_value_init requires
+	value =	g_slice_new0(GValue);
+	g_value_init(value, (c < 0 ? G_TYPE_INT : G_TYPE_UINT));
+
+	// set the value
+	if (c < 0) g_value_set_int(value, c);
+        else g_value_set_uint(value, (guint16)c);
+
+	// return address
+	return (jlong) value;
+}
+
+/**
+ * Implements
  *   org.gnome.glib.GValue.g_value_init(String str)
  * called from
  *   org.gnome.glib.GValue.createValue(String str)

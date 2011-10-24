@@ -14,6 +14,7 @@ package oscats.glib;
 import oscats.bindings.Constant;
 import oscats.bindings.Debug;
 import oscats.bindings.Pointer;
+import java.lang.reflect.Array;
 
 /**
  * A generic value that can be passed as a parameter to or returned from a
@@ -94,10 +95,10 @@ public class Value extends Pointer
     protected static Value fromObject(java.lang.Object value) {
       if (value.getClass().isArray())
       {
-        java.lang.Object[] values = (java.lang.Object[])value;
-        Value[] vals = new Value[values.length];
-        for (int i=0; i < values.length; i++)
-          vals[i] = fromObject(values[i]);
+        int num = Array.getLength(value);
+        Value[] vals = new Value[num];
+        for (int i=0; i < num; i++)
+          vals[i] = fromObject(Array.get(value, i));
         return new Value(GValue.createValue(vals), true);
       }
       if (value instanceof String)
@@ -116,6 +117,8 @@ public class Value extends Pointer
         return new Value(GValue.createValue(((Float)value).floatValue()), true);
       else if (value instanceof Double)
         return new Value(GValue.createValue(((Double)value).doubleValue()), true);
+      else if (value instanceof Character)
+        return new Value(GValue.createValue(((Character)value).charValue()), true);
       else
         throw new ClassCastException("Cannot create Value for " + value.getClass().getName());
     }

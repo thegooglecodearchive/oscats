@@ -56,6 +56,10 @@ final class GValue extends Plumbing
         return g_value_init(j);
     }
 
+    static final long createValue(char c) {
+        return g_value_init(c);
+    }
+
     static final long createValue(Value[] v) {
         long[] ptrs = new long[v.length];
         for (int i=0; i < v.length; i++)
@@ -85,6 +89,8 @@ final class GValue extends Plumbing
     private static native final long g_value_init(float f);
 
     private static native final long g_value_init(double d);
+
+    private static native final long g_value_init(char d);
 
     private static native final long g_value_init(String str);
 
