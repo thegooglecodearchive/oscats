@@ -32,5 +32,10 @@ public final class AlgMaxFisher extends Algorithm
     {
       return new AlgMaxFisher(OscatsAlgMaxFisher.new_with_params("num", num));
     }
+
+    public static AlgMaxFisher createAlgMaxFisher(boolean Aopt, int num)
+    {
+      return new AlgMaxFisher(OscatsAlgMaxFisher.new_with_params("A-opt", Aopt, "num", num));
+    }
 }
 
