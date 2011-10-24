@@ -26,18 +26,6 @@ public abstract class Model extends Object
 {
     protected Model(long pointer) { super(pointer); }
 
-    public Model() {
-      this(OscatsModel.new_with_params());
-    }
-    
-    public Model(char[] dims) {
-      this(OscatsModel.new_with_params("dims", dims));
-    }
-
-    public Model(char[] dims, Covariates covariates) {
-      this(OscatsModel.new_with_params("dims", dims, "covariates", covariates));
-    }
-
     public byte getMax() { return OscatsModel.getMax(this); }
     
     public double P(byte resp, Point theta, Covariates covariates) {
