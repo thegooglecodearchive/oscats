@@ -25,6 +25,8 @@ import oscats.glib.Object;
 public final class Covariates extends Object
 {
     protected Covariates(long pointer) { super(pointer); }
+    
+    public Covariates() { this(OscatsCovariates.new_with_params()); }
 
     static public long fromString(String name) {
       return OscatsCovariates.fromString(name);
