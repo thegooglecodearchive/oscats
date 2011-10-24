@@ -35,6 +35,14 @@ public final class Examinee extends Object
       this(OscatsExaminee.new_with_params("id", id));
     }
     
+    public Examinee(Covariates covariates) {
+      this(OscatsExaminee.new_with_params("covariates", covariates));
+    }
+    
+    public Examinee(String id, Covariates covariates) {
+      this(OscatsExaminee.new_with_params("id", id, "covariates", covariates));
+    }
+    
     public void setSimKey(String name) {
       OscatsExaminee.setSimKey(this, GObject.quarkFromString(name));
     }
