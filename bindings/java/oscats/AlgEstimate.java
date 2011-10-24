@@ -28,9 +28,19 @@ public final class AlgEstimate extends Algorithm
 
     public AlgEstimate() { this(OscatsAlgEstimate.new_with_params()); }
 
+    public AlgEstimate(int Nposterior)
+    {
+      this(OscatsAlgEstimate.new_with_params("Nposterior", Nposterior));
+    }
+
     public AlgEstimate(GslVector mu, GslMatrix sigma)
     {
       this(OscatsAlgEstimate.new_with_params("mu", mu, "Sigma", sigma));
+    }
+
+    public AlgEstimate(int Nposterior, GslVector mu, GslMatrix sigma)
+    {
+      this(OscatsAlgEstimate.new_with_params("Nposterior", Nposterior, "mu", mu, "Sigma", sigma));
     }
 }
 
