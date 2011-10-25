@@ -166,6 +166,14 @@ static void oscats_alg_max_fisher_set_property(GObject *object,
       self->A_opt = g_value_get_boolean(value);
       break;
     
+    case PROP_MODEL_KEY:
+      self->modelKey = g_value_get_ulong(value);
+      break;
+    
+    case PROP_THETA_KEY:
+      self->thetaKey = g_value_get_ulong(value);
+      break;
+    
     default:
       // Unknown property
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -185,6 +193,14 @@ static void oscats_alg_max_fisher_get_property(GObject *object,
     
     case PROP_TYPE:
       g_value_set_boolean(value, self->A_opt);
+      break;
+    
+    case PROP_MODEL_KEY:
+      g_value_set_ulong(value, self->modelKey);
+      break;
+    
+    case PROP_THETA_KEY:
+      g_value_set_ulong(value, self->thetaKey);
       break;
     
     default:
