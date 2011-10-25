@@ -794,8 +794,10 @@ void oscats_model_set_param_by_name(OscatsModel *model, const gchar *name,
                                     gdouble value)
 {
   GQuark q = g_quark_try_string(name);
-  g_return_if_fail(q != 0);
-  oscats_model_set_param(model, q, value);
+  if (q == 0)
+    g_critical("Unknown parameter %s", name);
+  else
+    oscats_model_set_param(model, q, value);
 }
 
 /**
