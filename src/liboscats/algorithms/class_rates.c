@@ -65,12 +65,12 @@ static void oscats_alg_class_rates_class_init (OscatsAlgClassRatesClass *klass)
 /**
  * OscatsAlgClassRates:simKey:
  *
- * Which latent point to consider the "correct" or "true" value.  Use 0 to
- * indicate the examinee's simulation default.
+ * Which latent point to consider the "correct" or "true" value.  A %NULL
+ * value or empty string indicate the examinee's simulation default.
  */
-  pspec = g_param_spec_ulong("simKey", "Reference Key", 
+  pspec = g_param_spec_string("simKey", "Reference Key", 
                                "Key for 'true' latent variable",
-                               0, G_MAXULONG, 0,
+                               NULL,
                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
                                G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                                G_PARAM_STATIC_BLURB);
@@ -79,12 +79,12 @@ static void oscats_alg_class_rates_class_init (OscatsAlgClassRatesClass *klass)
 /**
  * OscatsAlgClassRates:estKey:
  *
- * Which latent point holds the estimated classification.  Use 0 to indicate
- * the examinee's estimation default.
+ * Which latent point holds the estimated classification.  A %NULL value or
+ * empty string indicates the examinee's estimation default.
  */
-  pspec = g_param_spec_ulong("estKey", "Estimation Key", 
+  pspec = g_param_spec_string("estKey", "Estimation Key", 
                                "Key for estimated latent variable",
-                               0, G_MAXULONG, 0,
+                               NULL,
                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
                                G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                                G_PARAM_STATIC_BLURB);
@@ -126,11 +126,19 @@ static void oscats_alg_class_rates_set_property(GObject *object,
       break;
     
     case PROP_SIM_KEY:			// construction only
-      self->simKey = g_value_get_ulong(value);
+    {
+      const gchar *key = g_value_get_string(value);
+      if (key == NULL || key[0] == '\0') self->simKey = 0;
+      else self->simKey = g_quark_from_string(key);
+    }
       break;
     
     case PROP_EST_KEY:			// construction only
-      self->estKey = g_value_get_ulong(value);
+    {
+      const gchar *key = g_value_get_string(value);
+      if (key == NULL || key[0] == '\0') self->estKey = 0;
+      else self->estKey = g_quark_from_string(key);
+    }
       break;
     
     default:
@@ -151,11 +159,13 @@ static void oscats_alg_class_rates_get_property(GObject *object,
       break;
     
     case PROP_SIM_KEY:
-      g_value_set_ulong(value, self->simKey);
+      g_value_set_string(value,
+                         self->simKey ? g_quark_to_string(self->simKey) : "");
       break;
     
     case PROP_EST_KEY:
-      g_value_set_ulong(value, self->estKey);
+      g_value_set_string(value,
+                         self->estKey ? g_quark_to_string(self->estKey) : "");
       break;
     
     default:

@@ -246,12 +246,12 @@ static void oscats_alg_max_kl_class_init (OscatsAlgMaxKlClass *klass)
 /**
  * OscatsAlgMaxKl:modelKey:
  *
- * The key indicating which model to use for selection.  A value of 0
- * indicates the item's default model.
+ * The key indicating which model to use for selection.  A %NULL value or
+ * empty string indicates the item's default model.
  */
-  pspec = g_param_spec_ulong("modelKey", "model key", 
+  pspec = g_param_spec_string("modelKey", "model key", 
                             "Which model to use for selection",
-                            0, G_MAXULONG, 0,
+                            NULL,
                             G_PARAM_READWRITE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
@@ -260,12 +260,12 @@ static void oscats_alg_max_kl_class_init (OscatsAlgMaxKlClass *klass)
 /**
  * OscatsAlgMaxKl:thetaKey:
  *
- * The key indicating which latent variable to use for selection.  A value
- * of 0 indicates the examinee's default estimation theta.
+ * The key indicating which latent variable to use for selection.  A %NULL
+ * value or empty string indicates the examinee's default estimation theta.
  */
-  pspec = g_param_spec_ulong("thetaKey", "ability key", 
+  pspec = g_param_spec_string("thetaKey", "ability key", 
                             "Which latent variable to use for selection",
-                            0, G_MAXULONG, 0,
+                            NULL,
                             G_PARAM_READWRITE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |
                             G_PARAM_STATIC_BLURB);
@@ -374,11 +374,19 @@ static void oscats_alg_max_kl_set_property(GObject *object,
       break;
     
     case PROP_MODEL_KEY:
-      self->modelKey = g_value_get_ulong(value);
+    {
+      const gchar *key = g_value_get_string(value);
+      if (key == NULL || key[0] == '\0') self->modelKey = 0;
+      else self->modelKey = g_quark_from_string(key);
+    }
       break;
     
     case PROP_THETA_KEY:
-      self->thetaKey = g_value_get_ulong(value);
+    {
+      const gchar *key = g_value_get_string(value);
+      if (key == NULL || key[0] == '\0') self->thetaKey = 0;
+      else self->thetaKey = g_quark_from_string(key);
+    }
       break;
     
     default:
@@ -444,11 +452,13 @@ static void oscats_alg_max_kl_get_property(GObject *object,
       break;
     
     case PROP_MODEL_KEY:
-      g_value_set_ulong(value, self->modelKey);
+      g_value_set_string(value, self->modelKey ?
+                         g_quark_to_string(self->modelKey) : "");
       break;
     
     case PROP_THETA_KEY:
-      g_value_set_ulong(value, self->thetaKey);
+      g_value_set_string(value, self->thetaKey ?
+                         g_quark_to_string(self->thetaKey) : "");
       break;
     
     default:
