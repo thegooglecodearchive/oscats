@@ -32,6 +32,9 @@ oscats_covariates_list
 oscats_alg_stratify_stratify
 oscats_alg_astrat_register_model
 %%
+init oscats_administrand_set_model
+	g_object_ref(model);
+%%
 init oscats_examinee_set_sim_theta
 	g_object_ref(theta);
 %%
