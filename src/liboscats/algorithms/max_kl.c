@@ -263,7 +263,7 @@ static void oscats_alg_max_kl_class_init (OscatsAlgMaxKlClass *klass)
  * The key indicating which latent variable to use for selection.  A value
  * of 0 indicates the examinee's default estimation theta.
  */
-  pspec = g_param_spec_ulong("estKey", "estimation key", 
+  pspec = g_param_spec_ulong("thetaKey", "ability key", 
                             "Which latent variable to use for selection",
                             0, G_MAXULONG, 0,
                             G_PARAM_READWRITE |

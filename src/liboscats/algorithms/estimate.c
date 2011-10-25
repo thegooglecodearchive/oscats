@@ -186,8 +186,8 @@ static void oscats_alg_estimate_class_init (OscatsAlgEstimateClass *klass)
  * The key indicating which latent variable to use for estimation.  A value
  * of 0 indicates the examinee's default estimation theta.
  */
-  pspec = g_param_spec_ulong("estKey", "estimation key", 
-                            "Which latent variable to use for selection",
+  pspec = g_param_spec_ulong("thetaKey", "ability key", 
+                            "Which latent variable to use for estimation",
                             0, G_MAXULONG, 0,
                             G_PARAM_READWRITE |
                             G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK |

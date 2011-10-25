@@ -79,7 +79,7 @@ static void oscats_alg_simulate_class_init (OscatsAlgSimulateClass *klass)
  * The key indicating which latent variable to use for simulation.  A value
  * of 0 indicates the examinee's default simulation theta.
  */
-  pspec = g_param_spec_ulong("estKey", "estimation key", 
+  pspec = g_param_spec_ulong("thetaKey", "ability key", 
                             "Which latent variable to use for simulation",
                             0, G_MAXULONG, 0,
                             G_PARAM_READWRITE |
