@@ -437,12 +437,31 @@
   )
 )
 
+(define-method set_model_by_name
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_set_model_by_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "name")
+    '("OscatsModel*" "model")
+  )
+)
+
 (define-method get_model
   (of-object "OscatsAdministrand")
   (c-name "oscats_administrand_get_model")
   (return-type "OscatsModel*")
   (parameters
     '("GQuark" "name")
+  )
+)
+
+(define-method get_model_by_name
+  (of-object "OscatsAdministrand")
+  (c-name "oscats_administrand_get_model_by_name")
+  (return-type "OscatsModel*")
+  (parameters
+    '("const-gchar*" "name")
   )
 )
 
@@ -783,12 +802,31 @@
   )
 )
 
+(define-method set_theta_by_name
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_set_theta_by_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "name")
+    '("OscatsPoint*" "theta")
+  )
+)
+
 (define-method get_theta
   (of-object "OscatsExaminee")
   (c-name "oscats_examinee_get_theta")
   (return-type "OscatsPoint*")
   (parameters
     '("GQuark" "name")
+  )
+)
+
+(define-method get_theta_by_name
+  (of-object "OscatsExaminee")
+  (c-name "oscats_examinee_get_theta_by_name")
+  (return-type "OscatsPoint*")
+  (parameters
+    '("const-gchar*" "name")
   )
 )
 

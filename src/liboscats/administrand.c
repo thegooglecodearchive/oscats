@@ -537,6 +537,19 @@ void oscats_administrand_set_model (OscatsAdministrand *item, GQuark name, Oscat
 }
 
 /**
+ * oscats_administrand_set_model_by_name:
+ * @item: an #OscatsAdministrand
+ * @name: the name of the model
+ * @model: (transfer full): the #OscatsModel to set
+ *
+ * Convenience wrapper for oscats_administrand_set_model().
+ */
+void oscats_administrand_set_model_by_name (OscatsAdministrand *item, const gchar *name, OscatsModel *model)
+{
+  oscats_administrand_set_model(item, g_quark_from_string(name), model);
+}
+
+/**
  * oscats_administrand_get_model:
  * @item: an #OscatsAdministrand
  * @name: the name of the model (as a #GQuark)
@@ -552,3 +565,20 @@ OscatsModel * oscats_administrand_get_model (const OscatsAdministrand *item, GQu
   g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), NULL);
   return OSCATS_ADMINISTRAND_GET_CLASS(item)->get_model(item, name);
 }
+
+/**
+ * oscats_administrand_get_model_by_name:
+ * @item: an #OscatsAdministrand
+ * @name: the name of the model
+ *
+ * Convenience wrapper for oscats_administrand_get_model().
+ *
+ * Returns: (transfer none): the model @name for @item, or %NULL if @item
+ * does not have a model @name
+ */
+OscatsModel * oscats_administrand_get_model_by_name (const OscatsAdministrand *item, const gchar *name)
+{
+  g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(item), NULL);
+  return OSCATS_ADMINISTRAND_GET_CLASS(item)->get_model(item, g_quark_from_string(name));
+}
+

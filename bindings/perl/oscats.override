@@ -35,6 +35,9 @@ oscats_alg_astrat_register_model
 init oscats_administrand_set_model
 	g_object_ref(model);
 %%
+init oscats_administrand_set_model_by_name
+	g_object_ref(model);
+%%
 init oscats_examinee_set_sim_theta
 	g_object_ref(theta);
 %%
@@ -42,6 +45,9 @@ init oscats_examinee_set_est_theta
 	g_object_ref(theta);
 %%
 init oscats_examinee_set_theta
+	g_object_ref(theta);
+%%
+init oscats_examinee_set_theta_by_name
 	g_object_ref(theta);
 %%
 init oscats_item_new

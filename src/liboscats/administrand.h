@@ -99,7 +99,9 @@ gboolean oscats_administrand_check_space (const OscatsAdministrand *item, GQuark
 void oscats_administrand_set_default_model (OscatsAdministrand *item, GQuark name);
 GQuark oscats_administrand_get_default_model (const OscatsAdministrand *item);
 void oscats_administrand_set_model (OscatsAdministrand *item, GQuark name, OscatsModel *model);
+void oscats_administrand_set_model_by_name (OscatsAdministrand *item, const gchar *name, OscatsModel *model);
 OscatsModel * oscats_administrand_get_model (const OscatsAdministrand *item, GQuark name);
+OscatsModel * oscats_administrand_get_model_by_name (const OscatsAdministrand *item, const gchar *name);
 
 G_END_DECLS
 #endif

@@ -314,6 +314,19 @@ void oscats_examinee_set_theta(OscatsExaminee *e, GQuark name, OscatsPoint *thet
 }
 
 /**
+ * oscats_set_theta_by_name:
+ * @e: an #OscatsExaminee
+ * @name: the name of the point to set
+ * @theta: (transfer full): the #OscatsPoint to set
+ *
+ * Convenience wrapper for oscats_set_theta().
+ */
+void oscats_examinee_set_theta_by_name(OscatsExaminee *e, const gchar *name, OscatsPoint *theta)
+{
+  oscats_examinee_set_theta(e, g_quark_from_string(name), theta);
+}
+
+/**
  * oscats_examinee_get_theta:
  * @e: an #OscatsExaminee
  * @name: the key for the #OscatsPoint to fetch
@@ -326,6 +339,21 @@ OscatsPoint * oscats_examinee_get_theta(OscatsExaminee *e, GQuark name)
 {
   g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
   return GET_THETA(e, name);
+}
+
+/**
+ * oscats_examinee_get_theta_by_name:
+ * @e: an #OscatsExaminee
+ * @name: the name of the #OscatsPoint to fetch
+ *
+ * Convenience wrapper for oscats_examinee_get_theta().
+ *
+ * Returns: (transfer none): the #OscatsPoint for @e named @name
+ */
+OscatsPoint * oscats_examinee_get_theta_by_name(OscatsExaminee *e, const gchar *name)
+{
+  g_return_val_if_fail(OSCATS_IS_EXAMINEE(e), NULL);
+  return GET_THETA(e, g_quark_from_string(name));
 }
 
 /**

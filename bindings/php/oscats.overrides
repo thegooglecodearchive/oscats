@@ -150,6 +150,26 @@ static PHP_METHOD(OscatsAdministrand, set_model)
 }
 
 %%
+override oscats_administrand_set_model_by_name
+
+static PHP_METHOD(OscatsAdministrand, set_model_by_name)
+{
+	char *name;
+	zend_bool free_name = FALSE;
+	zval *model;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "uO", &name, &free_name, &model, oscatsmodel_ce))
+		return;
+
+    g_object_ref(PHPG_GOBJECT(model));
+    oscats_administrand_set_model_by_name(OSCATS_ADMINISTRAND(PHPG_GOBJECT(this_ptr)), name, OSCATS_MODEL(PHPG_GOBJECT(model)));
+    if (free_name) g_free(name);
+
+}
+
+%%
 override oscats_examinee_set_sim_theta
 
 static PHP_METHOD(OscatsExaminee, set_sim_theta)
@@ -198,6 +218,26 @@ static PHP_METHOD(OscatsExaminee, set_theta)
 
     g_object_ref(PHPG_GOBJECT(theta));
     oscats_examinee_set_theta(OSCATS_EXAMINEE(PHPG_GOBJECT(this_ptr)), (GQuark)name, OSCATS_POINT(PHPG_GOBJECT(theta)));
+
+}
+
+%%
+override oscats_examinee_set_theta_by_name
+
+static PHP_METHOD(OscatsExaminee, set_theta_by_name)
+{
+	char *name;
+	zend_bool free_name = FALSE;
+	zval *theta;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "uO", &name, &free_name, &theta, oscatspoint_ce))
+		return;
+
+    g_object_ref(PHPG_GOBJECT(theta));
+    oscats_examinee_set_theta_by_name(OSCATS_EXAMINEE(PHPG_GOBJECT(this_ptr)), name, OSCATS_POINT(PHPG_GOBJECT(theta)));
+    if (free_name) g_free(name);
 
 }
 
