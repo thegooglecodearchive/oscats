@@ -502,7 +502,7 @@ static gdouble sum(OscatsAlgMaxKl *alg_data)
   gdouble val=0, *Dprior=NULL;
   guint numNat = alg_data->space->num_nat;
   guint numBin = alg_data->space->num_bin;
-  guint stride, I, J, n=0;
+  guint I, J, n=0, stride=1;
 
   if (numBin == 0 && numNat == 0)	// only continuous dimensions
     return summand(alg_data);
@@ -530,17 +530,17 @@ static gdouble sum(OscatsAlgMaxKl *alg_data)
     {
       if (alg_data->theta->nat) alg_data->theta->nat[I] = i;
       if (numBin == 0)
-        val += summand(alg_data) * (Dprior ? Dprior[n++] : 1);
+        val += summand(alg_data) * (Dprior ? Dprior[stride*(n++)] : 1);
       else
         for (J=0; J < numBin; J++)	// binary dimension
         {
           // binary dim == 0
           g_bit_array_clear_bit(alg_data->theta->bin, J);
-          val += summand(alg_data) * (Dprior ? Dprior[n++] : 1);
+          val += summand(alg_data) * (Dprior ? Dprior[stride*(n++)] : 1);
           
           // binary dim == 1
           g_bit_array_set_bit(alg_data->theta->bin, J);
-          val += summand(alg_data) * (Dprior ? Dprior[n++] : 1);
+          val += summand(alg_data) * (Dprior ? Dprior[stride*(n++)] : 1);
         }
     }
       
