@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = codegen.pl oscats.pm oscats.override
+EXTRA_DIST = codegen.pl oscats.pm oscats.override oscats-typedefs.typemap
 
 CLEAN_FILES = oscats.defs oscats.maps lib
 
