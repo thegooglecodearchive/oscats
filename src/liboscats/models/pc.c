@@ -95,10 +95,9 @@ static void oscats_model_pc_init (OscatsModelPc *self)
 static void model_constructed(GObject *object)
 {
   GString *str;
-  guint i, k, Ncat, Ndims;
+  guint i, k, Ncat;
   OscatsModel *model = OSCATS_MODEL(object);
   G_OBJECT_CLASS(oscats_model_pc_parent_class)->constructed(object);
-  Ndims = model->Ndims;
   Ncat = OSCATS_MODEL_PC(model)->Ncat;
   
   // Set up parameters
@@ -239,7 +238,7 @@ static void logLik_dtheta(const OscatsModel *model, OscatsResponse resp,
   if (Inf)
     hes_val *= -P(model, resp, theta, covariates);
 
-  switch (model->Ndims)
+  switch (Ndims)
   {
     case 2:
       J = model->shortDims[1];
