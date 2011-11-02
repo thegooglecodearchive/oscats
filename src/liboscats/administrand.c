@@ -282,7 +282,8 @@ void oscats_administrand_register_characteristic(GQuark characteristic)
 {
   int c = (static_initialized ? g_hash_table_size(quark_to_char) : 1);
   initialize_static();
-  g_hash_table_insert(quark_to_char, (gpointer)characteristic, (gpointer)c);
+  g_hash_table_insert(quark_to_char, GUINT_TO_POINTER(characteristic),
+                      GUINT_TO_POINTER(c));
   g_array_append_val(char_to_quark, characteristic);
   g_tree_foreach(administrands, add_characteristic, NULL);
 }
@@ -325,7 +326,8 @@ void oscats_administrand_set_characteristic(OscatsAdministrand *administrand, GQ
 {
   guint c;
   g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
-  c = (guint)g_hash_table_lookup(quark_to_char, (gpointer)characteristic);
+  c = GPOINTER_TO_UINT(g_hash_table_lookup(quark_to_char,
+                                           GUINT_TO_POINTER(characteristic)));
   if (c == 0)
   {
     c = g_hash_table_size(quark_to_char);
@@ -345,7 +347,8 @@ void oscats_administrand_clear_characteristic(OscatsAdministrand *administrand, 
 {
   guint c;
   g_return_if_fail(OSCATS_IS_ADMINISTRAND(administrand));
-  c = (guint)g_hash_table_lookup(quark_to_char, (gpointer)characteristic);
+  c = GPOINTER_TO_UINT(g_hash_table_lookup(quark_to_char,
+                                           GUINT_TO_POINTER(characteristic)));
   if (c) g_bit_array_clear_bit(administrand->characteristics, c);
 }
 
@@ -372,7 +375,8 @@ gboolean oscats_administrand_has_characteristic(OscatsAdministrand *administrand
 {
   g_return_val_if_fail(OSCATS_IS_ADMINISTRAND(administrand), FALSE);
   return g_bit_array_get_bit(administrand->characteristics,
-    (guint)g_hash_table_lookup(quark_to_char, (gpointer)characteristic));
+    GPOINTER_TO_UINT(g_hash_table_lookup(quark_to_char,
+                                         GUINT_TO_POINTER(characteristic))));
 }
 
 /**

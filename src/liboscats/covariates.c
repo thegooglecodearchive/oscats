@@ -132,13 +132,13 @@ void oscats_covariates_set(OscatsCovariates *covariates,
 {
   gdouble *p;
   g_return_if_fail(OSCATS_IS_COVARIATES(covariates) && name != 0);
-  p = g_tree_lookup(covariates->names, (gpointer)name);
+  p = g_tree_lookup(covariates->names, GUINT_TO_POINTER(name));
   if (p)
     *p = value;
   else
   {		// Add new covariate
     g_array_append_val(covariates->data, value);
-    g_tree_insert(covariates->names, (gpointer)name,
+    g_tree_insert(covariates->names, GUINT_TO_POINTER(name),
                   &g_array_index(covariates->data, gdouble,
                                  covariates->data->len));
   }
@@ -170,7 +170,7 @@ gdouble oscats_covariates_get(const OscatsCovariates *covariates, GQuark name)
 {
   gdouble *p;
   g_return_val_if_fail(OSCATS_IS_COVARIATES(covariates) && name != 0, 0);
-  p = g_tree_lookup(covariates->names, (gpointer)name);
+  p = g_tree_lookup(covariates->names, GUINT_TO_POINTER(name));
   return (p ? *p : 0);
 }
 
