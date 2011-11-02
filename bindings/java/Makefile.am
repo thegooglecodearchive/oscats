@@ -67,16 +67,16 @@ libglibjni_la_SOURCES = oscats/bindings/Environment.c	\
 	jni/bindings_java_threads.c \
 	jni/bindings_java_type.c \
 	jni/bindings_java_util.c
-libglibjni_la_CFLAGS = @GLIB_CFLAGS@ -I.libs/include @JAVA_CPPFLAGS0@ \
+libglibjni_la_CFLAGS = $(GLIB_CFLAGS) -I.libs/include $(JAVA_CPPFLAGS0) \
 			-I$(srcdir)/jni -I$(top_srcdir)/src/liboscats
 #glibjni_la_LDFLAGS = -module
-libglibjni_la_LIBADD = @GLIB_LIBS@ -lgthread-2.0 @JAVA_LIBS0@
+libglibjni_la_LIBADD = $(GLIB_LIBS) -lgthread-2.0 $(JAVA_LIBS0)
 
 liboscatsjni_la_DEPENDENCIES = oscats.jar libglibjni.la
 liboscatsjni_la_SOURCES = oscats/OscatsAdministrandOverride.c \
 			oscats/OscatsExamineeOverride.c 
 nodist_liboscatsjni_la_SOURCES = $(OSCATS_GENERATED_SOURCES)
-liboscatsjni_la_CFLAGS = @GLIB_CFLAGS@ -I.libs/include @JAVA_CPPFLAGS0@ \
+liboscatsjni_la_CFLAGS = $(GLIB_CFLAGS) -I.libs/include $(JAVA_CPPFLAGS0) \
 			-I$(srcdir)/jni -I$(top_srcdir)/src/liboscats
 #oscatsjni_la_LDFLAGS = -module
 liboscatsjni_la_LIBADD = $(top_builddir)/src/liboscats/liboscats.la \

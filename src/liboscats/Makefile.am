@@ -33,8 +33,8 @@ liboscats_la_SOURCES = bitarray.c gsl.c random.c space.c point.c        \
 			algorithms/class_rates.c			\
 			algorithms/estimate.c				\
 			algorithms/fixed_length.c
-liboscats_la_CFLAGS = @GLIB_CFLAGS@ @GSL_CFLAGS@ -Wall -Werror
-liboscats_la_LIBADD = @GLIB_LIBS@ @GSL_LIBS@
+liboscats_la_CFLAGS = $(GLIB_CFLAGS) $(GSL_CFLAGS) -Wall -Werror
+liboscats_la_LIBADD = $(GLIB_LIBS) $(GSL_LIBS)
 liboscatsincludedir = $(includedir)/liboscats
 liboscatsinclude_HEADERS = oscats.h bitarray.h gsl.h random.h space.h point.h  \
 			   model.h administrand.h item.h		\

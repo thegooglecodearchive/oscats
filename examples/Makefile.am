@@ -5,8 +5,8 @@ EXTRA_DIST = README		\
 		ex02.py ex02.pl ex02.php ex02.java ex02_java.m
 
 bin_PROGRAMS = ex01 ex02
-ex01_CFLAGS = -I$(top_srcdir)/src/liboscats @GLIB_CFLAGS@ @GSL_CFLAGS@
+ex01_CFLAGS = -I$(top_srcdir)/src/liboscats $(GLIB_CFLAGS) $(GSL_CFLAGS)
 ex01_LDADD = $(top_builddir)/src/liboscats/liboscats.la
-ex02_CFLAGS = -I$(top_srcdir)/src/liboscats @GLIB_CFLAGS@ @GSL_CFLAGS@
+ex02_CFLAGS = -I$(top_srcdir)/src/liboscats $(GLIB_CFLAGS) $(GSL_CFLAGS)
 ex02_LDADD = $(top_builddir)/src/liboscats/liboscats.la
 
