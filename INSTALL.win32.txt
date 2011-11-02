@@ -17,7 +17,7 @@ OSCATS depends on the following packages:
 - GNU Scientific Library (http://www.gnu.org/software/gsl)
 - Glib 2, including GObject (http://www.gtk.org)
 - pkg-config, optional (http://pkg-config.freedesktop.org/wiki/)
-- PyGObject module, for Python bindings (http://www.pygtk.org)
+- PyGObject module, for Python bindings (http://live.gnome.org/PyGObject)
 - Perl Glib module, for Perl bindings (http://gtk2-perl.sourceforge.net)
 - PHP-GTK extension, for PHP bindings (http://gtk.php.net)
 
