@@ -38,7 +38,7 @@ $build = Module::Build->new
     build_requires => { "ExtUtils::CBuilder" => 0, },
     requires => { "perl" => 5.008,
                   "GLib" => 0, },
-    extra_compiler_flags => " @GLIB_CFLAGS@ @GSL_CFLAGS@ @CPPFLAGS@ ",
+    extra_compiler_flags => " @GLIB_CFLAGS@ @GSL_CFLAGS@ @CPPFLAGS@ @CFLAGS@ ",
     extra_linker_flags => " -L$GlibLoc -lGlib -L$ENV{top_builddir}/src/liboscats/.libs -loscats " .
                           " @LDFLAGS@ @GLIB_LIBS@ @GSL_LIBS@ ",
     include_dirs => [ "$ENV{top_srcdir}/src/liboscats", $glib_loc, ],
