@@ -428,10 +428,10 @@ Java_oscats_glib_GObject_g_1quark_1from_1string
 
 /**
  * Implements
- *   org.gnome.glib.GObject.g_quark_as_string(long quark)
+ *   org.gnome.glib.GObject.g_quark_to_string(long quark)
  */
 JNIEXPORT jstring JNICALL
-Java_oscats_glib_GObject_g_1quark_1as_1string
+Java_oscats_glib_GObject_g_1quark_1to_1string
 (
 	JNIEnv* env,
 	jclass cls,
@@ -441,7 +441,7 @@ Java_oscats_glib_GObject_g_1quark_1as_1string
 	const gchar* str; 
 
 	// call function
-	str = g_quark_as_string((GQuark)_quark);
+	str = g_quark_to_string((GQuark)_quark);
 
 	// and return	
 	return bindings_java_newString(env, str);

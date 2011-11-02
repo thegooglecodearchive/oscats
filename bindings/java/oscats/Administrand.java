@@ -80,7 +80,7 @@ public class Administrand extends Object
     }
 
     public String getDefaultModel() {
-      return GObject.quarkAsString(OscatsAdministrand.getDefaultModel(this));
+      return GObject.quarkToString(OscatsAdministrand.getDefaultModel(this));
     }
 
     public void setModel(String name, Model model) {

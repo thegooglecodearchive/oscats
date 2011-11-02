@@ -48,7 +48,7 @@ public final class Examinee extends Object
     }
     
     public String getSimKey() {
-      return GObject.quarkAsString(OscatsExaminee.getSimKey(this));
+      return GObject.quarkToString(OscatsExaminee.getSimKey(this));
     }
     
     public void setEstKey(String name) {
@@ -56,7 +56,7 @@ public final class Examinee extends Object
     }
     
     public String getEstKey() {
-      return GObject.quarkAsString(OscatsExaminee.getEstKey(this));
+      return GObject.quarkToString(OscatsExaminee.getEstKey(this));
     }
     
     public void setSimTheta(Point theta) {

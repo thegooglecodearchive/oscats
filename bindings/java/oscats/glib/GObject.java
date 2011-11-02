@@ -150,9 +150,9 @@ public final class GObject extends Plumbing
     
     private static native final long g_quark_from_string(String str);
     
-    public static final String quarkAsString(long q) {
-        return g_quark_as_string(q);
+    public static final String quarkToString(long q) {
+        return g_quark_to_string(q);
     }
     
-    private static native final String g_quark_as_string(long q);
+    private static native final String g_quark_to_string(long q);
 }
