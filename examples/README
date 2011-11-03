@@ -27,3 +27,20 @@ Note: On Windows, the colons in the the classpath should be semi-colons.
   Model: 1D 1PL
   Compare quality of estimated ability and item exposure under four
   different item selection criteria.
+
+- Example 2: MIRT with Covariate
+  Model: 2D 2PL with covariate
+  Compare A-optimality, D-optimality, and KL item selection for a
+  compensatory 2D 2PL model with a covariate.
+
+- Example 3: Dual purpose CAT
+  Models: 1D 3PL and DINA
+  Compare quality of estimated continuous ability and latent classification
+  under four different item selection criteria.  This exammple demonstrates
+  using multiple models.
+
+- Example 4: Custom Algorithm and Custom Model
+  Model: 1D 4PL
+  Compare average bias in estimated ability when examinee gets first two
+  items either both incorrect under three item selection criteria.  This
+  example demonstrates creating a new algorithm and model.
