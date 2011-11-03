@@ -22,7 +22,7 @@
  * @short_description: Examinee Class
  *
  * An #OscatsExaminee represents a single examinee taking a single test.
- * That is, a given #OscatsEaminee may be administered only one test at a
+ * That is, a given #OscatsExaminee may be administered only one test at a
  * time.
  *
  * The examinee may be associated with several points in latent space. 
@@ -389,7 +389,7 @@ OscatsPoint * oscats_examinee_init_est_theta(OscatsExaminee *e, OscatsSpace *spa
 }
 
 /**
- * oscats_examinee_init_est_theta:
+ * oscats_examinee_init_theta:
  * @e: an #OscatsExaminee
  * @name: the #GQuark name for the new #OscatsPoint
  * @space: (transfer none): the latent space from which to generate the #OscatsPoint
@@ -497,7 +497,7 @@ OscatsResponse oscats_examinee_get_resp(OscatsExaminee *e, guint i)
  * oscats_examinee_logLik:
  * @e: an #OscatsExaminee
  * @theta: an #OscatsPoint
- * @model: the model name to use
+ * @modelKey: the model name to use
  *
  * Computes the log-likelihood of the responses from @e, given latent ability
  * @theta. The default model is used if @model == 0.

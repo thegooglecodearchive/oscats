@@ -56,7 +56,7 @@ static void oscats_point_class_init (OscatsPointClass *klass)
  * OscatsPoint:space:
  *
  * The #OscatsSpace in which this #OscatsPoint resides.
- * The #OscatsSpace:space <emphasis>must</emphasis> be specified at
+ * The #OscatsPoint:space <emphasis>must</emphasis> be specified at
  * construction, otherwise the #OscatsPoint will not be usable.
  */
   pspec = g_param_spec_object("space", "space", 

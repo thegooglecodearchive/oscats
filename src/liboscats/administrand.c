@@ -217,7 +217,7 @@ static gboolean add_characteristic(gpointer key, gpointer val, gpointer data)
  *
  * When an administrand is added to a test (directly or indirectly), changes
  * to its list of models (including which model is set as the default) are
- * no longer permitted.  When an #OscatsItembank is added to an #OscatsTest,
+ * no longer permitted.  When an #OscatsItemBank is added to an #OscatsTest,
  * the test calls oscats_administrand_freeze(), and all implementations of
  * #OscatsAdministrand <emphasis>must</emphasis> provide
  * #OscatsAdministrandClass.freeze to call oscats_administrand_freeze()
@@ -503,6 +503,8 @@ void oscats_administrand_set_default_model (OscatsAdministrand *item, GQuark nam
  *
  * This function returns the key for the default model.  To actually
  * retrieve the #OscatsModel itself, use oscats_administrand_get_model().
+ *
+ * Returns: the model name for the default model (as a #GQuark)
  */
 GQuark oscats_administrand_get_default_model (const OscatsAdministrand *item)
 {

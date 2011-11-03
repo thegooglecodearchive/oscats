@@ -56,7 +56,7 @@ typedef struct _OscatsModelHetlgrClass OscatsModelHetlgrClass;
  *    <author><personname><firstname>F.</firstname> <surname>Samejima</surname></personname></author>
  *    (<pubdate>1976</pubdate>).
  *    "<title>The graded response model of latent trait theory and tailored testing</title>."
- *    <biblioset><title>Proceedings of the First Conference on Computerized Adaptive Testing</title>,
+ *    <biblioset><title>Proceedings of the First Conference on Computerized Adaptive Testing</title></biblioset>,
  *    <artpagenums>5-15</artpagenums>.
  *  </bibliomixed>
  *  <bibliomixed>

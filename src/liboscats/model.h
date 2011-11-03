@@ -45,7 +45,9 @@ typedef struct _OscatsModel OscatsModel;
 typedef struct _OscatsModelClass OscatsModelClass;
 
 struct _OscatsModel {
+  /*< private >*/
   GObject parent_instance;
+  /*< public >*/
   OscatsSpace *space;
   guint Ndims;			// dimensions of test and this model
   guint Np, Ncov;		// number of parameters, covariates
@@ -78,7 +80,9 @@ struct _OscatsModel {
  * arguments (including size of @grad and @Hes), as necessary.
  */
 struct _OscatsModelClass {
+  /*< private >*/
   GObjectClass parent_class;
+  /*< public >*/
   OscatsResponse (*get_max) (const OscatsModel *model);
   gdouble (*P) (const OscatsModel *model, OscatsResponse resp, const OscatsPoint *theta, const OscatsCovariates *covariates);
   gdouble (*distance) (const OscatsModel *model, const OscatsPoint *theta, const OscatsCovariates *covariates);

@@ -413,7 +413,7 @@ void oscats_space_set_dim_name(OscatsSpace *space, OscatsDim dim, const gchar *n
  * @space: an #OscatsSpace
  * @name: the #GQuark for a potential dimension name
  *
- * Returns %TRUE if @space has a dimension named @name
+ * Returns: %TRUE if @space has a dimension named @name
  */
 gboolean oscats_space_has_dim(const OscatsSpace *space, GQuark name)
 {
@@ -426,7 +426,7 @@ gboolean oscats_space_has_dim(const OscatsSpace *space, GQuark name)
  * @space: an #OscatsSpace
  * @name: a potential dimension name
  *
- * Returns %TRUE if @space has a dimension named @name
+ * Returns: %TRUE if @space has a dimension named @name
  */
 gboolean oscats_space_has_dim_name(const OscatsSpace *space, const gchar *name)
 {
@@ -443,7 +443,7 @@ gboolean oscats_space_has_dim_name(const OscatsSpace *space, const gchar *name)
  *
  * The @space must have a dimension named @name.
  *
- * Returns the #OscatsDim for the dimension named @name
+ * Returns: the #OscatsDim for the dimension named @name
  */
 OscatsDim oscats_space_get_dim(const OscatsSpace *space, GQuark name)
 {
@@ -459,7 +459,7 @@ OscatsDim oscats_space_get_dim(const OscatsSpace *space, GQuark name)
  *
  * The @space must have a dimension named @name.
  *
- * Returns the #OscatsDim for the dimension named @name
+ * Returns: the #OscatsDim for the dimension named @name
  */
 OscatsDim oscats_space_get_dim_by_name(const OscatsSpace *space, const gchar *name)
 {

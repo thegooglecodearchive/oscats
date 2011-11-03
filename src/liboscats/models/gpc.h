@@ -71,7 +71,6 @@ typedef struct _OscatsModelGpcClass OscatsModelGpcClass;
  *    Dissertation, University of Illinois.
  *  </bibliomixed>
  * </bibliolist>
- * </bibliolist>
  */
 struct _OscatsModelGpc {
   OscatsModel parent_instance;

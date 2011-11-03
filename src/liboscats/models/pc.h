@@ -78,7 +78,6 @@ typedef struct _OscatsModelPcClass OscatsModelPcClass;
  *    Dissertation, University of Illinois.
  *  </bibliomixed>
  * </bibliolist>
- * </bibliolist>
  */
 struct _OscatsModelPc {
   OscatsModel parent_instance;

@@ -151,49 +151,57 @@ Java has automatic garbage collection, it isn't necessary to free objects
 explicitly.</para>
 
 <programlisting>
+public final class Administrand extends Object
+    public Administrand()
+    public Administrand(String id)
+    public void setModel(String name, Model model)
+    public void setModel(Model model)  // set default model
+    public Model getModel(String name)
+    public Model getModel()  // get default model
+public final class AlgAstrat extends Algorithm
+    public static AlgAstrat createAlgAstrat(int Nstrata, int NperStratum, int num)
+    public static AlgAstrat createAlgAstrat(int Nstrata, int NperStratum)
+    public static AlgAstrat createAlgAstratWithBlocking(int Nstrata, int Nblocks, int NperStratum, int num)
+    public static AlgAstrat createAlgAstratWithBlocking(int Nstrata, int Nblocks, int NperStratum)
+    public static AlgAstrat createAlgAstrat(int[] NperStratum, int num)
+    public static AlgAstrat createAlgAstrat(int[] NperStratum)
+    public static AlgAstrat createAlgAstratWithBlocking(int[] NperStratum, int Nblocks, int num)
+    public static AlgAstrat createAlgAstratWithBlocking(int[] NperStratum, int Nblocks)
 public final class AlgClosestDiff extends Algorithm
     public static AlgClosestDiff createAlgClosestDiff(int num)
-public final class AlgEstimateTheta extends Algorithm
-    public AlgEstimateTheta(GslVector mu, GslMatrix sigma)
+public final class AlgEstimate extends Algorithm
+    public AlgEstimate()
+    public AlgEstimate(int Nposterior)
+    public AlgEstimate(GslVector mu, GslMatrix sigma)
+    public AlgEstimate(int Nposterior, GslVector mu, GslMatrix sigma)
 public final class AlgFixedLength extends Algorithm
     public static AlgFixedLength createAlgFixedLength(int len)
+public final class AlgMaxFisher extends Algorithm
+    public AlgMaxFisher()
+    public static AlgMaxFisher createAlgMaxFisher(int num)
+    public static AlgMaxFisher createAlgMaxFisher(boolean Aopt, int num)
+public final class AlgMaxKl extends Algorithm
+    public AlgMaxKl()
+    public static AlgMaxKl createAlgMaxKl(int num)
 public final class BitArray extends Object
     public static final BitArray createBitArray(int bitLength)
-public abstract class ContModel extends Object
-    public ContModel()
-    public ContModel(BitArray dims)
-    public boolean hasParam(int param) // param is a Quark
-    public double getParam(int param) // param is a Quark
-    public double getParamByIndex(int i)
-    public double getParam(String name)
-    public double getParamByName(String name)
-    public void setParam(int param, double x) // param is a Quark
-    public void setParamByIndex(int i, double x) // param is a Quark
-    public void setParam(String name, double x)
-    public void setParamByName(String name, double x)
-    public boolean hasCovariate(int name) // name is a Quark
-    public boolean hasCovariate(String name)
-    public boolean hasCovariateName(String name)
 public final class Covariates extends Object
     public void set(int name, double value)
     public void set(String name, double value)
     public double get(int name)
     public double get(String name)
-public abstract class DiscrModel extends Object
-    public DiscrModel()
-    public DiscrModel(Attributes attr)
-    public boolean hasParam(int param) // param is a Quark
-    public double getParam(int param) // param is a Quark
-    public double getParamByIndex(int i)
-    public double getParam(String name)
-    public double getParamByName(String name)
-    public void setParam(int param, double x) // param is a Quark
-    public void setParamByIndex(int i, double x)
-    public void setParam(String name, double x)
-    public void setParamByName(String name, double x)
 public final class Examinee extends Object
     public Examinee()
     public Examinee(String id)
+    public Examinee(Covariates covariates)
+    public Examinee(String id, Covariates covariates)
+    public void setSimKey(String name)
+    public String getSimKey()
+    public void setEstKey(String name)
+    public String getEstKey()
+    public void setTheta(String name, Point theta)
+    public Point getTheta(String name)
+    public void initTheta(String name, Space space)
 public final class GslMatrix extends Object
     public static GslMatrix createGslMatrix(int rows, int cols)
 public final class GslPermutation extends Object
@@ -203,16 +211,28 @@ public final class GslVector extends Object
 public final class Integrate extends Object
     public void setTol(double tol)
 public final class Item extends Object
-    public Item(String id, ContModel contmodel)
-    public Item(ContModel contmodel)
-    public Item(String id, DiscrModel discrmodel)
-    public Item(DiscrModel discrmodel)
-    public Item(String id, ContModel contmodel, DiscrModel discrmodel)
+    public Item(String id, Model model)
+    public Item(Model model)
 public final class ItemBank extends Object
     public ItemBank(String id, int sizeHint)
     public ItemBank(String id)
     public ItemBank(int sizeHint)
     public ItemBank()
+public abstract class Model extends Object
+    public boolean hasParam(int param) // param is a Quark
+    public double getParam(int param) // param is a Quark
+    public double getParam(String name)
+    public void setParam(int param, double x) // param is a Quark
+    public void setParam(String name, double x)
+    public boolean hasCovariate(int name) // name is a Quark
+    public boolean hasCovariate(String name)
+    // Constructors are defiend for Model subclasses, as appropriate, e.g.:
+    public Model(Space space)
+    public Model(Space space, int Ncat)
+    public Model(Space space, char[] dims)
+    public Model(Space space, char[] dims, int Ncat)
+    public Model(Space space, char[] dims, Covariates covariates)
+    public Model(Space space, char[] dims, int Ncat, Covariates covariates)
 public final class Random
     public static final int uniformInt()
     public static final int uniformIntRange(int min, int max)

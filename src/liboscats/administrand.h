@@ -61,7 +61,9 @@ struct _OscatsAdministrand {
  * implementation functions need not do so.
  */
 struct _OscatsAdministrandClass {
+  /*< private >*/
   GObjectClass parent_class;
+  /*< public >*/
   void (*freeze) (OscatsAdministrand *item);
   void (*unfreeze) (OscatsAdministrand *item);
   gboolean (*check_type) (const OscatsAdministrand *item, GType type);

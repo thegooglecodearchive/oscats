@@ -363,7 +363,7 @@ static gboolean foreach_func(gpointer key, gpointer value, gpointer closure)
  * @func: a function to call for each pattern
  * @user_data: user data to pass to the function
  *
- * If #OscatsAlgClassRates.by-pattern is %TRUE for @alg_data, calls @func on
+ * If #OscatsAlgClassRates:by-pattern is %TRUE for @alg_data, calls @func on
  * each pattern observed in #GBitArray serialized order.  The @func takes
  * four parameters: a pointer to the #GBitArray pattern, the number of times
  * the pattern was observed, the number of times the pattern was correctly

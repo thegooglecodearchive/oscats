@@ -144,8 +144,8 @@ static gint pair_compare(gconstpointer A, gconstpointer B)
  * @block: (allow-none): the criterion function by which to block
  * @b_data: (allow-none): user data to supply to @block
  *
- * Stratify the #OscatsAlgStratify:bank of @stratify using the criterion @f
- * within blocks specified by @block.  The bank can be restratified by
+ * Stratify the #OscatsAlgStratify:itembank of @stratify using the criterion
+ * @f within blocks specified by @block.  The bank can be restratified by
  * calling this function multiple times.
  */
 void oscats_alg_stratify_stratify(OscatsAlgStratify *stratify,

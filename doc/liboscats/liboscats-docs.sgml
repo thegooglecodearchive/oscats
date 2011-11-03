@@ -33,44 +33,44 @@
     </chapter>
     <chapter>
       <title>Core Objects</title>
+      <xi:include href="xml/space.xml"/>
+      <xi:include href="xml/point.xml"/>
       <xi:include href="xml/administrand.xml"/>
       <xi:include href="xml/item.xml"/>
       <xi:include href="xml/itembank.xml"/>
       <xi:include href="xml/test.xml"/>
       <xi:include href="xml/examinee.xml"/>
       <xi:include href="xml/covariates.xml"/>
-      <xi:include href="xml/attributes.xml"/>
     </chapter>
     <chapter>
-      <title>Continuous Models</title>
-      <xi:include href="xml/contmodel.xml"/>
+      <title>Models</title>
+      <xi:include href="xml/model.xml"/>
       <xi:include href="xml/l1p.xml"/>
       <xi:include href="xml/l2p.xml"/>
       <xi:include href="xml/l3p.xml"/>
       <xi:include href="xml/nominal.xml"/>
-    </chapter>
-    <chapter>
-      <title>Discrete Models</title>
-      <xi:include href="xml/discrmodel.xml"/>
+      <xi:include href="xml/pc.xml"/>
+      <xi:include href="xml/gpc.xml"/>
+      <xi:include href="xml/gr.xml"/>
+      <xi:include href="xml/hlgr.xml"/>
       <xi:include href="xml/dina.xml"/>
       <xi:include href="xml/nida.xml"/>
     </chapter>
     <chapter>
       <title>Algorithms</title>
       <xi:include href="xml/algorithm.xml"/>
+      <xi:include href="xml/astrat.xml"/>
       <xi:include href="xml/chooser.xml"/>
       <xi:include href="xml/class_rates.xml"/>
       <xi:include href="xml/closest_diff.xml"/>
-      <xi:include href="xml/estimate_theta.xml"/>
-      <xi:include href="xml/estimate_alpha.xml"/>
+      <xi:include href="xml/estimate.xml"/>
       <xi:include href="xml/exposure_counter.xml"/>
       <xi:include href="xml/fixed_length.xml"/>
       <xi:include href="xml/max_fisher.xml"/>
-      <xi:include href="xml/max_kl_cont.xml"/>
-      <xi:include href="xml/max_kl_discr.xml"/>
+      <xi:include href="xml/max_kl.xml"/>
       <xi:include href="xml/pick_rand.xml"/>
-      <xi:include href="xml/simulate_theta.xml"/>
-      <xi:include href="xml/simulate_alpha.xml"/>
+      <xi:include href="xml/simulate.xml"/>
+      <xi:include href="xml/stratify.xml"/>
     </chapter>
   </part>
 

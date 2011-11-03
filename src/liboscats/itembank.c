@@ -26,7 +26,7 @@
  * multi-stage testing or testlets, with appropriately coded algorithms.
  *
  * #OscatsItemBank does not implement oscats_administrand_get_default_model(),
- * oscats_administrand_set_model(), or oscast_administrand_get_model().  For
+ * oscats_administrand_set_model(), or oscats_administrand_get_model().  For
  * oscats_administrand_set_default_model(), #OscatsItemBank will set the
  * default model for all items.
  */
