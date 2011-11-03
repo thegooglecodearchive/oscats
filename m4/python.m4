@@ -16,7 +16,7 @@ if test "$py_prefix" != "$py_exec_prefix"; then
 fi
 if test "${IS_WINDOWS}" = "yes"; then
   PYTHON_INCLUDES=`echo $PYTHON_INCLUDES -I${py_prefix}/include | sed s%\\\\\\\\%/%g`
-  PYTHON_VER=`echo ${PYTHON_VERSION} | sed s:.::`
+  PYTHON_VER=`echo ${PYTHON_VERSION} | sed s:\\\\.::`
   PYTHON_LIBS=`echo -L${py_prefix}/libs -lpython${PYTHON_VER} | sed s%\\\\\\\\%/%g`
 fi
 fi
