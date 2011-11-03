@@ -26,16 +26,16 @@ public final class ModelHetlgr extends Model
 {
     protected ModelHetlgr(long pointer) { super(pointer); }
 
-    public ModelHetlgr(Space space) {
-      this(OscatsModelHetlgr.new_with_params("space", space));
+    public ModelHetlgr(Space space, int Ncat) {
+      this(OscatsModelHetlgr.new_with_params("space", space, "Ncat", Ncat));
     }
 
-    public ModelHetlgr(Space space, char[] dims) {
-      this(OscatsModelHetlgr.new_with_params("space", space, "dims", dims));
+    public ModelHetlgr(Space space, char[] dims, int Ncat) {
+      this(OscatsModelHetlgr.new_with_params("space", space, "dims", dims, "Ncat", Ncat));
     }
 
-    public ModelHetlgr(Space space, char[] dims, Covariates covariates) {
-      this(OscatsModelHetlgr.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    public ModelHetlgr(Space space, char[] dims, int Ncat, Covariates covariates) {
+      this(OscatsModelHetlgr.new_with_params("space", space, "dims", dims, "Ncat", Ncat, "covariates", covariates));
     }
 
 }

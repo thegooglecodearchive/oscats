@@ -26,16 +26,16 @@ public final class ModelGr extends Model
 {
     protected ModelGr(long pointer) { super(pointer); }
 
-    public ModelGr(Space space) {
-      this(OscatsModelGr.new_with_params("space", space));
+    public ModelGr(Space space, int Ncat) {
+      this(OscatsModelGr.new_with_params("space", space, "Ncat", Ncat));
     }
 
-    public ModelGr(Space space, char[] dims) {
-      this(OscatsModelGr.new_with_params("space", space, "dims", dims));
+    public ModelGr(Space space, char[] dims, int Ncat) {
+      this(OscatsModelGr.new_with_params("space", space, "dims", dims, "Ncat", Ncat));
     }
 
-    public ModelGr(Space space, char[] dims, Covariates covariates) {
-      this(OscatsModelGr.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    public ModelGr(Space space, char[] dims, int Ncat, Covariates covariates) {
+      this(OscatsModelGr.new_with_params("space", space, "dims", dims, "Ncat", Ncat, "covariates", covariates));
     }
 
 }

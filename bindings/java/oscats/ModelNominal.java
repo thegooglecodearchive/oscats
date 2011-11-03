@@ -26,16 +26,16 @@ public final class ModelNominal extends Model
 {
     protected ModelNominal(long pointer) { super(pointer); }
 
-    public ModelNominal(Space space) {
-      this(OscatsModelNominal.new_with_params("space", space));
+    public ModelNominal(Space space, int Ncat) {
+      this(OscatsModelNominal.new_with_params("space", space, "Ncat", Ncat));
     }
 
-    public ModelNominal(Space space, char[] dims) {
-      this(OscatsModelNominal.new_with_params("space", space, "dims", dims));
+    public ModelNominal(Space space, char[] dims, int Ncat) {
+      this(OscatsModelNominal.new_with_params("space", space, "dims", dims, "Ncat", Ncat));
     }
 
-    public ModelNominal(Space space, char[] dims, Covariates covariates) {
-      this(OscatsModelNominal.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    public ModelNominal(Space space, char[] dims, int Ncat, Covariates covariates) {
+      this(OscatsModelNominal.new_with_params("space", space, "dims", dims, "Ncat", Ncat, "covariates", covariates));
     }
 
 }

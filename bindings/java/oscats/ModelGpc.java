@@ -26,16 +26,16 @@ public final class ModelGpc extends Model
 {
     protected ModelGpc(long pointer) { super(pointer); }
 
-    public ModelGpc(Space space) {
-      this(OscatsModelGpc.new_with_params("space", space));
+    public ModelGpc(Space space, int Ncat) {
+      this(OscatsModelGpc.new_with_params("space", space, "Ncat", Ncat));
     }
 
-    public ModelGpc(Space space, char[] dims) {
-      this(OscatsModelGpc.new_with_params("space", space, "dims", dims));
+    public ModelGpc(Space space, char[] dims, int Ncat) {
+      this(OscatsModelGpc.new_with_params("space", space, "dims", dims, "Ncat", Ncat));
     }
 
-    public ModelGpc(Space space, char[] dims, Covariates covariates) {
-      this(OscatsModelGpc.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    public ModelGpc(Space space, char[] dims, int Ncat, Covariates covariates) {
+      this(OscatsModelGpc.new_with_params("space", space, "dims", dims, "Ncat", Ncat, "covariates", covariates));
     }
 
 }

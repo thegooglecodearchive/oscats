@@ -26,16 +26,16 @@ public final class ModelPc extends Model
 {
     protected ModelPc(long pointer) { super(pointer); }
 
-    public ModelPc(Space space) {
-      this(OscatsModelPc.new_with_params("space", space));
+    public ModelPc(Space space, int Ncat) {
+      this(OscatsModelPc.new_with_params("space", space, "Ncat", Ncat));
     }
 
-    public ModelPc(Space space, char[] dims) {
-      this(OscatsModelPc.new_with_params("space", space, "dims", dims));
+    public ModelPc(Space space, char[] dims, int Ncat) {
+      this(OscatsModelPc.new_with_params("space", space, "dims", dims, "Ncat", Ncat));
     }
 
-    public ModelPc(Space space, char[] dims, Covariates covariates) {
-      this(OscatsModelPc.new_with_params("space", space, "dims", dims, "covariates", covariates));
+    public ModelPc(Space space, char[] dims, int Ncat, Covariates covariates) {
+      this(OscatsModelPc.new_with_params("space", space, "dims", dims, "Ncat", Ncat, "covariates", covariates));
     }
 
 }
