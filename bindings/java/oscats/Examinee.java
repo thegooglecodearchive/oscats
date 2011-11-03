@@ -79,7 +79,7 @@ public final class Examinee extends Object
       OscatsExamineeOverride.setTheta(this, GObject.quarkFromString(name), theta);
     }
     
-    public Point getTheta(String name, Point theta) {
+    public Point getTheta(String name) {
       return OscatsExaminee.getTheta(this, GObject.quarkFromString(name));
     }
     
