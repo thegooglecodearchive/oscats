@@ -1,5 +1,5 @@
  % OSCATS: Open-Source Computerized Adaptive Testing System
- % Copyright 2010 Michael Culbertson <culbert1@illinois.edu>
+ % Copyright 2010, 2011 Michael Culbertson <culbert1@illinois.edu>
  %
  % Example 1
  %
@@ -21,7 +21,8 @@
 %% Note that the path to libglibjni and liboscatsjni 
 %% must be in Matlab's toolbox/local/librarypath.txt
 
-import oscats.GslVector;
+import oscats.Space;
+import oscats.Point;
 import oscats.Examinee;
 import oscats.Test;
 import oscats.AlgExposureCounter;
@@ -30,19 +31,20 @@ N_EXAMINEES = 1000;
 N_ITEMS = 400;
 LEN = 30;
 
-function ret = gen_items()
+function ret = gen_items(space)
     import oscats.ItemBank
-    import oscats.ContModelL1p
+    import oscats.ModelL1p
     import oscats.Item
     % Create an item bank to store the items.
     % Setting the property "sizeHint" increases allocation efficiency.
     bank = ItemBank(N_ITEMS);
     for k = 1:N_ITEMS
       % First we create an IRT model container for our item
-      model = ContModelL1p();
+      % Defaults to unidimensional, using the first dimension of space
+      model = ModelL1p(space);
       % Then, set the parameters.  Here there is only one, the difficulty (b).
       model.setParamByIndex(0, oscats.Random.normal(1));
-      % Create an item based on this model
+      % Create an item based on this model (as default model)
       item = Item(model);
       % Add the item to the item bank
       bank.addItem(item);
@@ -53,21 +55,21 @@ function ret = gen_items()
 end
 
   % Returns an array of new OscatsExaminee pointers
-function examinees = gen_examinees()
+function examinees = gen_examinees(space)
     import oscats.Examinee
-    import oscats.GslVector
+    import oscats.Point
+    dim = char(oscats.Space.OSCATS_DIM_CONT + 0);  % First continuous dimension
     ret = javaArray('oscats.Examinee', N_EXAMINEES);
     
-    % Latent IRT ability parameter.  This is a one-dimensional test.
-    theta = oscats.GslVector.createGslVector(1);
     for k = 1:N_EXAMINEES
+      % Latent IRT ability parameter.  This is a one-dimensional test.
+      theta = oscats.Point(space);
       % Sample the ability from N(0,1) distribution
-      theta.set(0, oscats.Random.normal(1));
+      theta.setCont(dim, oscats.Random.normal(1));
       % Create a new examinee
       ret(k) = Examinee();
       % Set the examinee's true (simulated) ability
-      % Note, theta is *copied* into examinee.
-      ret(k).setTrueTheta(theta);
+      ret(k).setSimTheta(theta);
     end
     
     examinees = ret;
@@ -80,10 +82,15 @@ test_names = { 'random', 'matched', 'match.5', 'match.10' };
 test = javaArray('oscats.Test', num_tests);
 exposure = javaArray('oscats.AlgExposureCounter', num_tests);
     
+% Create the latent space for the test: continuous unidimensional
+space = oscats.Space(1, 0);
+dim = oscats.Space.OSCATS_DIM_CONT + 0;  % First continuous dimension
+        
+
 disp('Creating examinees.');
-examinees = gen_examinees();
+examinees = gen_examinees(space);
 disp('Creating items.');
-bank = gen_items();
+bank = gen_items(space);
 
 disp('Creating tests.');
 for j = 1:num_tests
@@ -98,10 +105,8 @@ for j = 1:num_tests
       % Register the CAT algorithms for this test.
       % A test must have at minimum a selection algorithm, and administration
       % algorithm, and a stoping critierion.
-
-      % Have to pass empty set of parameters to appease Matlab
-      oscats.AlgSimulateTheta().register(test(j));
-      oscats.AlgEstimateTheta().register(test(j));
+      oscats.AlgSimulate().register(test(j));
+      oscats.AlgEstimate().register(test(j));
 
       % All calls to oscats.Algorithm.register() return an algorithm
       % data object.  In many cases, we don't care about this object, since
@@ -129,25 +134,21 @@ disp('Administering.');
 f = fopen('ex01-examinees.dat', 'w');
 fprintf(f, 'ID\ttrue');
 for j = 1:num_tests
-  fprintf(f, '\t%s\t%s.err', char(test_names(j)), char(test_names(j)));
+  fprintf(f, '\t%s', char(test_names(j)) );
 end
 fprintf(f, '\n');
 for i = 1:N_EXAMINEES
       % An initial estimate for latent IRT ability must be provided.
-      examinees(i).setThetaHat(GslVector.createGslVector(1));
-      % We want errors for the estimates: initialize them.
-      % 1 is the test dimension
-      examinees(i).initThetaErr(1);
+      examinees(i).setEstTheta(oscats.Point(space));
 
-      fprintf(f, '%d\t%g', i, examinees(i).getTrueTheta().get(0));
+      fprintf(f, '%d\t%g', i, examinees(i).getSimTheta().getCont(dim));
       for j = 1:num_tests
         % Reset initial latent ability for this test
-        examinees(i).getThetaHat().set(0, 0);
+        examinees(i).getEstTheta().setCont(dim, 0);
         % Do the administration!
         test(j).administer(examinees(i));
-        % Output the resulting theta.hat and its *variance*
-        fprintf(f, '\t%g\t%g', examinees(i).getThetaHat().get(0), ...
-                examinees(i).getThetaErr().get(0, 0));
+        % Output the resulting theta.hat
+        fprintf(f, '\t%g', examinees(i).getEstTheta().getCont(dim) );
       end
       fprintf(f, '\n');
 end
@@ -161,7 +162,7 @@ end
 fprintf(f, '\n');
 for i = 1:N_ITEMS
       % Get the item's difficulty parameter
-      fprintf(f, '%d\t%g', i, bank.getItem(i-1).getContModel().getParamByIndex(0));
+      fprintf(f, '%d\t%g', i, bank.getItem(i-1).getModel().getParamByIndex(0));
       % Get the exposure rate for this item in each test
       for j = 1:num_tests
         fprintf(f, '\t%g', exposure(j).getRate(bank.getItem(i-1)) );
