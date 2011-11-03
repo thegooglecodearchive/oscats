@@ -211,6 +211,7 @@ AC_CONFIG_FILES([
   bindings/python/codegen/Makefile
   bindings/perl/Makefile
   bindings/perl/Build.PL
+  bindings/perl/oscats.pm
   bindings/php/Makefile
   bindings/php/generator/Makefile
   bindings/java/Makefile

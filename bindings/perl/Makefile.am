@@ -1,12 +1,12 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = codegen.pl oscats.pm oscats.override oscats-typedefs.typemap
+EXTRA_DIST = codegen.pl oscats.override oscats-typedefs.typemap
 
 CLEAN_FILES = oscats.defs oscats.maps lib
 
 oscats.maps: $(srcdir)/../oscats-common.defs $(srcdir)/oscats.override
 	if test ! -d lib; then mkdir lib; fi
-	if test ! -f lib/oscats.pm; then cp $(srcdir)/oscats.pm lib; fi
+	if test ! -f lib/oscats.pm; then cp $(builddir)/oscats.pm lib; fi
 	cp $(srcdir)/../oscats-common.defs oscats.defs
 	$(PERL) $(srcdir)/codegen.pl $(srcdir)/oscats.override oscats.defs
 

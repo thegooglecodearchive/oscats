@@ -2,7 +2,7 @@ package oscats;
 use Glib;
 require DynaLoader;
 our @ISA = qw(DynaLoader);
-our $VERSION = '0.5';
+our $VERSION = '@VERSION@';
 sub dl_load_flags {0x01};
 bootstrap oscats $VERSION;
 1;
