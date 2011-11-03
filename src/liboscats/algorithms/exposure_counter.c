@@ -65,8 +65,8 @@ static void administered (OscatsTest *test, OscatsExaminee *e,
 {
   guint count;
   OscatsAlgExposureCounter *self = OSCATS_ALG_EXPOSURE_COUNTER(alg_data);
-  count = (guint)g_hash_table_lookup(self->counts, item);
-  g_hash_table_insert(self->counts, item, (gpointer)(count+1));
+  count = GPOINTER_TO_UINT(g_hash_table_lookup(self->counts, item));
+  g_hash_table_insert(self->counts, item, GUINT_TO_POINTER(count+1));
 }
 
 /*
@@ -108,5 +108,6 @@ gdouble oscats_alg_exposure_counter_get_rate(const OscatsAlgExposureCounter *alg
                                              const OscatsItem *item)
 {
   g_return_val_if_fail(OSCATS_IS_ALG_EXPOSURE_COUNTER(alg_data), 0);
-  return (guint)g_hash_table_lookup(alg_data->counts, item)/(gdouble)(alg_data->num_examinees);
+  return GPOINTER_TO_UINT(g_hash_table_lookup(alg_data->counts, item)) /
+           (gdouble)(alg_data->num_examinees);
 }
