@@ -3,9 +3,9 @@
 EXTRA_DIST = README		\
 		ex01.py ex01.pl ex01.php ex01.java ex01_java.m	\
 		ex02.py ex02.pl ex02.php ex02.java ex02_java.m	\
-		ex03.py #ex03.pl ex03.php ex03.java ex03_java.m	\
+		ex03.py \
 		ex03-items.dat ex03-person.dat			\
-		ex04.py #ex04.pl ex04.php ex04.java ex04_java.m
+		ex04.py
 
 bin_PROGRAMS = ex01 ex02 ex03 # ex04
 ex01_CFLAGS = -I$(top_srcdir)/src/liboscats $(GLIB_CFLAGS) $(GSL_CFLAGS)
