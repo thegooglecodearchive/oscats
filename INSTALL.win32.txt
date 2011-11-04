@@ -38,7 +38,7 @@ For compiling with the C library:
 
 For the Python bindings:
 - Note: This package is compiled for Python 2.7.
-- Place the oscats.pyd from Python26 in your Python's site-packages directory
+- Place the oscats.pyd from Python27 in your Python's site-packages directory
   (e.g. C:\Python27\Lib\site-packages).
 - Alternatively, you may specify the location of oscats.pyd in PYTHONPATH.
 
