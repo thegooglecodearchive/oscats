@@ -39,8 +39,8 @@ Note: On Windows, the colons in the the classpath should be semi-colons.
   under four different item selection criteria.  This exammple demonstrates
   using multiple models.
 
-- Example 4: Custom Algorithm and Custom Model
-  Model: 1D 4PL
+- Example 4: Custom Algorithm
+  Model: 1D 3PL
   Compare average bias in estimated ability when examinee gets first two
-  items either both incorrect under three item selection criteria.  This
-  example demonstrates creating a new algorithm and model.
+  items either both correct or incorrect under three item selection
+  criteria.  This example demonstrates creating a new algorithm.
