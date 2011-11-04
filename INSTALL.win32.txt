@@ -16,6 +16,7 @@ OSCATS depends on the following packages:
 
 - GNU Scientific Library (http://www.gnu.org/software/gsl)
 - Glib 2, including GObject (http://www.gtk.org)
+
 - pkg-config, optional (http://pkg-config.freedesktop.org/wiki/)
 - PyGObject module, for Python bindings (http://live.gnome.org/PyGObject)
 - Perl Glib module, for Perl bindings (http://gtk2-perl.sourceforge.net)
@@ -36,9 +37,9 @@ For compiling with the C library:
   (e.g. C:\oscats\lib\pkgconfig).
 
 For the Python bindings:
-- Note: This package is compiled for Python 2.6.
+- Note: This package is compiled for Python 2.7.
 - Place the oscats.pyd from Python26 in your Python's site-packages directory
-  (e.g. C:\Python26\Lib\site-packages).
+  (e.g. C:\Python27\Lib\site-packages).
 - Alternatively, you may specify the location of oscats.pyd in PYTHONPATH.
 
 For the Perl bindings:
