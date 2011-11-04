@@ -4,7 +4,7 @@ dnl Initialization
 
 AC_PREREQ(2.59)
 
-m4_define(oscats_version, 0.5)
+m4_define(oscats_version, 0.6)
 
 m4_define(glib_required_version, 2.22.0)
 m4_define(gsl_required_version, 1.13)
